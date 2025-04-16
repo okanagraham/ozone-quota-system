@@ -51,9 +51,33 @@ const CO2Calculator = () => {
   }, []);
   
   // Calculate total CO2 whenever calculator items change
+  const calculateTotalCO2 = useCallback(() => {
+    let total = 0;
+    
+    calculatorItems.forEach(item => {
+      if (item.refrigerantId && item.volume) {
+        const refrigerant = refrigerants.find(r => r.id === item.refrigerantId);
+        if (!refrigerant) return;
+        
+        const gwpValue = refrigerant.gwp_value || 0;
+        const unit = unitOptions.find(u => u.value === item.designation);
+        if (!unit) return;
+        
+        const volumeValue = parseFloat(item.volume) || 0;
+        const standardizedVolume = volumeValue * unit.factor;
+        const co2Equivalent = standardizedVolume * gwpValue;
+        
+        total += co2Equivalent;
+      }
+    });
+    
+    setTotalCO2(total);
+  }, [calculatorItems, refrigerants, unitOptions]);
+  
+  // Calculate total CO2 whenever calculator items change
   useEffect(() => {
     calculateTotalCO2();
-  }, [calculatorItems]);
+  }, [calculatorItems, calculateTotalCO2]);
   
   // Filter refrigerants based on search term
   const filteredRefrigerants = refrigerants.filter(refrigerant => {
@@ -87,30 +111,6 @@ const CO2Calculator = () => {
       item.id === id ? { ...item, [field]: value } : item
     ));
   };
-  
-  // Calculate total CO2 equivalent
-  const calculateTotalCO2 = useCallback(() => {
-    let total = 0;
-    
-    calculatorItems.forEach(item => {
-      if (item.refrigerantId && item.volume) {
-        const refrigerant = refrigerants.find(r => r.id === item.refrigerantId);
-        if (!refrigerant) return;
-        
-        const gwpValue = refrigerant.gwp_value || 0;
-        const unit = unitOptions.find(u => u.value === item.designation);
-        if (!unit) return;
-        
-        const volumeValue = parseFloat(item.volume) || 0;
-        const standardizedVolume = volumeValue * unit.factor;
-        const co2Equivalent = standardizedVolume * gwpValue;
-        
-        total += co2Equivalent;
-      }
-    });
-    
-    setTotalCO2(total);
-  }, [calculatorItems, refrigerants, unitOptions]);
   
   // Reset calculator
   const resetCalculator = () => {

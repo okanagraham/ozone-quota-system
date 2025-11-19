@@ -1,259 +1,274 @@
+// src/services/registrationService.js
 // src/services/registration/registrationService.js
-import { db } from '../firebase/firebaseConfig';
-import { 
-  collection, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  addDoc, 
-  updateDoc, 
-  query, 
-  where, 
-  serverTimestamp,
-  limit 
-} from 'firebase/firestore';
+import { db, storage } from '../firebase/firebaseConfig';
+import { collection, doc, setDoc, getDoc, updateDoc, query, where, getDocs } from 'firebase/firestore';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { getCurrentUser } from '../authService/authService';
+import { generateRegistrationNumber } from '../utils/registrationUtils';
 
 /**
- * Service for managing registrations
+ * Registration Service - Handles registration operations
  */
-export const RegistrationService = {
+const RegistrationService = {
   /**
-   * Check registration period status
-   * @returns {Object} - Registration period information
+   * Check if registration is currently allowed (December only)
+   * @returns {boolean} Whether registration is currently allowed
    */
-  checkRegistrationPeriodStatus() {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth();
-    const currentDay = now.getDate();
+  isRegistrationOpen: () => {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth(); // 0-indexed, 11 = December
     
-    // Registration period is December 1-31
-    const isDecember = currentMonth === 11;
-    const isRegistrationOpen = isDecember;
-    
-    // Calculate days until registration opens/closes
-    let daysUntilOpen = 0;
-    let daysUntilClose = 0;
-    
-    if (!isDecember) {
-      // Calculate days until December 1
-      const decFirst = new Date(currentYear, 11, 1);
-      daysUntilOpen = Math.ceil((decFirst - now) / (1000 * 60 * 60 * 24));
-    } else {
-      // Calculate days until December 31
-      const decLast = new Date(currentYear, 11, 31);
-      daysUntilClose = Math.ceil((decLast - now) / (1000 * 60 * 60 * 24)) + 1;
-    }
-    
-    // Determine if we should show notification (November or December)
-    const showNotification = currentMonth >= 10;
-    
-    // Set upcoming year for registration
-    const registrationYear = isDecember ? currentYear + 1 : currentYear;
-    
-    return {
-      isOpen: isRegistrationOpen,
-      registrationYear,
-      daysUntilOpen,
-      daysUntilClose,
-      showNotification
-    };
+    // Only allow registrations in December
+    return currentMonth === 11;
   },
-  
+
   /**
-   * Get registration status
-   * @param {string} userId - User ID
-   * @returns {Promise<Object>} - Registration status
+   * Get the year for which registration is currently open
+   * @returns {string} The year for registration (next calendar year)
    */
-  async getRegistrationStatus(userId) {
-    try {
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      
-      // Check for current year registration
-      const registrationsRef = collection(db, 'registrations');
-      const q = query(
-        registrationsRef,
-        where('user', '==', userId),
-        where('year', '==', currentYear.toString()),
-        where('completed', '==', true),
-        limit(1)
-      );
-      
-      const querySnapshot = await getDocs(q);
-      
-      if (querySnapshot.empty) {
-        return {
-          isRegistered: false,
-          expiryDays: 0,
-          registration: null
-        };
-      }
-      
-      // Get registration data
-      const registrationDoc = querySnapshot.docs[0];
-      const registration = {
-        id: registrationDoc.id,
-        ...registrationDoc.data()
-      };
-      
-      // Calculate days until expiry
-      const yearEnd = new Date(currentYear, 11, 31);
-      const daysUntilExpiry = Math.ceil((yearEnd - now) / (1000 * 60 * 60 * 24));
-      
-      return {
-        isRegistered: true,
-        expiryDays: daysUntilExpiry,
-        registration
-      };
-    } catch (error) {
-      console.error('Error getting registration status:', error);
-      throw error;
-    }
+  getRegistrationYear: () => {
+    const currentDate = new Date();
+    return (currentDate.getFullYear() + 1).toString();
   },
-  
+
   /**
-   * Get approved refrigerants for a user
-   * @param {string} userId - User ID
-   * @returns {Promise<Array>} - List of approved refrigerants
+   * Submit a new registration application
+   * @param {Object} registrationData - Registration form data
+   * @returns {Promise<Object>} Created registration document
    */
-  async getApprovedRefrigerants(userId) {
+  submitRegistration: async (registrationData) => {
     try {
-      const now = new Date();
-      const currentYear = now.getFullYear();
+      const user = getCurrentUser();
+      if (!user) throw new Error('User not authenticated');
       
-      // Get current registration
-      const registrationsRef = collection(db, 'registrations');
-      const q = query(
-        registrationsRef,
-        where('user', '==', userId),
-        where('year', '==', currentYear.toString()),
-        where('completed', '==', true),
-        limit(1)
-      );
+      // Get next year for registration
+      const registrationYear = RegistrationService.getRegistrationYear();
       
-      const querySnapshot = await getDocs(q);
-      
-      if (querySnapshot.empty) {
-        return [];
+      // Check if user already has a registration for the upcoming year
+      const existingReg = await RegistrationService.checkExistingRegistration(user.uid, registrationYear);
+      if (existingReg) {
+        throw new Error(`You already have a registration application for ${registrationYear}`);
       }
       
-      // Get registration data
-      const registration = querySnapshot.docs[0].data();
-      
-      // Return approved refrigerants
-      return registration.refrigerants || [];
-    } catch (error) {
-      console.error('Error getting approved refrigerants:', error);
-      throw error;
-    }
-  },
-  
-  /**
-   * Submit new registration
-   * @param {string} userId - User ID
-   * @param {Object} registrationData - Registration data
-   * @returns {Promise<string>} - New registration ID
-   */
-  async submitRegistration(userId, registrationData) {
-    try {
-      // Check if registration period is open
-      const periodStatus = this.checkRegistrationPeriodStatus();
-      
-      if (!periodStatus.isOpen) {
-        throw new Error('Registration period is not currently open.');
-      }
-      
-      // Get user data
-      const userDoc = await getDoc(doc(db, 'users', userId));
-      
-      if (!userDoc.exists()) {
-        throw new Error('User not found');
-      }
-      
-      const userData = userDoc.data();
-      
-      // Check for existing registration for upcoming year
-      const existingRegistrationsQuery = query(
-        collection(db, 'registrations'),
-        where('user', '==', userId),
-        where('year', '==', periodStatus.registrationYear.toString())
-      );
-      
-      const existingRegistrations = await getDocs(existingRegistrationsQuery);
-      
-      if (!existingRegistrations.empty) {
-        throw new Error('You already have a registration for the upcoming year.');
-      }
+      // Generate registration ID
+      const registrationId = doc(collection(db, 'registrations')).id;
       
       // Create registration document
-      const newRegistration = {
-        user: userId,
-        name: userData.enterprise_name || '',
-        business_address: userData.business_address || '',
-        business_location: userData.business_location || '',
+      const registrationDoc = {
+        id: registrationId,
+        user: user.uid,
+        name: registrationData.enterprise_name || user.enterprise_name,
+        date: new Date(),
+        year: registrationYear,
         refrigerants: registrationData.refrigerants || [],
         retail: registrationData.retail || false,
-        year: periodStatus.registrationYear.toString(),
-        date: serverTimestamp(),
-        last_modified: serverTimestamp(),
+        receipt_uploaded: registrationData.receipt_uploaded || false,
+        paid: registrationData.paid || false,
+        last_modified: new Date(),
         completed: false,
-        paid: false,
-        receipt_uploaded: false,
+        awaiting_admin_signature: false,
         status: 'Awaiting Approval',
-        imports_under_license: [],
-        cert_no: userData.importer_number || 0,
-        next_importer_number: 0
+        // Add cert_no and next_importer_number once approved
       };
       
-      // Add to Firestore
-      const docRef = await addDoc(collection(db, 'registrations'), newRegistration);
+      // Save to Firestore
+      await setDoc(doc(db, 'registrations', registrationId), registrationDoc);
       
-      return docRef.id;
+      // Update user document with registration reference
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        const registrations = userData.registrations || [];
+        
+        // Add new registration reference
+        await updateDoc(userRef, {
+          registrations: [...registrations, doc(db, 'registrations', registrationId)]
+        });
+      }
+      
+      return registrationDoc;
     } catch (error) {
       console.error('Error submitting registration:', error);
       throw error;
     }
   },
-  
+
   /**
-   * Get all refrigerants
-   * @returns {Promise<Array>} - List of all refrigerants
+   * Check if user already has a registration for specified year
+   * @param {string} userId - User ID
+   * @param {string} year - Registration year to check
+   * @returns {Promise<Object|null>} Existing registration or null
    */
-  async getAllRefrigerants() {
+  checkExistingRegistration: async (userId, year) => {
     try {
-      const refrigerantsRef = collection(db, 'refrigerants');
-      const querySnapshot = await getDocs(refrigerantsRef);
+      const registrationsRef = collection(db, 'registrations');
+      const q = query(registrationsRef, where('user', '==', userId), where('year', '==', year));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        return { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error checking existing registration:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get user's current active registration
+   * @param {string} userId - User ID
+   * @returns {Promise<Object|null>} Active registration or null
+   */
+  getCurrentActiveRegistration: async (userId) => {
+    try {
+      const currentYear = new Date().getFullYear().toString();
+      
+      // First check for a completed registration for the current year
+      const registrationsRef = collection(db, 'registrations');
+      const q = query(
+        registrationsRef, 
+        where('user', '==', userId), 
+        where('year', '==', currentYear),
+        where('completed', '==', true)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        return { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error getting active registration:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Upload signature for registration
+   * @param {string} registrationId - Registration ID
+   * @param {string} signatureDataUrl - Base64 signature data
+   * @returns {Promise<string>} Signature URL
+   */
+  uploadRegistrationSignature: async (registrationId, signatureDataUrl) => {
+    try {
+      const signatureRef = ref(storage, `registration_signatures/${registrationId}.png`);
+      await uploadString(signatureRef, signatureDataUrl, 'data_url');
+      const signatureUrl = await getDownloadURL(signatureRef);
+      
+      // Update registration with signature URL
+      await updateDoc(doc(db, 'registrations', registrationId), {
+        signature_url: signatureUrl
+      });
+      
+      return signatureUrl;
+    } catch (error) {
+      console.error('Error uploading signature:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Admin approves registration
+   * @param {string} registrationId - Registration ID
+   * @param {Object} approvalData - Admin signature and approval data
+   * @returns {Promise<void>}
+   */
+  approveRegistration: async (registrationId, approvalData) => {
+    try {
+      const registrationRef = doc(db, 'registrations', registrationId);
+      const registrationSnap = await getDoc(registrationRef);
+      
+      if (!registrationSnap.exists()) {
+        throw new Error('Registration not found');
+      }
+      
+      const registrationData = registrationSnap.data();
+      
+      // Get next certificate number
+      const settingsRef = doc(db, 'settings', '8ZCOe8dQhGajk4fog90q');
+      const settingsSnap = await getDoc(settingsRef);
+      const settings = settingsSnap.data();
+      const certNo = settings.registration_cert_no_counter + 1;
+      
+      // Upload admin signature if provided
+      let adminSignatureUrl = null;
+      if (approvalData.signatureDataUrl) {
+        const signatureRef = ref(storage, `registration_signatures/${registrationId}_admin.png`);
+        await uploadString(signatureRef, approvalData.signatureDataUrl, 'data_url');
+        adminSignatureUrl = await getDownloadURL(signatureRef);
+      }
+      
+      // Update registration
+      await updateDoc(registrationRef, {
+        completed: true,
+        admin_signature: adminSignatureUrl,
+        admin_role: approvalData.admin_role || 'NOU Admin',
+        admin_name: approvalData.admin_name,
+        admin_signature_date: new Date(),
+        cert_no: certNo,
+        next_importer_number: 0,
+        status: 'complete',
+        can_generate: true
+      });
+      
+      // Update settings with new counter
+      await updateDoc(settingsRef, {
+        registration_cert_no_counter: certNo
+      });
+      
+      // Update user document to set this as current registration
+      const userRef = doc(db, 'users', registrationData.user);
+      await updateDoc(userRef, {
+        current_registration: registrationRef
+      });
+      
+      return { certNo };
+    } catch (error) {
+      console.error('Error approving registration:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get all registrations for the upcoming year
+   * @returns {Promise<Array>} List of registrations
+   */
+  getUpcomingRegistrations: async () => {
+    try {
+      const upcomingYear = RegistrationService.getRegistrationYear();
+      const registrationsRef = collection(db, 'registrations');
+      const q = query(registrationsRef, where('year', '==', upcomingYear));
+      const querySnapshot = await getDocs(q);
       
       return querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
     } catch (error) {
-      console.error('Error getting refrigerants:', error);
-      throw error;
-    }
-  },
-  
-  /**
-   * Get active registration for user
-   * @param {string} userId - User ID
-   * @returns {Promise<Object|null>} - Active registration or null
-   */
-  async getActiveRegistration(userId) {
-    try {
-      const { isRegistered, registration } = await this.getRegistrationStatus(userId);
-      
-      if (!isRegistered) {
-        return null;
-      }
-      
-      return registration;
-    } catch (error) {
-      console.error('Error getting active registration:', error);
+      console.error('Error getting upcoming registrations:', error);
       throw error;
     }
   }
+
+  
 };
 
-export default RegistrationService;
+//export default RegistrationService;
+
+// Named exports for individual functions
+export const { 
+  isRegistrationOpen, 
+  getRegistrationYear, 
+  submitRegistration, 
+  checkExistingRegistration, 
+  getCurrentActiveRegistration, 
+  uploadRegistrationSignature, 
+  approveRegistration, 
+  getUpcomingRegistrations 
+} = RegistrationService;

@@ -1,5 +1,5 @@
 // src/context/AuthContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
+/*import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
@@ -78,6 +78,97 @@ export function AuthProvider({ children }) {
     register,
     logout,
     loading
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+}*/
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { auth, db } from '../services/firebase/firebaseConfig';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  sendPasswordResetEmail,
+} from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+
+const AuthContext = createContext();
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  async function signup(email, password) {
+    return createUserWithEmailAndPassword(auth, email, password);
+  }
+
+  async function login(email, password) {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  async function logout() {
+    return signOut(auth);
+  }
+
+  async function resetPassword(email) {
+    return sendPasswordResetEmail(auth, email);
+  }
+
+  // Fetch user role from Firestore
+  async function fetchUserRole(uid) {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setUserRole(userData.role || null);
+        return userData.role || null;
+      } else {
+        setUserRole(null);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      setUserRole(null);
+      return null;
+    }
+  }
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setCurrentUser(user);
+        await fetchUserRole(user.uid);
+      } else {
+        setCurrentUser(null);
+        setUserRole(null);
+      }
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const value = {
+    currentUser,
+    userRole,
+    login,
+    signup,
+    logout,
+    resetPassword,
+    fetchUserRole,
+    isAdmin: userRole === 'admin',
+    isImporter: userRole === 'importer',
+    isCustoms: userRole === 'customs',
   };
 
   return (

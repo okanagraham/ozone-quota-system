@@ -1,15 +1,10 @@
-// src/components/auth/PrivateRoute.js
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-/**
- * PrivateRoute component that redirects to login if user is not authenticated
- */
-const PrivateRoute = ({ children }) => {
-  const { currentUser, loading } = useAuth();
+const PrivateRoute = ({ children, allowedRoles = ['importer', 'technician'] }) => {
+  const { currentUser, userRole, loading } = useAuth();
   
-  // Show loading indicator while checking authentication
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -18,12 +13,17 @@ const PrivateRoute = ({ children }) => {
     );
   }
   
-  // Redirect to login if not authenticated
   if (!currentUser) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login/importer" replace />;
   }
   
-  // Render children if authenticated
+  if (!allowedRoles.includes(userRole)) {
+    // Redirect to appropriate dashboard based on role
+    if (userRole === 'admin') return <Navigate to="/admin/dashboard" replace />;
+    if (userRole === 'customs') return <Navigate to="/customs/dashboard" replace />;
+    return <Navigate to="/login/importer" replace />;
+  }
+  
   return children;
 };
 

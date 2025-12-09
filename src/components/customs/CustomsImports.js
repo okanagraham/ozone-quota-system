@@ -1,358 +1,149 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../../firebase';
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  getDoc,
-  doc,
-} from 'firebase/firestore';
-import {
-  Box,
-  Paper,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  CircularProgress,
-  TextField,
-  Button,
-  Grid,
-  IconButton,
-  Tooltip,
-  Chip,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { 
-  Visibility, 
-  DescriptionOutlined,
-  Receipt 
-} from '@material-ui/icons';
-import { format } from 'date-fns';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-  },
-  paper: {
-    width: '100%',
-    marginBottom: theme.spacing(2),
-  },
-  table: {
-    minWidth: 750,
-  },
-  tableHead: {
-    backgroundColor: theme.palette.primary.light,
-    '& .MuiTableCell-head': {
-      color: theme.palette.common.white,
-      fontWeight: 'bold',
-    },
-  },
-  searchBar: {
-    marginBottom: theme.spacing(3),
-  },
-  loading: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '50vh',
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-  },
-  chipApproved: {
-    backgroundColor: '#4caf50',
-    color: 'white',
-  },
-  chipPending: {
-    backgroundColor: '#ff9800',
-    color: 'white',
-  },
-}));
+import { Link } from 'react-router-dom';
+import { supabase } from '../../services/supabase/supabaseClient';
 
 const CustomsImports = () => {
-  const classes = useStyles();
   const [imports, setImports] = useState([]);
-  const [filteredImports, setFilteredImports] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [yearFilter, setYearFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('approved');
+  const [filter, setFilter] = useState('all'); // all, pending, inspected
 
   useEffect(() => {
-    const fetchImports = async () => {
-      try {
-        // Query based on status filter
-        let importsQuery;
-        if (statusFilter === 'approved') {
-          importsQuery = query(
-            collection(db, 'imports'),
-            where('approved', '==', true)
-          );
-        } else {
-          // For 'all' view
-          importsQuery = collection(db, 'imports');
-        }
-        
-        const importsSnapshot = await getDocs(importsQuery);
-        const importsData = [];
-        
-        for (const docSnapshot of importsSnapshot.docs) {
-          const importData = docSnapshot.data();
-          
-          // Get registration data if available
-          if (importData.registration) {
-            try {
-              const regDoc = await getDoc(importData.registration);
-              if (regDoc.exists()) {
-                importData.registrationData = regDoc.data();
-              }
-            } catch (err) {
-              console.error("Error fetching registration", err);
-            }
-          }
-          
-          importsData.push({
-            id: docSnapshot.id,
-            ...importData,
-          });
-        }
-        
-        // Sort by submission date (newest first)
-        importsData.sort((a, b) => {
-          return (b.submission_date?.seconds || 0) - (a.submission_date?.seconds || 0);
-        });
-        
-        setImports(importsData);
-        setFilteredImports(importsData);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching imports:', error);
-        setLoading(false);
-      }
-    };
-
     fetchImports();
-  }, [statusFilter]);
+  }, [filter]);
 
-  // Apply filters whenever search term or year filter changes
-  useEffect(() => {
-    filterImports();
-  }, [searchTerm, yearFilter, imports]);
+  const fetchImports = async () => {
+    try {
+      setLoading(true);
+      
+      // Customs can only see approved imports with scheduled inspections
+      let query = supabase
+        .from('imports')
+        .select(`
+          *,
+          users:user_id (
+            display_name,
+            enterprise_name,
+            importer_number
+          )
+        `)
+        .eq('approved', true)
+        .not('inspection_date', 'is', null)
+        .order('inspection_date', { ascending: false });
 
-  const filterImports = () => {
-    let filtered = [...imports];
-    
-    // Apply search term filter
-    if (searchTerm) {
-      const searchTermLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (imp) =>
-          imp.name?.toLowerCase().includes(searchTermLower) ||
-          imp.import_number?.toString().includes(searchTermLower)
-      );
-    }
-    
-    // Apply year filter
-    if (yearFilter) {
-      filtered = filtered.filter((imp) => imp.import_year === yearFilter);
-    }
-    
-    setFilteredImports(filtered);
-    setPage(0); // Reset to first page when filtering
-  };
+      if (filter === 'pending') {
+        query = query.eq('inspected', false);
+      } else if (filter === 'inspected') {
+        query = query.eq('inspected', true);
+      }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleYearFilterChange = (event) => {
-    setYearFilter(event.target.value);
-  };
-
-  const handleStatusFilterChange = (status) => {
-    setStatusFilter(status);
-  };
-
-  const resetFilters = () => {
-    setSearchTerm('');
-    setYearFilter('');
-  };
-
-  const formatDate = (timestamp) => {
-    if (!timestamp) return 'N/A';
-    const date = new Date(timestamp.seconds * 1000);
-    return format(date, 'MMM dd, yyyy');
-  };
-
-  const viewImportLicense = (importId) => {
-    // Open license in a new tab
-    window.open(`/import-license/${importId}`, '_blank');
-  };
-
-  const viewInvoice = (url) => {
-    if (url) {
-      window.open(url, '_blank');
+      const { data, error } = await query;
+      if (error) throw error;
+      setImports(data || []);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className={classes.loading}>
-        <CircularProgress />
-      </div>
-    );
-  }
+  const formatDate = (date) => date ? new Date(date).toLocaleDateString() : 'N/A';
 
   return (
-    <div className={classes.root}>
-      <Typography variant="h4" className={classes.title}>
-        Import Licenses
-      </Typography>
-      
-      {/* Search and Filter Controls */}
-      <Grid container spacing={2} className={classes.searchBar}>
-        <Grid item xs={12} sm={3}>
-          <TextField
-            fullWidth
-            label="Search by name or number"
-            variant="outlined"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <TextField
-            fullWidth
-            label="Filter by year"
-            variant="outlined"
-            value={yearFilter}
-            onChange={handleYearFilterChange}
-          />
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <Button
-            variant="contained"
-            color={statusFilter === 'approved' ? 'primary' : 'default'}
-            onClick={() => handleStatusFilterChange('approved')}
-            style={{ marginRight: 8, marginTop: 8 }}
-          >
-            Approved Only
-          </Button>
-          <Button
-            variant="contained"
-            color={statusFilter === 'all' ? 'primary' : 'default'}
-            onClick={() => handleStatusFilterChange('all')}
-            style={{ marginTop: 8 }}
-          >
-            View All
-          </Button>
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={resetFilters}
-            style={{ marginTop: 8 }}
-          >
-            Reset Filters
-          </Button>
-        </Grid>
-      </Grid>
-      
-      <Paper className={classes.paper}>
-        <TableContainer>
-          <Table className={classes.table} size="medium">
-            <TableHead className={classes.tableHead}>
-              <TableRow>
-                <TableCell>Import #</TableCell>
-                <TableCell>Importer Name</TableCell>
-                <TableCell>Year</TableCell>
-                <TableCell>Submission Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredImports
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((importItem) => (
-                  <TableRow key={importItem.id}>
-                    <TableCell>{importItem.import_number || 'N/A'}</TableCell>
-                    <TableCell>{importItem.name || 'N/A'}</TableCell>
-                    <TableCell>{importItem.import_year || 'N/A'}</TableCell>
-                    <TableCell>
-                      {formatDate(importItem.submission_date)}
-                    </TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={importItem.approved ? "Approved" : "Pending"} 
-                        className={importItem.approved ? classes.chipApproved : classes.chipPending}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Box display="flex">
-                        {importItem.download_ready && (
-                          <Tooltip title="View License">
-                            <IconButton
-                              color="primary"
-                              onClick={() => viewImportLicense(importItem.id)}
-                            >
-                              <Visibility />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                        {importItem.invoice_uploaded && (
-                          <Tooltip title="View Invoice">
-                            <IconButton
-                              color="secondary"
-                              onClick={() => viewInvoice(importItem.invoice_url)}
-                            >
-                              <Receipt />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                      </Box>
-                    </TableCell>
-                  </TableRow>
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-green-800 text-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+              <span className="text-green-800 font-bold text-xs">C&E</span>
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold">Approved Import Licenses</h1>
+              <p className="text-xs text-green-200">View Only Access</p>
+            </div>
+          </div>
+          <span className="px-2 py-1 bg-green-700 rounded text-xs">VIEW ONLY</span>
+        </div>
+      </header>
+
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 flex space-x-8">
+          <Link to="/customs/dashboard" className="px-3 py-4 text-sm text-gray-500">Dashboard</Link>
+          <Link to="/customs/registrations" className="px-3 py-4 text-sm text-gray-500">Registered Importers</Link>
+          <Link to="/customs/imports" className="px-3 py-4 text-sm font-medium border-b-2 border-green-700 text-green-800">Approved Imports</Link>
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto px-4 py-6">
+        {/* Filter Buttons */}
+        <div className="mb-6 flex space-x-2">
+          {['all', 'pending', 'inspected'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-4 py-2 rounded-md text-sm font-medium ${
+                filter === f 
+                  ? 'bg-green-700 text-white' 
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              {f === 'all' ? 'All Imports' : f === 'pending' ? 'Pending Inspection' : 'Inspected'}
+            </button>
+          ))}
+        </div>
+
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          {loading ? (
+            <div className="p-8 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-700 mx-auto"></div>
+            </div>
+          ) : (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-green-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Import #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Importer</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inspection Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {imports.map((imp) => (
+                  <tr key={imp.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{imp.import_number}</td>
+                    <td className="px-6 py-4 text-sm">
+                      <div className="text-gray-900">{imp.users?.enterprise_name}</div>
+                      <div className="text-gray-500 text-xs">#{imp.users?.importer_number}</div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{imp.import_year}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{formatDate(imp.inspection_date)}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        imp.inspected 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-orange-100 text-orange-800'
+                      }`}>
+                        {imp.inspected ? 'Inspected' : 'Pending'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <Link to={`/customs/import/${imp.id}`} className="text-green-600 hover:text-green-800 text-sm">
+                        View Details
+                      </Link>
+                    </td>
+                  </tr>
                 ))}
-              {filteredImports.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    No imports found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredImports.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+                {imports.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">No imports found</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </main>
     </div>
   );
 };

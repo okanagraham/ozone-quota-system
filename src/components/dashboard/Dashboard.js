@@ -2,18 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { QuotaService } from '../../services/quota/quotaService';
-import { RegistrationService } from '../../services/registration/registrationService';
+import { useDemoMode } from '../../context/DemoModeContext';
+import { supabase } from '../../lib/supabase';
 import MainLayout from '../layout/MainLayout';
 
 const Dashboard = () => {
   const { currentUser, userProfile, loading: authLoading } = useAuth();
+  const { isDemoMode, getDemoRegistration, getDemoUserProfile } = useDemoMode();
   const navigate = useNavigate();
   
   const [quotaInfo, setQuotaInfo] = useState(null);
   const [registrationStatus, setRegistrationStatus] = useState(null);
   const [approvedRefrigerants, setApprovedRefrigerants] = useState([]);
-  const [registrationPeriod, setRegistrationPeriod] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -33,20 +33,107 @@ const Dashboard = () => {
         setLoading(true);
         setError(null);
         
-        // Check registration period status
-        const periodStatus = RegistrationService.checkRegistrationPeriodStatus();
-        setRegistrationPeriod(periodStatus);
+        // DEMO MODE: Use demo data
+        if (isDemoMode) {
+          const demoReg = getDemoRegistration();
+          const demoUser = getDemoUserProfile();
+          
+          setApprovedRefrigerants(demoReg.refrigerants);
+          
+          setQuotaInfo({
+            total: demoUser.import_quota,
+            used: demoUser.cumulative_imports,
+            remaining: demoUser.balance_imports,
+            percentage: Math.round((demoUser.cumulative_imports / demoUser.import_quota) * 100)
+          });
+          
+          setRegistrationStatus({
+            isRegistered: true,
+            registration: demoReg,
+            expiryDays: 365
+          });
+          
+          setLoading(false);
+          return;
+        }
         
-        // Execute parallel requests
-        const [quotaData, registrationData, refrigerantsData] = await Promise.all([
-          QuotaService.getQuotaInfo(currentUser.uid),
-          RegistrationService.getRegistrationStatus(currentUser.uid),
-          RegistrationService.getApprovedRefrigerants(currentUser.uid)
-        ]);
+        // PRODUCTION MODE: Fetch from database
+        // Get current year - THIS IS THE KEY FIX
+        // Check for BOTH current year AND next year registrations
+        const currentYear = new Date().getFullYear().toString();
+        const nextYear = (new Date().getFullYear() + 1).toString();
         
-        setQuotaInfo(quotaData);
-        setRegistrationStatus(registrationData);
-        setApprovedRefrigerants(refrigerantsData);
+        // First try current year, then next year
+        let activeRegistration = null;
+        
+        // Try current year first
+        const { data: currentYearReg, error: currentYearError } = await supabase
+          .from('registrations')
+          .select('*')
+          .eq('user_id', currentUser.id)
+          .eq('year', currentYear)
+          .eq('completed', true)
+          .maybeSingle();
+        
+        if (currentYearError && currentYearError.code !== 'PGRST116') {
+          throw currentYearError;
+        }
+        
+        if (currentYearReg) {
+          activeRegistration = currentYearReg;
+        } else {
+          // If no current year registration, check next year
+          const { data: nextYearReg, error: nextYearError } = await supabase
+            .from('registrations')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .eq('year', nextYear)
+            .eq('completed', true)
+            .maybeSingle();
+          
+          if (nextYearError && nextYearError.code !== 'PGRST116') {
+            throw nextYearError;
+          }
+          
+          activeRegistration = nextYearReg;
+        }
+        
+        // Get approved refrigerants from active registration
+        const approvedRefrig = activeRegistration?.refrigerants || [];
+        setApprovedRefrigerants(approvedRefrig);
+        
+        // Calculate days until expiry
+        let expiryDays = 0;
+        if (activeRegistration) {
+          const registrationYear = parseInt(activeRegistration.year);
+          const endOfYear = new Date(registrationYear, 11, 31, 23, 59, 59);
+          const now = new Date();
+          const msPerDay = 24 * 60 * 60 * 1000;
+          expiryDays = Math.ceil((endOfYear - now) / msPerDay);
+        }
+        
+        setRegistrationStatus({
+          isRegistered: !!activeRegistration,
+          registration: activeRegistration,
+          expiryDays: expiryDays > 0 ? expiryDays : 0
+        });
+        
+        // Get quota information from users table
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('import_quota, cumulative_imports, balance_imports')
+          .eq('id', currentUser.id)
+          .single();
+        
+        if (userError) throw userError;
+        
+        const total = parseFloat(userData?.import_quota || 0);
+        const used = parseFloat(userData?.cumulative_imports || 0);
+        const remaining = parseFloat(userData?.balance_imports || 0);
+        const percentage = total > 0 ? Math.round((used / total) * 100) : 0;
+        
+        setQuotaInfo({ total, used, remaining, percentage });
+        
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
         setError('Failed to load dashboard data. Please refresh the page.');
@@ -114,68 +201,53 @@ const Dashboard = () => {
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {/* Header Section */}
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-1">Importer Information</h2>
-          <div className="text-sm text-gray-500 flex">
-            <Link to="/registration/view" className="hover:underline">View Registration Information</Link>
-            <span className="mx-2">/</span>
-            <Link to="/registration/create" className="hover:underline">Application Form</Link>
-          </div>
-        </div>
-        
-        {/* Registration Notice */}
-        {registrationPeriod && registrationPeriod.showNotification && !registrationStatus?.isRegistered && (
-          <div className={`mb-6 p-4 rounded-md border ${
-            registrationPeriod.isOpen ? 'bg-blue-50 border-blue-200' : 'bg-yellow-50 border-yellow-200'
-          }`}>
-            <div className="flex">
-              <div className={`flex-shrink-0 ${
-                registrationPeriod.isOpen ? 'text-blue-400' : 'text-yellow-400'
-              }`}>
-                <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className={`text-sm font-medium ${
-                  registrationPeriod.isOpen ? 'text-blue-800' : 'text-yellow-800'
-                }`}>
-                  {registrationPeriod.isOpen 
-                    ? `Registration for ${registrationPeriod.registrationYear} is now open!` 
-                    : `Registration for ${registrationPeriod.registrationYear} opens soon`}
-                </h3>
-                <div className={`mt-2 text-sm ${
-                  registrationPeriod.isOpen ? 'text-blue-700' : 'text-yellow-700'
-                }`}>
-                  {registrationPeriod.isOpen ? (
-                    <p>
-                      You must complete your registration before December 31st to be able to import during {registrationPeriod.registrationYear}.
-                      <br />
-                      <span className="font-medium">Time remaining: {registrationPeriod.daysUntilClose} days</span>
-                    </p>
-                  ) : (
-                    <p>
-                      Registration will open on December 1st. Please prepare your registration documents.
-                      <br />
-                      <span className="font-medium">Days until registration opens: {registrationPeriod.daysUntilOpen}</span>
-                    </p>
-                  )}
-                </div>
-                {registrationPeriod.isOpen && (
-                  <div className="mt-4">
-                    <Link
-                      to="/registration/create"
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                      Register Now
-                    </Link>
-                  </div>
-                )}
+        {/* Header Section with Registration Actions */}
+        <div className="mb-8">
+          {/* Top bar with title and button */}
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">Importer Dashboard</h2>
+              <div className="text-sm text-gray-500">
+                Manage your registrations and import licenses
               </div>
             </div>
+            
+            {/* Prominent Register Button - Show in Demo Mode OR if not registered */}
+            {(isDemoMode || !registrationStatus?.isRegistered) && (
+              <Link
+                to="/registration/create"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-semibold rounded-lg shadow-lg text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition hover:scale-105"
+              >
+                <svg className="-ml-1 mr-3 h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+                <span className="text-lg">Apply for Registration</span>
+                {isDemoMode && (
+                  <span className="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800 animate-pulse">
+                    DEMO
+                  </span>
+                )}
+              </Link>
+            )}
           </div>
-        )}
+          
+          {/* Breadcrumb links below */}
+          {registrationStatus?.isRegistered && (
+            <div className="flex items-center text-sm text-gray-600">
+              <Link to="/registration/view" className="hover:text-blue-600 hover:underline font-medium">
+                View Registration Certificate
+              </Link>
+              {isDemoMode && (
+                <>
+                  <span className="mx-2">•</span>
+                  <Link to="/registration/create" className="hover:text-blue-600 hover:underline font-medium">
+                    Apply Again (Demo Mode)
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
+        </div>
         
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -203,9 +275,11 @@ const Dashboard = () => {
           
           <div className="bg-white rounded border border-gray-200 shadow-sm p-4">
             <div className="text-sm text-gray-500 mb-1">Status</div>
-            <div className="text-xl font-semibold text-red-600">
+            <div className={`text-xl font-semibold ${
+              registrationStatus?.isRegistered ? 'text-green-600' : 'text-red-600'
+            }`}>
               {registrationStatus?.isRegistered 
-                ? registrationStatus.registration.status || 'Approved' 
+                ? registrationStatus.registration?.status || 'Approved' 
                 : 'Not Registered'}
             </div>
           </div>
@@ -214,7 +288,7 @@ const Dashboard = () => {
         {/* User Profile */}
         <div className="bg-white rounded border border-gray-200 shadow-sm p-6 mb-8">
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-blue-900 mb-4">{userProfile?.displayName || currentUser?.email}</h3>
+            <h3 className="text-xl font-semibold text-blue-900 mb-4">{userProfile?.display_name || currentUser?.email}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <div className="text-sm text-gray-500 mb-1">Enterprise Name</div>
@@ -241,7 +315,7 @@ const Dashboard = () => {
               <div className="flex justify-between mb-2">
                 <h3 className="text-lg font-semibold text-gray-800">CO2 Equivalent Quota</h3>
                 <div className="text-sm bg-blue-50 text-blue-700 rounded-full px-3 py-1">
-                  Import Year {new Date().getFullYear()}
+                  Import Year {registrationStatus?.registration?.year || new Date().getFullYear()}
                 </div>
               </div>
               
@@ -307,7 +381,7 @@ const Dashboard = () => {
                         {refrigerant.ashrae}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {refrigerant.refrigerant || refrigerant.cs_name}
+                        {refrigerant.refrigerant}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {refrigerant.hs_code}

@@ -12,7 +12,6 @@ const MainLayout = ({ children, title = "National Ozone Unit" }) => {
   const navigation = [
     { name: 'Registered Importer', href: '/dashboard' },
     { name: 'Import License', href: '/imports' },
-    //{ name: 'Refrigerants', href: '/refrigerants' },
     { name: 'CO2 Calculator', href: '/calculator' }
   ];
   
@@ -35,7 +34,7 @@ const MainLayout = ({ children, title = "National Ozone Unit" }) => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-100">
       {/* Top header with government seal/logo */}
       <header className="bg-blue-900 text-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
@@ -92,13 +91,13 @@ const MainLayout = ({ children, title = "National Ozone Unit" }) => {
         </div>
       </nav>
 
-      {/* Main content */}
-      <main className="flex-grow">
+      {/* Main content - flex-1 makes it take remaining space */}
+      <main className="flex-1">
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-blue-900 text-white mt-auto">
+      {/* Footer - will be pushed to bottom */}
+      <footer className="bg-blue-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="text-sm">

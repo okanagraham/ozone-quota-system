@@ -1,276 +1,157 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../../firebase';
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  orderBy,
-} from 'firebase/firestore';
-import {
-  Box,
-  Paper,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  CircularProgress,
-  TextField,
-  Button,
-  Grid,
-  IconButton,
-  Tooltip,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { Visibility } from '@material-ui/icons';
-import { format } from 'date-fns';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-  },
-  paper: {
-    width: '100%',
-    marginBottom: theme.spacing(2),
-  },
-  table: {
-    minWidth: 750,
-  },
-  tableHead: {
-    backgroundColor: theme.palette.primary.light,
-    '& .MuiTableCell-head': {
-      color: theme.palette.common.white,
-      fontWeight: 'bold',
-    },
-  },
-  searchBar: {
-    marginBottom: theme.spacing(3),
-  },
-  loading: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '50vh',
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-  },
-}));
+import { Link } from 'react-router-dom';
+import { supabase } from '../../services/supabase/supabaseClient';
 
 const CustomsRegistrations = () => {
-  const classes = useStyles();
   const [registrations, setRegistrations] = useState([]);
-  const [filteredRegistrations, setFilteredRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
-  const [yearFilter, setYearFilter] = useState('');
+  const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
 
   useEffect(() => {
-    const fetchRegistrations = async () => {
-      try {
-        // Fetch only completed/approved registrations
-        const registrationsQuery = query(
-          collection(db, 'registrations'),
-          where('completed', '==', true),
-          where('status', '==', 'complete')
-        );
-        const registrationsSnapshot = await getDocs(registrationsQuery);
-        const registrationsData = [];
-        
-        registrationsSnapshot.forEach((doc) => {
-          registrationsData.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
-        
-        // Sort by date (newest first)
-        registrationsData.sort((a, b) => {
-          return b.admin_signature_date?.seconds - a.admin_signature_date?.seconds;
-        });
-        
-        setRegistrations(registrationsData);
-        setFilteredRegistrations(registrationsData);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching registrations:', error);
-        setLoading(false);
-      }
-    };
-
     fetchRegistrations();
-  }, []);
+  }, [yearFilter]);
 
-  // Apply filters whenever search term or year filter changes
-  useEffect(() => {
-    filterRegistrations();
-  }, [searchTerm, yearFilter, registrations]);
+  const fetchRegistrations = async () => {
+    try {
+      setLoading(true);
+      let query = supabase
+        .from('registrations')
+        .select(`
+          *,
+          users:user_id (
+            display_name,
+            enterprise_name,
+            importer_number,
+            business_address,
+            telephone
+          )
+        `)
+        .eq('completed', true)
+        .eq('status', 'complete')
+        .order('admin_signature_date', { ascending: false });
 
-  const filterRegistrations = () => {
-    let filtered = [...registrations];
-    
-    // Apply search term filter
-    if (searchTerm) {
-      const searchTermLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (reg) =>
-          reg.name?.toLowerCase().includes(searchTermLower) ||
-          reg.cert_no?.toString().includes(searchTermLower)
-      );
+      if (yearFilter) {
+        query = query.eq('year', yearFilter);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      setRegistrations(data || []);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
     }
-    
-    // Apply year filter
-    if (yearFilter) {
-      filtered = filtered.filter((reg) => reg.year === yearFilter);
-    }
-    
-    setFilteredRegistrations(filtered);
-    setPage(0); // Reset to first page when filtering
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleYearFilterChange = (event) => {
-    setYearFilter(event.target.value);
-  };
-
-  const resetFilters = () => {
-    setSearchTerm('');
-    setYearFilter('');
-  };
-
-  const formatDate = (timestamp) => {
-    if (!timestamp) return 'N/A';
-    const date = new Date(timestamp.seconds * 1000);
-    return format(date, 'MMM dd, yyyy');
-  };
-
-  const viewRegistrationCertificate = (registrationId) => {
-    // Open certificate in a new tab
-    window.open(`/registration-certificate/${registrationId}`, '_blank');
-  };
-
-  if (loading) {
+  const filteredRegistrations = registrations.filter(reg => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
     return (
-      <div className={classes.loading}>
-        <CircularProgress />
-      </div>
+      reg.users?.display_name?.toLowerCase().includes(search) ||
+      reg.users?.enterprise_name?.toLowerCase().includes(search) ||
+      reg.cert_no?.toString().includes(search) ||
+      reg.users?.importer_number?.toString().includes(search)
     );
-  }
+  });
+
+  const formatDate = (date) => date ? new Date(date).toLocaleDateString() : 'N/A';
 
   return (
-    <div className={classes.root}>
-      <Typography variant="h4" className={classes.title}>
-        Approved Registrations
-      </Typography>
-      
-      {/* Search and Filter Controls */}
-      <Grid container spacing={2} className={classes.searchBar}>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            fullWidth
-            label="Search by name or certificate number"
-            variant="outlined"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            fullWidth
-            label="Filter by year"
-            variant="outlined"
-            value={yearFilter}
-            onChange={handleYearFilterChange}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={resetFilters}
-            style={{ marginTop: 8 }}
-          >
-            Reset Filters
-          </Button>
-        </Grid>
-      </Grid>
-      
-      <Paper className={classes.paper}>
-        <TableContainer>
-          <Table className={classes.table} size="medium">
-            <TableHead className={classes.tableHead}>
-              <TableRow>
-                <TableCell>Certificate #</TableCell>
-                <TableCell>Importer Name</TableCell>
-                <TableCell>Year</TableCell>
-                <TableCell>Approval Date</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredRegistrations
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((registration) => (
-                  <TableRow key={registration.id}>
-                    <TableCell>{registration.cert_no || 'N/A'}</TableCell>
-                    <TableCell>{registration.name || 'N/A'}</TableCell>
-                    <TableCell>{registration.year || 'N/A'}</TableCell>
-                    <TableCell>
-                      {formatDate(registration.admin_signature_date)}
-                    </TableCell>
-                    <TableCell>
-                      {registration.download_ready && (
-                        <Tooltip title="View Certificate">
-                          <IconButton
-                            color="primary"
-                            onClick={() => viewRegistrationCertificate(registration.id)}
-                          >
-                            <Visibility />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </TableCell>
-                  </TableRow>
+    <div className="min-h-screen bg-gray-100">
+      {/* Header */}
+      <header className="bg-green-800 text-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+              <span className="text-green-800 font-bold text-xs">C&E</span>
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold">Registered Importers</h1>
+              <p className="text-xs text-green-200">View Only Access</p>
+            </div>
+          </div>
+          <span className="px-2 py-1 bg-green-700 rounded text-xs">VIEW ONLY</span>
+        </div>
+      </header>
+
+      {/* Nav */}
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 flex space-x-8">
+          <Link to="/customs/dashboard" className="px-3 py-4 text-sm text-gray-500 hover:text-green-800">Dashboard</Link>
+          <Link to="/customs/registrations" className="px-3 py-4 text-sm font-medium border-b-2 border-green-700 text-green-800">Registered Importers</Link>
+          <Link to="/customs/imports" className="px-3 py-4 text-sm text-gray-500 hover:text-green-800">Approved Imports</Link>
+        </div>
+      </nav>
+
+      {/* Content */}
+      <main className="max-w-7xl mx-auto px-4 py-6">
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow p-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input
+              type="text"
+              placeholder="Search by name, enterprise, or certificate..."
+              className="px-4 py-2 border rounded-md focus:ring-green-500 focus:border-green-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <select
+              className="px-4 py-2 border rounded-md focus:ring-green-500 focus:border-green-500"
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+            >
+              <option value="">All Years</option>
+              {[2024, 2025, 2026].map(y => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+            <div className="text-right text-sm text-gray-500 py-2">
+              Showing {filteredRegistrations.length} approved registrations
+            </div>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          {loading ? (
+            <div className="p-8 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-700 mx-auto"></div>
+            </div>
+          ) : (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-green-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cert #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Importer #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Enterprise</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Approved</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredRegistrations.map((reg) => (
+                  <tr key={reg.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{reg.cert_no}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{reg.users?.importer_number}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{reg.users?.enterprise_name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{reg.year}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{formatDate(reg.admin_signature_date)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{reg.users?.telephone}</td>
+                  </tr>
                 ))}
-              {filteredRegistrations.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    No registrations found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredRegistrations.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+                {filteredRegistrations.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">No registrations found</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </main>
     </div>
   );
 };

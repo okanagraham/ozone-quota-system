@@ -1,147 +1,199 @@
 // src/components/registration/RegistrationForm.js
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { RegistrationService } from '../../services/registration/registrationService';
-import MainLayout from '../layout/MainLayout';
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
+import { useDemoMode } from '../../context/DemoModeContext'
+import { supabase } from '../../lib/supabase'
+import MainLayout from '../layout/MainLayout'
 
 const RegistrationForm = () => {
-  const { currentUser, userProfile } = useAuth();
-  const navigate = useNavigate();
+  const { currentUser, userProfile } = useAuth()
+  const { isDemoMode, simulateRegistrationSubmit } = useDemoMode()
+  const navigate = useNavigate()
   
-  const [refrigerants, setRefrigerants] = useState([]);
-  const [registrationPeriod, setRegistrationPeriod] = useState(null);
-  const [selectedRefrigerants, setSelectedRefrigerants] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isRetail, setIsRetail] = useState(false);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [refrigerants, setRefrigerants] = useState([])
+  const [registrationPeriod, setRegistrationPeriod] = useState(null)
+  const [selectedRefrigerants, setSelectedRefrigerants] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [isRetail, setIsRetail] = useState(false)
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(true)
   
   // Fetch initial data
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        setLoading(true);
-        setError(null);
+        setLoading(true)
+        setError(null)
         
-        // Check registration period
-        const periodStatus = RegistrationService.checkRegistrationPeriodStatus();
-        setRegistrationPeriod(periodStatus);
+        // Check registration period (TESTING MODE - always open)
+        const currentYear = new Date().getFullYear()
+        const periodStatus = {
+          isOpen: true, // TESTING MODE
+          registrationYear: (currentYear + 1).toString(),
+          currentMonth: new Date().getMonth(),
+          daysUntilOpen: 0,
+          daysUntilClose: 365,
+          showNotification: false // Don't show banner during testing
+        }
+        setRegistrationPeriod(periodStatus)
         
         // Set retail flag from user profile if available
         if (userProfile && userProfile.hasOwnProperty('retail')) {
-          setIsRetail(userProfile.retail);
+          setIsRetail(userProfile.retail)
         }
         
-        // Get all refrigerants
-        const allRefrigerants = await RegistrationService.getAllRefrigerants();
-        setRefrigerants(allRefrigerants);
+        // Get all refrigerants from Supabase
+        const { data: refrigerantsData, error: refrigerantsError } = await supabase
+          .from('refrigerants')
+          .select('*')
+          .order('ashrae', { ascending: true })
+        
+        if (refrigerantsError) throw refrigerantsError
+        
+        setRefrigerants(refrigerantsData || [])
       } catch (err) {
-        console.error('Error fetching initial data:', err);
-        setError('Failed to load refrigerant data. Please refresh the page.');
+        console.error('Error fetching initial data:', err)
+        setError('Failed to load refrigerant data. Please refresh the page.')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
     
     if (currentUser) {
-      fetchInitialData();
+      fetchInitialData()
     }
-  }, [currentUser, userProfile]);
+  }, [currentUser, userProfile])
   
   // Filter refrigerants based on search term
   const filteredRefrigerants = refrigerants.filter(refrigerant => {
-    const searchLower = searchTerm.toLowerCase();
+    const searchLower = searchTerm.toLowerCase()
     return (
       refrigerant.ashrae?.toLowerCase().includes(searchLower) ||
       refrigerant.chemical_name?.toLowerCase().includes(searchLower) ||
       refrigerant.hs_code?.toLowerCase().includes(searchLower) ||
       refrigerant.type?.toLowerCase().includes(searchLower)
-    );
-  });
+    )
+  })
   
   // Group refrigerants by type
   const groupedRefrigerants = filteredRefrigerants.reduce((groups, refrigerant) => {
-    const type = refrigerant.type || 'Other';
+    const type = refrigerant.type || 'Other'
     if (!groups[type]) {
-      groups[type] = [];
+      groups[type] = []
     }
-    groups[type].push(refrigerant);
-    return groups;
-  }, {});
+    groups[type].push(refrigerant)
+    return groups
+  }, {})
   
   // Toggle refrigerant selection
   const toggleRefrigerant = (refrigerantId) => {
     if (selectedRefrigerants.includes(refrigerantId)) {
-      setSelectedRefrigerants(selectedRefrigerants.filter(id => id !== refrigerantId));
+      setSelectedRefrigerants(selectedRefrigerants.filter(id => id !== refrigerantId))
     } else {
-      setSelectedRefrigerants([...selectedRefrigerants, refrigerantId]);
+      setSelectedRefrigerants([...selectedRefrigerants, refrigerantId])
     }
-  };
+  }
   
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     
     // Validate form
     if (selectedRefrigerants.length === 0) {
-      setError('Please select at least one refrigerant.');
-      return;
+      setError('Please select at least one refrigerant.')
+      return
     }
     
     if (!agreedToTerms) {
-      setError('You must agree to the declaration.');
-      return;
+      setError('You must agree to the declaration.')
+      return
     }
     
     if (!registrationPeriod?.isOpen) {
-      setError('Registration period is not currently open.');
-      return;
+      setError('Registration period is not currently open.')
+      return
     }
     
     try {
-      setIsSubmitting(true);
-      setError(null);
+      setIsSubmitting(true)
+      setError(null)
+      
+      // Check if user already has a registration for this year
+      const { data: existingReg, error: checkError } = await supabase
+        .from('registrations')
+        .select('id')
+        .eq('user_id', currentUser.id)  // FIXED: Changed from 'user' to 'user_id'
+        .eq('year', registrationPeriod.registrationYear)
+        .maybeSingle()  // FIXED: Changed from single() to maybeSingle() to avoid error if no record exists
+      
+      if (checkError && checkError.code !== 'PGRST116') {
+        // PGRST116 is "no rows returned" which is expected when no registration exists
+        throw checkError
+      }
+      
+      if (existingReg) {
+        throw new Error(`You already have a registration application for ${registrationPeriod.registrationYear}`)
+      }
       
       // Format selected refrigerants data
       const refrigerantsData = selectedRefrigerants.map(id => {
-        const refrigerant = refrigerants.find(r => r.id === id);
+        const refrigerant = refrigerants.find(r => r.id === id)
         return {
           refrigerant: refrigerant.chemical_name,
           ashrae: refrigerant.ashrae,
           hs_code: refrigerant.hs_code,
           quota: refrigerant.gwp_value
-        };
-      });
+        }
+      })
       
-      // Submit registration
-      await RegistrationService.submitRegistration(currentUser.uid, {
+      // Create registration document
+      const registrationDoc = {
+        user_id: currentUser.id,  // FIXED: Changed from 'user' to 'user_id'
+        name: userProfile?.enterprise_name || currentUser.email,
+        date: new Date().toISOString(),
+        year: registrationPeriod.registrationYear,
         refrigerants: refrigerantsData,
-        retail: isRetail
-      });
+        retail: isRetail,
+        receipt_uploaded: false,
+        paid: false,
+        last_modified: new Date().toISOString(),
+        completed: false,
+        awaiting_admin_signature: false,
+        status: 'Awaiting Approval',
+      }
+      
+      // Insert into Supabase
+      const { data, error: insertError } = await supabase
+        .from('registrations')
+        .insert(registrationDoc)
+        .select()
+        .single()
+      
+      if (insertError) throw insertError
       
       // Show success message
-      setSuccess(true);
+      setSuccess(true)
       
       // Navigate back to dashboard after delay
       setTimeout(() => {
-        navigate('/dashboard');
-      }, 3000);
+        navigate('/dashboard')
+      }, 3000)
     } catch (err) {
-      console.error('Error submitting registration:', err);
-      setError(err.message || 'Failed to submit registration. Please try again.');
+      console.error('Error submitting registration:', err)
+      setError(err.message || 'Failed to submit registration. Please try again.')
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
   
   // Handle cancel
   const handleCancel = () => {
-    navigate('/dashboard');
-  };
+    navigate('/dashboard')
+  }
   
   if (loading) {
     return (
@@ -152,7 +204,7 @@ const RegistrationForm = () => {
           </div>
         </div>
       </MainLayout>
-    );
+    )
   }
   
   return (
@@ -168,43 +220,25 @@ const RegistrationForm = () => {
           </div>
         </div>
         
-        {/* Registration period notice */}
-        {registrationPeriod && (
-          <div className={`mb-8 p-4 rounded-md border ${
-            registrationPeriod.isOpen ? 'bg-blue-50 border-blue-200' : 'bg-yellow-50 border-yellow-200'
-          }`}>
+        {/* Registration period notice - Only show if NOT open */}
+        {registrationPeriod && !registrationPeriod.isOpen && registrationPeriod.showNotification && (
+          <div className="mb-8 p-4 rounded-md border bg-yellow-50 border-yellow-200">
             <div className="flex">
-              <div className={`flex-shrink-0 ${
-                registrationPeriod.isOpen ? 'text-blue-400' : 'text-yellow-400'
-              }`}>
+              <div className="flex-shrink-0 text-yellow-400">
                 <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className={`text-sm font-medium ${
-                  registrationPeriod.isOpen ? 'text-blue-800' : 'text-yellow-800'
-                }`}>
-                  {registrationPeriod.isOpen 
-                    ? `Registration for ${registrationPeriod.registrationYear} is now open!` 
-                    : `Registration for ${registrationPeriod.registrationYear} is not yet open`}
+                <h3 className="text-sm font-medium text-yellow-800">
+                  Registration for {registrationPeriod.registrationYear} is not yet open
                 </h3>
-                <div className={`mt-2 text-sm ${
-                  registrationPeriod.isOpen ? 'text-blue-700' : 'text-yellow-700'
-                }`}>
-                  {registrationPeriod.isOpen ? (
-                    <p>
-                      You must complete your registration before December 31st to be able to import during {registrationPeriod.registrationYear}.
-                      <br />
-                      <span className="font-medium">Time remaining: {registrationPeriod.daysUntilClose} days</span>
-                    </p>
-                  ) : (
-                    <p>
-                      Registration will open on December 1st. Please prepare your registration documents.
-                      <br />
-                      <span className="font-medium">Days until registration opens: {registrationPeriod.daysUntilOpen}</span>
-                    </p>
-                  )}
+                <div className="mt-2 text-sm text-yellow-700">
+                  <p>
+                    Registration will open on December 1st. Please prepare your registration documents.
+                    <br />
+                    <span className="font-medium">Days until registration opens: {registrationPeriod.daysUntilOpen}</span>
+                  </p>
                 </div>
               </div>
             </div>
@@ -244,9 +278,7 @@ const RegistrationForm = () => {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">
-                  Error
-                </h3>
+                <h3 className="text-sm font-medium text-red-800">Error</h3>
                 <div className="mt-2 text-sm text-red-700">
                   <p>{error}</p>
                 </div>
@@ -339,7 +371,7 @@ const RegistrationForm = () => {
                                 disabled={isSubmitting || !registrationPeriod?.isOpen}
                               />
                             </div>
-                            <div className="ml-3 text-sm">
+                            <div className="ml-3 text-sm flex-1">
                               <div className="font-medium text-gray-900 flex justify-between">
                                 <span>{refrigerant.ashrae}</span>
                                 <span className="text-gray-500">GWP: {refrigerant.gwp_value}</span>
@@ -440,7 +472,7 @@ const RegistrationForm = () => {
         </form>
       </div>
     </MainLayout>
-  );
-};
+  )
+}
 
-export default RegistrationForm;
+export default RegistrationForm

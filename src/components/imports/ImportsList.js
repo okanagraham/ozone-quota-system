@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { db } from '../../services/firebase/firebaseConfig';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { supabase } from '../../services/supabase/supabaseClient';
 import MainLayout from '../layout/MainLayout';
 
 const ImportsList = () => {
@@ -21,29 +20,40 @@ const ImportsList = () => {
         setLoading(true);
         setError(null);
         
-        if (!currentUser) return;
+        if (!currentUser) {
+          console.log('No current user');
+          setImports([]);
+          setLoading(false);
+          return;
+        }
+        
+        // IMPORTANT FIX: Use currentUser.id (Supabase) not currentUser.uid (Firebase)
+        const userId = currentUser.id || currentUser.uid;
+        console.log('Fetching imports for user:', userId);
+        
+        if (!userId) {
+          throw new Error('User ID is undefined');
+        }
         
         // Query imports for current user and current year
-        const importsCollection = collection(db, 'imports');
-        const importsQuery = query(
-          importsCollection,
-          where('user', '==', currentUser.uid),
-          where('import_year', '==', currentYear.toString()),
-          orderBy('submission_date', 'desc')
-        );
+        const { data, error: fetchError } = await supabase
+          .from('imports')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('import_year', currentYear.toString())
+          .order('created_at', { ascending: false });
         
-        const importsSnapshot = await getDocs(importsQuery);
+        if (fetchError) {
+          console.error('Supabase error:', fetchError);
+          throw fetchError;
+        }
         
-        const importsList = importsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          submission_date: doc.data().submission_date?.toDate() || new Date()
-        }));
+        console.log('Imports fetched:', data?.length || 0);
+        setImports(data || []);
         
-        setImports(importsList);
       } catch (err) {
         console.error('Error fetching imports:', err);
-        setError('Failed to load imports. Please refresh the page.');
+        setError(err.message || 'Failed to load imports. Please refresh the page.');
       } finally {
         setLoading(false);
       }
@@ -53,10 +63,10 @@ const ImportsList = () => {
   }, [currentUser, currentYear]);
   
   // Helper function to format date
-  const formatDate = (date) => {
-    if (!date) return 'N/A';
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
     
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -224,11 +234,11 @@ const ImportsList = () => {
                         {importItem.import_number || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(importItem.submission_date)}
+                        {formatDate(importItem.created_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {importItem.inspection_date 
-                          ? formatDate(importItem.inspection_date.toDate()) 
+                          ? formatDate(importItem.inspection_date) 
                           : 'Not scheduled'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #ccc;
+        }
+        .success {
+            border-left-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+        pre {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Supabase Connection Test</h1>
+    
+    <div id="results"></div>
+    
+    <button onclick="runTests()">Run Tests Again</button>
+
+    <script type="module">
+        // Test without React - direct check
+        async function runTests() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Running tests...</p>';
+            
+            let html = '';
+            
+            // Test 1: Check if .env variables exist
+            html += '<div class="result ' + (window.REACT_APP_SUPABASE_URL ? 'success' : 'error') + '">';
+            html += '<h3>Test 1: Environment Variables</h3>';
+            
+            // Check if running in dev mode with .env
+            const hasEnvUrl = typeof process !== 'undefined' && process.env?.REACT_APP_SUPABASE_URL;
+            const hasEnvKey = typeof process !== 'undefined' && process.env?.REACT_APP_SUPABASE_ANON_KEY;
+            
+            html += '<p><strong>REACT_APP_SUPABASE_URL:</strong> ' + (hasEnvUrl ? '✓ Found' : '✗ Missing') + '</p>';
+            html += '<p><strong>REACT_APP_SUPABASE_ANON_KEY:</strong> ' + (hasEnvKey ? '✓ Found' : '✗ Missing') + '</p>';
+            
+            if (!hasEnvUrl || !hasEnvKey) {
+                html += '<p style="color: red;">❌ Environment variables are missing!</p>';
+                html += '<p>Create a .env file in your project root with:</p>';
+                html += '<pre>REACT_APP_SUPABASE_URL=https://your-project.supabase.co\nREACT_APP_SUPABASE_ANON_KEY=your-anon-key</pre>';
+                html += '<p><strong>IMPORTANT:</strong> After creating .env, you MUST restart the dev server!</p>';
+            }
+            html += '</div>';
+            
+            // Test 2: Check if Supabase package is installed
+            html += '<div class="result warning">';
+            html += '<h3>Test 2: Package Check</h3>';
+            html += '<p>Run in terminal:</p>';
+            html += '<pre>npm list @supabase/supabase-js</pre>';
+            html += '<p>If not installed, run:</p>';
+            html += '<pre>npm install @supabase/supabase-js</pre>';
+            html += '</div>';
+            
+            // Test 3: Network connectivity
+            html += '<div class="result">';
+            html += '<h3>Test 3: Internet Connection</h3>';
+            html += '<p>Testing connection to supabase.com...</p>';
+            
+            try {
+                const response = await fetch('https://supabase.com', { mode: 'no-cors' });
+                html += '<p style="color: green;">✓ Can reach supabase.com</p>';
+            } catch (err) {
+                html += '<p style="color: red;">✗ Cannot reach supabase.com</p>';
+                html += '<p>Error: ' + err.message + '</p>';
+            }
+            html += '</div>';
+            
+            // Test 4: Check console logs
+            html += '<div class="result">';
+            html += '<h3>Test 4: Browser Console</h3>';
+            html += '<p>Open your browser console (F12 or Right-click → Inspect → Console)</p>';
+            html += '<p>Look for messages starting with:</p>';
+            html += '<pre>=== Supabase Configuration ===</pre>';
+            html += '</div>';
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        // Run tests on load
+        runTests();
+    </script>
+</body>
+</html>

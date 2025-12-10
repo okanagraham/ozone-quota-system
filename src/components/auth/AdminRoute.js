@@ -1,7 +1,7 @@
 // src/components/auth/AdminRoute.js
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext_working';
 
 /**
  * AdminRoute component that redirects to dashboard if user is not an admin

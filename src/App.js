@@ -1,131 +1,259 @@
 // src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 import { DemoModeProvider } from './context/DemoModeContext';
 
-// Auth Pages
-import LoginSelector from './pages/auth/LoginSelector';
+// Auth components
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 import ImporterLogin from './pages/auth/ImporterLogin';
 import AdminLogin from './pages/auth/AdminLogin';
 import CustomsLogin from './pages/auth/CustomsLogin';
-import Register from './pages/auth/Register';
-import ForgotPassword from './pages/auth/ForgotPassword';
+import LoginSelector from './pages/auth/LoginSelector';
+import PrivateRoute from './components/auth/PrivateRoute';
+import AdminRoute from './components/auth/AdminRoute';
+import CustomsRoute from './components/auth/CustomsRoute';
 
-// Demo Mode Components
-import DemoModeBanner from './components/common/DemoModeBanner';
-import DemoModeToggle from './components/common/DemoModeToggle';
-
-// Main Components
+// Importer/User components
 import Dashboard from './components/dashboard/Dashboard';
 import RegistrationForm from './components/registration/RegistrationForm';
 import ImportLicenseForm from './components/imports/ImportLicenseForm';
 import ImportsList from './components/imports/ImportsList';
+import ImportDetail from './components/imports/ImportDetail';
 import CO2Calculator from './components/calculator/CO2Calculator';
 
-// Admin Components
+// Admin components
 import AdminDashboard from './components/admin/AdminDashboard';
 import AdminRegistrations from './components/admin/AdminRegistrations';
 import AdminRegistrationView from './components/admin/AdminRegistrationView';
-import AdminImports from './components/admin/AdminImports';
-import AdminImporters from './components/admin/AdminImporters';
+import AdminImportsManagement from './components/admin/AdminImportsManagement';
 import AdminRefrigerants from './components/admin/AdminRefrigerants';
-import FirebaseExport from './components/admin/FirebaseExport';
 
-// Simple wrapper that checks auth
-function PrivateRoute({ children }) {
-  const { currentUser, loading } = useAuth();
-  
-  if (loading) return null;
-  if (!currentUser) return <Navigate to="/login" replace />;
-  return children;
-}
+// Customs components (View Only)
+import CustomsDashboard from './components/customs/CustomsDashboard';
+import CustomsRegistrations from './components/customs/CustomsRegistrations';
+import CustomsImports from './components/customs/CustomsImports';
+import CustomsCalculator from './components/customs/CustomsCalculator';
 
-// Admin only wrapper
-function AdminRoute({ children }) {
-  const { currentUser, userRole, loading } = useAuth();
-  
-  if (loading) return null;
-  if (!currentUser) return <Navigate to="/login/admin" replace />;
-  if (userRole !== 'admin') return <Navigate to="/dashboard" replace />;
-  return children;
-}
+// PDF Preview components
+import PDFPreview from './components/pdf/PDFPreview';
 
-// The actual routes
-function AppRoutes() {
-  const { currentUser, userRole } = useAuth();
-  
-  return (
-    <Routes>
-      {/* PUBLIC - Auth pages */}
-      <Route path="/login" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <LoginSelector />
-      } />
-      <Route path="/login/importer" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <ImporterLogin />
-      } />
-      <Route path="/login/admin" element={
-        currentUser ? <Navigate to="/admin/dashboard" replace /> : <AdminLogin />
-      } />
-      <Route path="/login/customs" element={
-        currentUser ? <Navigate to="/customs/dashboard" replace /> : <CustomsLogin />
-      } />
-      <Route path="/register" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <Register />
-      } />
-      <Route path="/forgot-password" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />
-      } />
-      
-      {/* IMPORTER ROUTES */}
-      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      <Route path="/registration/create" element={<PrivateRoute><RegistrationForm /></PrivateRoute>} />
-      <Route path="/imports" element={<PrivateRoute><ImportsList /></PrivateRoute>} />
-      <Route path="/imports/create" element={<PrivateRoute><ImportLicenseForm /></PrivateRoute>} />
-      <Route path="/calculator" element={<PrivateRoute><CO2Calculator /></PrivateRoute>} />
-      
-      {/* ADMIN ROUTES */}
-      <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-      <Route path="/admin/registrations" element={<AdminRoute><AdminRegistrations /></AdminRoute>} />
-      <Route path="/admin/registrations/:id" element={<AdminRoute><AdminRegistrationView /></AdminRoute>} />
-      <Route path="/admin/imports" element={<AdminRoute><AdminImports /></AdminRoute>} />
-      <Route path="/admin/importers" element={<AdminRoute><AdminImporters /></AdminRoute>} />
-      <Route path="/admin/refrigerants" element={<AdminRoute><AdminRefrigerants /></AdminRoute>} />
-      <Route path="/admin/export" element={<FirebaseExport />} />
-      
-      {/* CUSTOMS ROUTES */}
-      <Route path="/customs/dashboard" element={
-        <PrivateRoute><div className="p-8">Customs Dashboard - Coming Soon</div></PrivateRoute>
-      } />
-      
-      {/* TECHNICIAN ROUTES */}
-      <Route path="/technician/dashboard" element={
-        <PrivateRoute><div className="p-8">Technician Dashboard - Coming Soon</div></PrivateRoute>
-      } />
-      
-      {/* ROOT - redirect based on auth */}
-      <Route path="/" element={
-        currentUser 
-          ? (userRole === 'admin' ? <Navigate to="/admin/dashboard" replace /> : <Navigate to="/dashboard" replace />)
-          : <Navigate to="/login" replace />
-      } />
-      
-      {/* CATCH ALL */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-}
+// Notifications page
+import NotificationsPage from './pages/NotificationsPage';
 
 function App() {
   return (
     <Router>
-      <DemoModeProvider>
-        <AuthProvider>
-          <DemoModeBanner />
-          <DemoModeToggle />
-          <AppRoutes />
-        </AuthProvider>
-      </DemoModeProvider>
+      <AuthProvider>
+        <DemoModeProvider>
+          <Routes>
+            {/* ============================================ */}
+            {/* PUBLIC ROUTES - Login Selection             */}
+            {/* ============================================ */}
+            <Route path="/login" element={<LoginSelector />} />
+            <Route path="/login/importer" element={<ImporterLogin />} />
+            <Route path="/login/admin" element={<AdminLogin />} />
+            <Route path="/login/customs" element={<CustomsLogin />} />
+            <Route path="/register" element={<Register />} />
+            
+            {/* Legacy login route redirect */}
+            <Route path="/auth/login" element={<Navigate to="/login" replace />} />
+            
+            {/* ============================================ */}
+            {/* IMPORTER PRIVATE ROUTES                     */}
+            {/* ============================================ */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              } 
+            />
+            
+            <Route 
+              path="/registration/create" 
+              element={
+                <PrivateRoute>
+                  <RegistrationForm />
+                </PrivateRoute>
+              } 
+            />
+            
+            <Route 
+              path="/imports" 
+              element={
+                <PrivateRoute>
+                  <ImportsList />
+                </PrivateRoute>
+              } 
+            />
+            
+            <Route 
+              path="/imports/create" 
+              element={
+                <PrivateRoute>
+                  <ImportLicenseForm />
+                </PrivateRoute>
+              } 
+            />
+            
+            <Route 
+              path="/imports/:id" 
+              element={
+                <PrivateRoute>
+                  <ImportDetail />
+                </PrivateRoute>
+              } 
+            />
+            
+            <Route 
+              path="/calculator" 
+              element={
+                <PrivateRoute>
+                  <CO2Calculator />
+                </PrivateRoute>
+              } 
+            />
+            
+            <Route 
+              path="/notifications" 
+              element={
+                <PrivateRoute>
+                  <NotificationsPage />
+                </PrivateRoute>
+              } 
+            />
+            
+            {/* ============================================ */}
+            {/* ADMIN ROUTES                                */}
+            {/* ============================================ */}
+            <Route 
+              path="/admin/dashboard" 
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              } 
+            />
+            
+            <Route 
+              path="/admin/registrations" 
+              element={
+                <AdminRoute>
+                  <AdminRegistrations />
+                </AdminRoute>
+              } 
+            />
+            
+            <Route 
+              path="/admin/registrations/:id" 
+              element={
+                <AdminRoute>
+                  <AdminRegistrationView />
+                </AdminRoute>
+              } 
+            />
+            
+            <Route 
+              path="/admin/imports" 
+              element={
+                <AdminRoute>
+                  <AdminImportsManagement />
+                </AdminRoute>
+              } 
+            />
+            
+            <Route 
+              path="/admin/refrigerants" 
+              element={
+                <AdminRoute>
+                  <AdminRefrigerants />
+                </AdminRoute>
+              } 
+            />
+            
+            <Route 
+              path="/admin/notifications" 
+              element={
+                <AdminRoute>
+                  <NotificationsPage />
+                </AdminRoute>
+              } 
+            />
+            
+            {/* ============================================ */}
+            {/* CUSTOMS ROUTES (View Only)                  */}
+            {/* ============================================ */}
+            <Route 
+              path="/customs/dashboard" 
+              element={
+                <CustomsRoute>
+                  <CustomsDashboard />
+                </CustomsRoute>
+              } 
+            />
+            
+            <Route 
+              path="/customs/registrations" 
+              element={
+                <CustomsRoute>
+                  <CustomsRegistrations />
+                </CustomsRoute>
+              } 
+            />
+            
+            <Route 
+              path="/customs/imports" 
+              element={
+                <CustomsRoute>
+                  <CustomsImports />
+                </CustomsRoute>
+              } 
+            />
+            
+            <Route 
+              path="/customs/calculator" 
+              element={
+                <CustomsRoute>
+                  <CustomsCalculator />
+                </CustomsRoute>
+              } 
+            />
+            
+            {/* ============================================ */}
+            {/* PDF PREVIEW ROUTES                          */}
+            {/* ============================================ */}
+            <Route 
+              path="/pdf/registration/:id" 
+              element={
+                <PrivateRoute>
+                  <PDFPreview type="registration" />
+                </PrivateRoute>
+              } 
+            />
+            
+            <Route 
+              path="/pdf/import/:id" 
+              element={
+                <PrivateRoute>
+                  <PDFPreview type="import" />
+                </PrivateRoute>
+              } 
+            />
+            
+            {/* ============================================ */}
+            {/* REDIRECTS                                   */}
+            {/* ============================================ */}
+            {/* Redirect root to login selector */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            
+            {/* Catch all route */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </DemoModeProvider>
+      </AuthProvider>
     </Router>
   );
 }

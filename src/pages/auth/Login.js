@@ -1,7 +1,7 @@
 // src/pages/auth/Login.js
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext_working'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -126,7 +126,7 @@ const Login = () => {
         </form>
 
         <div className="text-center text-xs text-gray-500 mt-8">
-          &copy; {new Date().getFullYear()} National Ozone Unit, Ministry of Environment
+          &copy; {new Date().getFullYear()} National Ozone Unit
         </div>
       </div>
     </div>

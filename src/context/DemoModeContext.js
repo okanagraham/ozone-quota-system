@@ -7,6 +7,107 @@ export function useDemoMode() {
   return useContext(DemoModeContext);
 }
 
+// Complete demo data for PDF previews and testing
+export const DEMO_DATA = {
+  user: {
+    id: 'demo-user-001',
+    email: 'demo@example.com',
+    display_name: 'John Smith',
+    enterprise_name: 'Caribbean Cooling Solutions Ltd.',
+    business_address: '123 Main Street, Kingstown',
+    business_location: 'Kingstown, St. Vincent',
+    telephone: '+1 (784) 456-7890',
+    importer_number: 'IMP-2025-0042',
+    role: 'importer',
+    import_quota: 50000,
+    cumulative_imports: 15000,
+    balance_imports: 35000
+  },
+  
+  registration: {
+    id: 'demo-reg-001',
+    user_id: 'demo-user-001',
+    name: 'Caribbean Cooling Solutions Ltd.',
+    year: new Date().getFullYear().toString(),
+    cert_no: 'RC-2025-0042',
+    status: 'complete',
+    completed: true,
+    retail: false,
+    download_ready: true,
+    can_generate: true,
+    refrigerants: [
+      { ashrae: 'R-134a', refrigerant: '1,1,1,2-Tetrafluoroethane', hs_code: '2903.45', quota: 1430 },
+      { ashrae: 'R-410A', refrigerant: 'Difluoromethane/Pentafluoroethane', hs_code: '3824.78', quota: 2088 },
+      { ashrae: 'R-32', refrigerant: 'Difluoromethane', hs_code: '2903.39', quota: 675 },
+      { ashrae: 'R-404A', refrigerant: 'R-125/143a/134a', hs_code: '3824.78', quota: 3922 }
+    ],
+    signature_url: null,
+    admin_signature: null,
+    admin_name: 'Maria Johnson',
+    admin_role: 'NOU Director',
+    admin_signature_date: '2024-12-15T14:30:00Z',
+    created_at: '2024-12-01T09:00:00Z'
+  },
+  
+  import: {
+    id: 'demo-imp-001',
+    user_id: 'demo-user-001',
+    registration_id: 'demo-reg-001',
+    name: 'Caribbean Cooling Solutions Ltd.',
+    import_year: new Date().getFullYear().toString(),
+    import_number: 1001,
+    status: 'Approved',
+    arrived: true,
+    approved: true,
+    inspected: true,
+    pending: false,
+    invoice_uploaded: true,
+    inspection_date: '2025-01-20T10:00:00Z',
+    admin_name: 'Maria Johnson',
+    admin_role: 'NOU Director',
+    admin_signature: null,
+    admin_signature_date: '2025-01-22T15:00:00Z',
+    can_generate: true,
+    download_ready: true,
+    imported_items: [
+      {
+        ashrae: 'R-134a',
+        cs_name: '1,1,1,2-Tetrafluoroethane',
+        hs_code: '2903.45',
+        export_country: 'China',
+        quantity: 50,
+        volume: 13.6,
+        designation: 'kg',
+        co2_equivalent: '971800.00'
+      },
+      {
+        ashrae: 'R-410A',
+        cs_name: 'Difluoromethane/Pentafluoroethane',
+        hs_code: '3824.78',
+        export_country: 'United States',
+        quantity: 25,
+        volume: 11.3,
+        designation: 'kg',
+        co2_equivalent: '589860.00'
+      }
+    ],
+    documents: [
+      { name: 'Invoice_2025_001.pdf', url: '#', uploadedAt: '2025-01-15T08:00:00Z' },
+      { name: 'Bill_of_Lading.pdf', url: '#', uploadedAt: '2025-01-15T08:05:00Z' }
+    ],
+    created_at: '2025-01-10T11:00:00Z'
+  },
+  
+  refrigerants: [
+    { id: 'ref-1', ashrae: 'R-134a', chemical_name: '1,1,1,2-Tetrafluoroethane', hs_code: '2903.45', gwp_value: 1430, type: 'HFC' },
+    { id: 'ref-2', ashrae: 'R-410A', chemical_name: 'Difluoromethane/Pentafluoroethane', hs_code: '3824.78', gwp_value: 2088, type: 'HFC' },
+    { id: 'ref-3', ashrae: 'R-32', chemical_name: 'Difluoromethane', hs_code: '2903.39', gwp_value: 675, type: 'HFC' },
+    { id: 'ref-4', ashrae: 'R-404A', chemical_name: 'R-125/143a/134a', hs_code: '3824.78', gwp_value: 3922, type: 'HFC' },
+    { id: 'ref-5', ashrae: 'R-407C', chemical_name: 'R-32/125/134a', hs_code: '3824.78', gwp_value: 1774, type: 'HFC' },
+    { id: 'ref-6', ashrae: 'R-22', chemical_name: 'Chlorodifluoromethane', hs_code: '2903.71', gwp_value: 1810, type: 'HCFC' }
+  ]
+};
+
 export function DemoModeProvider({ children }) {
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [showDemoBanner, setShowDemoBanner] = useState(true);
@@ -19,7 +120,7 @@ export function DemoModeProvider({ children }) {
     }
   }, []);
 
-  // Save demo mode state to localStorage
+  // Toggle demo mode and save to localStorage
   const toggleDemoMode = () => {
     const newState = !isDemoMode;
     setIsDemoMode(newState);
@@ -27,50 +128,27 @@ export function DemoModeProvider({ children }) {
     setShowDemoBanner(true);
   };
 
+  // Enable demo mode
+  const enableDemoMode = () => {
+    setIsDemoMode(true);
+    localStorage.setItem('nouDemoMode', 'true');
+    setShowDemoBanner(true);
+  };
+
+  // Disable demo mode
+  const disableDemoMode = () => {
+    setIsDemoMode(false);
+    localStorage.setItem('nouDemoMode', 'false');
+  };
+
+  // Hide banner (session only)
   const hideBanner = () => {
     setShowDemoBanner(false);
   };
 
-  // Demo data for simulations
-  const demoUserProfile = {
-    id: 'demo-user-001',
-    display_name: 'Demo User',
-    enterprise_name: 'Demo Import Company Ltd.',
-    business_address: '123 Demo Street, Capital City',
-    business_location: 'Capital District',
-    telephone: '+1-555-DEMO',
-    email: 'demo@example.com',
-    role: 'importer',
-    importer_number: 9999,
-    import_quota: 50000,
-    balance_imports: 35000,
-    cumulative_imports: 15000
-  };
-
-  const demoRegistration = {
-    id: 'demo-reg-001',
-    user_id: 'demo-user-001',
-    year: new Date().getFullYear().toString(),
-    status: 'complete',
-    completed: true,
-    cert_no: 'DEMO-001',
-    refrigerants: [
-      { ashrae: 'R-134a', refrigerant: 'Tetrafluoroethane', hs_code: '2903.39', quota: 1430 },
-      { ashrae: 'R-410A', refrigerant: 'R-32/125 (50/50)', hs_code: '3824.78', quota: 2088 },
-      { ashrae: 'R-404A', refrigerant: 'R-125/143a/134a', hs_code: '3824.78', quota: 3922 }
-    ],
-    admin_signature_date: new Date().toISOString()
-  };
-
-  const demoRefrigerants = [
-    { id: '1', ashrae: 'R-134a', chemical_name: 'Tetrafluoroethane', hs_code: '2903.39', gwp_value: 1430, type: 'HFC' },
-    { id: '2', ashrae: 'R-410A', chemical_name: 'R-32/125 (50/50)', hs_code: '3824.78', gwp_value: 2088, type: 'HFC' },
-    { id: '3', ashrae: 'R-404A', chemical_name: 'R-125/143a/134a', hs_code: '3824.78', gwp_value: 3922, type: 'HFC' },
-    { id: '4', ashrae: 'R-22', chemical_name: 'Chlorodifluoromethane', hs_code: '2903.45', gwp_value: 1810, type: 'HCFC' },
-    { id: '5', ashrae: 'R-32', chemical_name: 'Difluoromethane', hs_code: '2903.39', gwp_value: 675, type: 'HFC' }
-  ];
-
+  // =============================================
   // DEMO MODE BYPASS FUNCTIONS
+  // =============================================
   
   /**
    * Check if registration period is open
@@ -157,6 +235,81 @@ export function DemoModeProvider({ children }) {
   };
 
   /**
+   * Check if user has approved registration for current year
+   * In demo mode: ALWAYS returns true with demo registration
+   */
+  const hasApprovedRegistration = (userRegistrations) => {
+    if (isDemoMode) {
+      return {
+        hasRegistration: true,
+        registration: DEMO_DATA.registration
+      };
+    }
+    
+    const currentYear = new Date().getFullYear().toString();
+    const approved = userRegistrations?.find(
+      r => r.year === currentYear && r.completed && r.status === 'complete'
+    );
+    
+    return {
+      hasRegistration: !!approved,
+      registration: approved || null
+    };
+  };
+
+  // =============================================
+  // DEMO DATA GETTERS
+  // =============================================
+
+  /**
+   * Get demo user profile
+   */
+  const getDemoUser = () => DEMO_DATA.user;
+  const getDemoUserProfile = () => DEMO_DATA.user; // Alias for compatibility
+
+  /**
+   * Get demo registration
+   */
+  const getDemoRegistration = () => DEMO_DATA.registration;
+
+  /**
+   * Get demo import
+   */
+  const getDemoImport = () => DEMO_DATA.import;
+
+  /**
+   * Get demo refrigerants list
+   */
+  const getDemoRefrigerants = () => DEMO_DATA.refrigerants;
+
+  /**
+   * Get demo approved refrigerants (from registration)
+   */
+  const getDemoApprovedRefrigerants = () => DEMO_DATA.registration.refrigerants;
+
+  /**
+   * Get demo data by type
+   */
+  const getDemoData = (type) => {
+    switch (type) {
+      case 'user':
+        return DEMO_DATA.user;
+      case 'registration':
+        return DEMO_DATA.registration;
+      case 'import':
+        return DEMO_DATA.import;
+      case 'refrigerants':
+        return DEMO_DATA.refrigerants;
+      default:
+        return null;
+    }
+  };
+
+  // =============================================
+  // DEMO SIMULATION FUNCTIONS
+  // =============================================
+
+  /**
    * Simulate form submission in demo mode
    * Returns success without actually saving to database
    */
@@ -182,54 +335,90 @@ export function DemoModeProvider({ children }) {
   };
 
   /**
-   * Get demo registration for import license form
+   * Simulate API call in demo mode
    */
-  const getDemoRegistration = () => {
-    return demoRegistration;
+  const simulateApiCall = async (operation, delay = 800) => {
+    if (!isDemoMode) {
+      throw new Error('simulateApiCall should only be called in demo mode');
+    }
+
+    await new Promise(resolve => setTimeout(resolve, delay));
+    console.log(`[DEMO MODE] Simulated API call: ${operation}`);
+    return { success: true, operation };
   };
 
   /**
-   * Get demo user profile
+   * Get quota info - returns demo data in demo mode
    */
-  const getDemoUserProfile = () => {
-    return demoUserProfile;
+  const getQuotaInfo = (actualQuotaInfo) => {
+    if (isDemoMode) {
+      return {
+        total: DEMO_DATA.user.import_quota,
+        used: DEMO_DATA.user.cumulative_imports,
+        remaining: DEMO_DATA.user.balance_imports,
+        percentage: Math.round((DEMO_DATA.user.cumulative_imports / DEMO_DATA.user.import_quota) * 100)
+      };
+    }
+    return actualQuotaInfo;
   };
 
   /**
-   * Get demo refrigerants list
+   * Get registration status - returns demo data in demo mode
    */
-  const getDemoRefrigerants = () => {
-    return demoRefrigerants;
+  const getRegistrationStatus = (actualStatus) => {
+    if (isDemoMode) {
+      return {
+        isRegistered: true,
+        registration: DEMO_DATA.registration,
+        expiryDays: 365 - Math.floor((new Date() - new Date(DEMO_DATA.registration.created_at)) / (1000 * 60 * 60 * 24))
+      };
+    }
+    return actualStatus;
   };
 
-  /**
-   * Get demo approved refrigerants (from registration)
-   */
-  const getDemoApprovedRefrigerants = () => {
-    return demoRegistration.refrigerants;
-  };
+  // =============================================
+  // CONTEXT VALUE
+  // =============================================
 
   const value = {
+    // State
     isDemoMode,
     showDemoBanner,
+    showBanner: showDemoBanner, // Alias for compatibility
+    
+    // Mode controls
     toggleDemoMode,
+    enableDemoMode,
+    disableDemoMode,
     hideBanner,
     
-    // Bypass functions
+    // Bypass functions (CRITICAL - do not remove)
     isRegistrationPeriodOpen,
     getRegistrationPeriodStatus,
     canCreateRegistration,
     canCreateImportLicense,
     canImportWithinQuota,
+    hasApprovedRegistration,
     
-    // Demo data
+    // Demo data getters
+    getDemoUser,
     getDemoUserProfile,
     getDemoRegistration,
+    getDemoImport,
     getDemoRefrigerants,
     getDemoApprovedRefrigerants,
+    getDemoData,
     
-    // Simulation
-    simulateSubmit
+    // Status helpers
+    getQuotaInfo,
+    getRegistrationStatus,
+    
+    // Simulation functions
+    simulateSubmit,
+    simulateApiCall,
+    
+    // Raw demo data (for direct access)
+    DEMO_DATA
   };
 
   return (
@@ -238,3 +427,5 @@ export function DemoModeProvider({ children }) {
     </DemoModeContext.Provider>
   );
 }
+
+export default DemoModeContext;

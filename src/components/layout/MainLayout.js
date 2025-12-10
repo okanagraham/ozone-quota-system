@@ -1,7 +1,7 @@
 // src/components/layout/MainLayout.js
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext_working';
 
 const MainLayout = ({ children, title = "National Ozone Unit" }) => {
   const { currentUser, userProfile, logout } = useAuth();

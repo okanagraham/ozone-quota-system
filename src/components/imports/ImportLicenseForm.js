@@ -2,7 +2,7 @@
 // FIXED: Removed "shipment arrived" section - that's for EDITING, not creating
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext_working';
 import { useDemoMode } from '../../context/DemoModeContext';
 import { supabase } from '../../services/supabase/supabaseClient';
 import MainLayout from '../layout/MainLayout';

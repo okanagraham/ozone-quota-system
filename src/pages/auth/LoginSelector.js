@@ -48,21 +48,21 @@ const LoginSelector = () => {
       blue: {
         bg: 'bg-blue-50',
         border: 'border-blue-200',
-        hover: 'hover:border-blue-500',
+        hover: 'hover:border-blue-500 hover:shadow-lg',
         text: 'text-blue-900',
         icon: 'text-blue-600'
       },
       gray: {
         bg: 'bg-gray-50',
         border: 'border-gray-300',
-        hover: 'hover:border-gray-600',
+        hover: 'hover:border-gray-600 hover:shadow-lg',
         text: 'text-gray-900',
         icon: 'text-gray-700'
       },
       green: {
         bg: 'bg-green-50',
         border: 'border-green-200',
-        hover: 'hover:border-green-500',
+        hover: 'hover:border-green-500 hover:shadow-lg',
         text: 'text-green-900',
         icon: 'text-green-600'
       }
@@ -99,7 +99,7 @@ const LoginSelector = () => {
               <button
                 key={option.route}
                 onClick={() => navigate(option.route)}
-                className={`${colors.bg} ${colors.border} ${colors.hover} border-2 rounded-lg p-8 transition-all duration-200 hover:shadow-lg transform hover:-translate-y-1 text-left`}
+                className={`${colors.bg} ${colors.border} ${colors.hover} border-2 rounded-lg p-8 transition-all duration-200 transform hover:-translate-y-1 text-left focus:outline-none focus:ring-2 focus:ring-blue-500`}
               >
                 <div className={`${colors.icon} mb-4`}>
                   {option.icon}

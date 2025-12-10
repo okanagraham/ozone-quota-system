@@ -6,7 +6,7 @@ import { supabase } from '../../services/supabase/supabaseClient';
 import MainLayout from '../layout/MainLayout';
 
 const AdminDashboard = () => {
-  const { currentUser, userProfile } = useAuth();
+  const { currentUser, userProfile, userRole } = useAuth();
   const navigate = useNavigate();
   
   const [stats, setStats] = useState({
@@ -23,30 +23,22 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Redirect non-admins
+  // Fetch dashboard stats - runs when userRole is confirmed as admin
   useEffect(() => {
-    if (userProfile && userProfile.role !== 'admin') {
-      navigate('/dashboard');
+    // Only fetch if we have confirmed admin role
+    if (userRole !== 'admin') {
+      console.log('AdminDashboard: Not admin, skipping fetch. Role:', userRole);
+      return;
     }
-  }, [userProfile, navigate]);
-  
-  // Fetch dashboard stats
-  useEffect(() => {
+    
     const fetchStats = async () => {
+      console.log('AdminDashboard: Fetching stats...');
       try {
         setLoading(true);
         setError(null);
         
         // Fetch all stats in parallel
-        const [
-          { count: pendingRegs },
-          { count: pendingImps },
-          { count: needInspection },
-          { count: totalImps },
-          { count: activeRegs },
-          { count: allImports },
-          { count: pendingTechs }
-        ] = await Promise.all([
+        const results = await Promise.all([
           supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('status', 'Awaiting Approval'),
           supabase.from('imports').select('*', { count: 'exact', head: true }).eq('pending', true),
           supabase.from('imports').select('*', { count: 'exact', head: true }).eq('arrived', true).eq('inspected', false),
@@ -56,61 +48,65 @@ const AdminDashboard = () => {
           supabase.from('technicians').select('*', { count: 'exact', head: true }).eq('status', 'Pending')
         ]);
         
+        console.log('AdminDashboard: Stats results:', results.map(r => r.count));
+        
         setStats({
-          pendingRegistrations: pendingRegs || 0,
-          pendingImports: pendingImps || 0,
-          needingInspection: needInspection || 0,
-          totalImporters: totalImps || 0,
-          activeRegistrations: activeRegs || 0,
-          totalImports: allImports || 0,
-          pendingTechnicians: pendingTechs || 0
+          pendingRegistrations: results[0].count || 0,
+          pendingImports: results[1].count || 0,
+          needingInspection: results[2].count || 0,
+          totalImporters: results[3].count || 0,
+          activeRegistrations: results[4].count || 0,
+          totalImports: results[5].count || 0,
+          pendingTechnicians: results[6].count || 0
         });
         
         // Fetch recent activity
         await fetchRecentActivity();
         
       } catch (err) {
-        console.error('Error fetching stats:', err);
-        setError('Failed to load dashboard data');
+        console.error('AdminDashboard: Error fetching stats:', err);
+        setError('Failed to load dashboard data: ' + err.message);
       } finally {
         setLoading(false);
       }
     };
     
-    if (userProfile?.role === 'admin') {
-      fetchStats();
-    }
-  }, [userProfile]);
+    fetchStats();
+  }, [userRole]); // Only re-run when userRole changes
   
   const fetchRecentActivity = async () => {
     try {
       // Get recent registrations
-      const { data: recentRegs } = await supabase
+      const { data: recentRegs, error: regError } = await supabase
         .from('registrations')
         .select('id, user_id, year, status, created_at, users(enterprise_name)')
         .order('created_at', { ascending: false })
         .limit(5);
       
+      if (regError) console.error('Reg fetch error:', regError);
+      
       // Get recent imports
-      const { data: recentImps } = await supabase
+      const { data: recentImps, error: impError } = await supabase
         .from('imports')
         .select('id, user_id, import_number, status, created_at, users(enterprise_name)')
         .order('created_at', { ascending: false })
         .limit(5);
+      
+      if (impError) console.error('Import fetch error:', impError);
       
       // Combine and sort
       const activities = [
         ...(recentRegs || []).map(r => ({
           type: 'registration',
           id: r.id,
-          description: `Registration application for ${r.year} by ${r.users?.enterprise_name || 'Unknown'}`,
+          description: `Registration for ${r.year} by ${r.users?.enterprise_name || 'Unknown'}`,
           status: r.status,
           timestamp: r.created_at
         })),
         ...(recentImps || []).map(i => ({
           type: 'import',
           id: i.id,
-          description: `Import License #${i.import_number} by ${i.users?.enterprise_name || 'Unknown'}`,
+          description: `Import #${i.import_number} by ${i.users?.enterprise_name || 'Unknown'}`,
           status: i.status,
           timestamp: i.created_at
         }))
@@ -123,6 +119,7 @@ const AdminDashboard = () => {
   };
   
   const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -143,7 +140,8 @@ const AdminDashboard = () => {
     return 'bg-gray-100 text-gray-800';
   };
   
-  if (loading) {
+  // Show loading while fetching data (but only if we're admin)
+  if (loading && userRole === 'admin') {
     return (
       <MainLayout title="Admin Dashboard">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -155,12 +153,34 @@ const AdminDashboard = () => {
     );
   }
   
+  // Show error if any
   if (error) {
     return (
       <MainLayout title="Admin Dashboard">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="bg-red-50 border-l-4 border-red-400 p-4">
             <p className="text-sm text-red-700">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="mt-2 text-sm text-red-600 underline"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+  
+  // If somehow we get here without being admin, show message
+  if (userRole !== 'admin') {
+    return (
+      <MainLayout title="Admin Dashboard">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+            <p className="text-sm text-yellow-700">
+              Access denied. Admin role required. Current role: {userRole || 'none'}
+            </p>
           </div>
         </div>
       </MainLayout>
@@ -173,7 +193,9 @@ const AdminDashboard = () => {
         {/* Header */}
         <div className="mb-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-1">Admin Dashboard</h2>
-          <p className="text-sm text-gray-500">Overview of system activity and pending actions</p>
+          <p className="text-sm text-gray-500">
+            Welcome, {userProfile?.display_name || currentUser?.email}
+          </p>
         </div>
         
         {/* Stats Grid */}
@@ -316,46 +338,6 @@ const AdminDashboard = () => {
                 <div className="text-xs text-gray-500">Manage database</div>
               </div>
             </button>
-            
-            <button
-              onClick={() => navigate('/admin/technicians')}
-              className="flex items-center p-4 border border-gray-200 rounded-md hover:bg-gray-50 transition"
-            >
-              <svg className="h-6 w-6 text-blue-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-              </svg>
-              <div className="text-left">
-                <div className="text-sm font-medium text-gray-900">Technicians</div>
-                <div className="text-xs text-gray-500">Certifications</div>
-              </div>
-            </button>
-            
-            <button
-              onClick={() => navigate('/admin/reports')}
-              className="flex items-center p-4 border border-gray-200 rounded-md hover:bg-gray-50 transition"
-            >
-              <svg className="h-6 w-6 text-blue-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <div className="text-left">
-                <div className="text-sm font-medium text-gray-900">Reports</div>
-                <div className="text-xs text-gray-500">Generate reports</div>
-              </div>
-            </button>
-            
-            <button
-              onClick={() => navigate('/admin/settings')}
-              className="flex items-center p-4 border border-gray-200 rounded-md hover:bg-gray-50 transition"
-            >
-              <svg className="h-6 w-6 text-blue-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <div className="text-left">
-                <div className="text-sm font-medium text-gray-900">Settings</div>
-                <div className="text-xs text-gray-500">System config</div>
-              </div>
-            </button>
           </div>
         </div>
         
@@ -368,7 +350,15 @@ const AdminDashboard = () => {
           <div className="divide-y divide-gray-200">
             {recentActivity.length > 0 ? (
               recentActivity.map((activity, index) => (
-                <div key={index} className="px-6 py-4 hover:bg-gray-50">
+                <div 
+                  key={`${activity.type}-${activity.id}-${index}`} 
+                  className="px-6 py-4 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => navigate(
+                    activity.type === 'registration' 
+                      ? `/admin/registrations/${activity.id}`
+                      : `/admin/imports/${activity.id}`
+                  )}
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <p className="text-sm text-gray-900">{activity.description}</p>

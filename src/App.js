@@ -1,154 +1,120 @@
 // src/App.js
+// MINIMAL VERSION - Just to test auth works
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { DemoModeProvider } from './context/DemoModeContext';
 
-
-// Auth components
-import Login from './pages/auth/Login';
-import AdminLogin from './pages/auth/AdminLogin';
+// Auth Pages
+import LoginSelector from './pages/auth/LoginSelector';
 import ImporterLogin from './pages/auth/ImporterLogin';
-import TechnicianLogin from './pages/auth/TechnicianLogin';
+import AdminLogin from './pages/auth/AdminLogin';
+import CustomsLogin from './pages/auth/CustomsLogin';
 import Register from './pages/auth/Register';
-import TechnicianRegister from './pages/auth/TechnicianRegister';
-import PrivateRoute from './components/auth/PrivateRoute';
 
-// Main components
+// Demo Mode Components
+import DemoModeBanner from './components/common/DemoModeBanner';
+import DemoModeToggle from './components/common/DemoModeToggle';
+
+// Main Components
 import Dashboard from './components/dashboard/Dashboard';
 import RegistrationForm from './components/registration/RegistrationForm';
 import ImportLicenseForm from './components/imports/ImportLicenseForm';
 import ImportsList from './components/imports/ImportsList';
 import CO2Calculator from './components/calculator/CO2Calculator';
 
-
-// Demo Mode Components
-import DemoModeBanner from './components/common/DemoModeBanner';
-import DemoModeToggle from './components/common/DemoModeToggle';
-
-//Admin Components
+// Admin Components
 import AdminDashboard from './components/admin/AdminDashboard';
 import AdminRegistrations from './components/admin/AdminRegistrations';
+import AdminRegistrationView from './components/admin/AdminRegistrationView';
 import AdminImports from './components/admin/AdminImports';
 import AdminImporters from './components/admin/AdminImporters';
 import AdminRefrigerants from './components/admin/AdminRefrigerants';
+import FirebaseExport from './components/admin/FirebaseExport';
 
+// Simple wrapper that checks auth
+function PrivateRoute({ children }) {
+  const { currentUser, loading } = useAuth();
+  
+  if (loading) return null; // AuthProvider shows loading
+  if (!currentUser) return <Navigate to="/login" replace />;
+  return children;
+}
 
+// Admin only wrapper
+function AdminRoute({ children }) {
+  const { currentUser, userRole, loading } = useAuth();
+  
+  if (loading) return null;
+  if (!currentUser) return <Navigate to="/login/admin" replace />;
+  if (userRole !== 'admin') return <Navigate to="/dashboard" replace />;
+  return children;
+}
+
+// The actual routes - separated so useAuth works
+function AppRoutes() {
+  const { currentUser, userRole } = useAuth();
+  
+  return (
+    <Routes>
+      {/* PUBLIC - Login pages */}
+      <Route path="/login" element={
+        currentUser ? <Navigate to="/dashboard" replace /> : <LoginSelector />
+      } />
+      <Route path="/login/importer" element={
+        currentUser ? <Navigate to="/dashboard" replace /> : <ImporterLogin />
+      } />
+      <Route path="/login/admin" element={
+        currentUser ? <Navigate to="/admin/dashboard" replace /> : <AdminLogin />
+      } />
+      <Route path="/login/customs" element={
+        currentUser ? <Navigate to="/customs/dashboard" replace /> : <CustomsLogin />
+      } />
+      <Route path="/register" element={
+        currentUser ? <Navigate to="/dashboard" replace /> : <Register />
+      } />
+      
+      {/* IMPORTER ROUTES */}
+      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+      <Route path="/registration/create" element={<PrivateRoute><RegistrationForm /></PrivateRoute>} />
+      <Route path="/imports" element={<PrivateRoute><ImportsList /></PrivateRoute>} />
+      <Route path="/imports/create" element={<PrivateRoute><ImportLicenseForm /></PrivateRoute>} />
+      <Route path="/calculator" element={<PrivateRoute><CO2Calculator /></PrivateRoute>} />
+      
+      {/* ADMIN ROUTES */}
+      <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/registrations" element={<AdminRoute><AdminRegistrations /></AdminRoute>} />
+      <Route path="/admin/registrations/:id" element={<AdminRoute><AdminRegistrationView /></AdminRoute>} />
+      <Route path="/admin/imports" element={<AdminRoute><AdminImports /></AdminRoute>} />
+      <Route path="/admin/importers" element={<AdminRoute><AdminImporters /></AdminRoute>} />
+      <Route path="/admin/refrigerants" element={<AdminRoute><AdminRefrigerants /></AdminRoute>} />
+      <Route path="/admin/export" element={<FirebaseExport />} />
+      
+      {/* PLACEHOLDERS */}
+      <Route path="/customs/dashboard" element={<PrivateRoute><div className="p-8">Customs Dashboard - Coming Soon</div></PrivateRoute>} />
+      <Route path="/technician/dashboard" element={<PrivateRoute><div className="p-8">Technician Dashboard - Coming Soon</div></PrivateRoute>} />
+      
+      {/* ROOT - redirect based on auth */}
+      <Route path="/" element={
+        currentUser 
+          ? (userRole === 'admin' ? <Navigate to="/admin/dashboard" replace /> : <Navigate to="/dashboard" replace />)
+          : <Navigate to="/login" replace />
+      } />
+      
+      {/* CATCH ALL */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
 
 function App() {
   return (
     <Router>
       <DemoModeProvider>
         <AuthProvider>
-          {/* Demo Mode Banner - Shows across all pages when in demo mode */}
           <DemoModeBanner />
-          
-          {/* Demo Mode Toggle - Floating button for enabling/disabling demo mode */}
           <DemoModeToggle />
-          
-          <Routes>
-            {/* Auth routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            {/* Private routes */}
-            <Route 
-              path="/dashboard" 
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/registration/create" 
-              element={
-                <PrivateRoute>
-                  <RegistrationForm />
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/imports" 
-              element={
-                <PrivateRoute>
-                  <ImportsList />
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/imports/create" 
-              element={
-                <PrivateRoute>
-                  <ImportLicenseForm />
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/calculator" 
-              element={
-                <PrivateRoute>
-                  <CO2Calculator />
-                </PrivateRoute>
-              } 
-            />
-            
-            {/* Redirect to dashboard by default */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            
-            {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-
-            // Inside your Routes component:
-            <Route 
-              path="/admin/dashboard" 
-              element={
-                <PrivateRoute>
-                  <AdminDashboard />
-                </PrivateRoute>
-              } 
-            />
-
-            <Route 
-              path="/admin/registrations" 
-              element={
-                <PrivateRoute>
-                  <AdminRegistrations />
-                </PrivateRoute>
-              } 
-            />
-
-            <Route 
-              path="/admin/imports" 
-              element={
-                <PrivateRoute>
-                  <AdminImports />
-                </PrivateRoute>
-              } 
-            />
-
-            <Route 
-              path="/admin/importers" 
-              element={
-                <PrivateRoute>
-                  <AdminImporters />
-                </PrivateRoute>
-              } 
-            />
-
-            <Route 
-              path="/admin/refrigerants" 
-              element={
-                <PrivateRoute>
-                  <AdminRefrigerants />
-                </PrivateRoute>
-              } 
-            />
-          </Routes>
+          <AppRoutes />
         </AuthProvider>
       </DemoModeProvider>
     </Router>

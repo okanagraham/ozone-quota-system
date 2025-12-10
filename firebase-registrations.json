@@ -1,0 +1,2735 @@
+{
+    "registrations": [
+        {
+          "id": "0Q3hMzqv8aUlqKWZ4Khj",
+          "user": "vxaJgbmO1kdGz13o4ByE9hKAdeT2",
+          "completed": true,
+          "admin_role": "NOU Admin",
+          "date": "2023-12-20T18:53:53.415Z",
+          "next_importer_number": 0,
+          "paid": true,
+          "receipt_uploaded": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2F0Q3hMzqv8aUlqKWZ4Khj_admin.png?alt=media&token=86fa7bb9-3285-470b-8fc1-a68a4e1bf33c",
+          "last_modified": "2023-12-20T18:53:53.415Z",
+          "cert_no": 283,
+          "awaiting_admin_signature": false,
+          "can_generate": false,
+          "status": "complete",
+          "refrigerants": [
+            {
+              "refrigerant": "R-143a/125/134a",
+              "ashrae": "R-404A",
+              "quota": 3921.6,
+              "hs_code": "3827.61"
+            },
+            {
+              "ashrae": "R-134a",
+              "refrigerant": "1,1,1,1,2-Tetra",
+              "hs_code": "2903.45",
+              "quota": 1100
+            }
+          ],
+          "generated": true,
+          "name": "Big Tigga Investments Ltd",
+          "year": "2024",
+          "retail": true,
+          "download_ready": true,
+          "admin_name": "Mr. Brenton Quammie",
+          "imports_under_license": [],
+          "admin_signature_date": "2023-12-28T15:06:45.523Z"
+        },
+        {
+          "id": "22GY2BN5pHhExx0j4xuS",
+          "retail": true,
+          "receipt_uploaded": true,
+          "date": "2025-01-03T15:01:35.106Z",
+          "last_modified": "2025-01-03T15:01:35.106Z",
+          "awaiting_admin_signature": false,
+          "refrigerants": [
+            {
+              "quota": 1260,
+              "ashrae": "R-134a",
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            }
+          ],
+          "admin_name": "Brenton Quammie",
+          "status": "complete",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2F22GY2BN5pHhExx0j4xuS_admin.png?alt=media&token=bcbb7a27-798b-4663-8ff5-729897489762",
+          "generated": true,
+          "paid": true,
+          "can_generate": false,
+          "cert_no": 327,
+          "download_ready": true,
+          "admin_signature_date": "2025-01-27T12:38:01.955Z",
+          "year": "2025",
+          "name": "THA HOOK UP",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "user": "3gx3oxVlKUde1BdpeoUq0slBG1F2",
+          "completed": true,
+          "next_importer_number": 0,
+          "imports_under_license": []
+        },
+        {
+          "id": "23LT7eTYyDuL8oI58EL9",
+          "retail": true,
+          "cert_no": 306,
+          "completed": true,
+          "status": "complete",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2F23LT7eTYyDuL8oI58EL9_admin.png?alt=media&token=39933177-e7f7-4fe0-adfa-a5175f762dd7",
+          "next_importer_number": 0,
+          "date": "2024-12-27T17:18:09.756Z",
+          "generated": true,
+          "paid": true,
+          "imports_under_license": [],
+          "admin_name": "Brenton Quammie",
+          "awaiting_admin_signature": false,
+          "admin_role": "National Ozone Assistant (Technical)",
+          "download_ready": true,
+          "admin_signature_date": "2025-01-27T12:38:47.171Z",
+          "user": "NidtgbgINsRfieKlHsDnZ4hKqVf2",
+          "year": "2025",
+          "can_generate": false,
+          "receipt_uploaded": true,
+          "name": "ANDREWS REFRIGERATION AND AIR CONDITIONING SERVICES",
+          "refrigerants": [
+            {
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a",
+              "quota": 1260,
+              "hs_code": "2903.45"
+            },
+            {
+              "quota": 675,
+              "refrigerant": "Difluoromethane",
+              "hs_code": "2903.42",
+              "ashrae": "R-32"
+            },
+            {
+              "hs_code": "3827.61",
+              "refrigerant": "R-143a/125/134a",
+              "ashrae": "R-404A",
+              "quota": 3921.6
+            },
+            {
+              "ashrae": "R-407C",
+              "quota": 1773.85,
+              "hs_code": "3827.64",
+              "refrigerant": "R32/125/134a"
+            },
+            {
+              "refrigerant": "R32/125",
+              "hs_code": "3827.63",
+              "ashrae": "R-410A",
+              "quota": 2087.5
+            },
+            {
+              "refrigerant": "Iso-Butane",
+              "hs_code": "2901.10",
+              "ashrae": "R-600a",
+              "quota": 0
+            },
+            {
+              "hs_code": "2903.51",
+              "quota": 0,
+              "ashrae": "R-1234yf",
+              "refrigerant": "2,3,3,3- Tetrafluoropropene"
+            },
+            {
+              "quota": 0.02,
+              "hs_code": "2711.12",
+              "refrigerant": "Propane",
+              "ashrae": "R-290"
+            },
+            {
+              "hs_code": "2903.51",
+              "quota": 0,
+              "refrigerant": "1,3,3,3-Tetrafluoropropene",
+              "ashrae": "R-1234ze(E)"
+            },
+            {
+              "ashrae": "R-452A",
+              "refrigerant": "R-1,2,3,4yf/ 125/32",
+              "hs_code": "3827.63",
+              "quota": 2139.25
+            }
+          ],
+          "last_modified": "2024-12-27T17:18:09.756Z"
+        },
+        {
+          "id": "6OxqZAROfyuR9DyOlwuR",
+          "completed": true,
+          "can_generate": false,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2F6OxqZAROfyuR9DyOlwuR_admin.png?alt=media&token=381dbfa8-bea5-443d-8474-6734f4e2da30",
+          "admin_signature_date": "2025-01-27T12:39:25.094Z",
+          "last_modified": "2024-12-31T19:41:36.036Z",
+          "paid": true,
+          "cert_no": 313,
+          "user": "xPV5oEfpn5aUYp7id6WKVW7QtQk2",
+          "imports_under_license": [],
+          "name": "holistic automotive services ",
+          "retail": "false",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "date": "2024-12-31T19:41:36.036Z",
+          "receipt_uploaded": true,
+          "status": "complete",
+          "download_ready": true,
+          "refrigerants": [
+            {
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "quota": 1260,
+              "ashrae": "R-134a"
+            }
+          ],
+          "next_importer_number": 0,
+          "admin_name": "Brenton Quammie",
+          "awaiting_admin_signature": false,
+          "generated": true,
+          "year": "2025"
+        },
+        {
+          "id": "7ZuWFuJTDYJ5qWYCHHDK",
+          "admin_name": "Brenton Quammie",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2F7ZuWFuJTDYJ5qWYCHHDK_admin.png?alt=media&token=17c432e1-cefb-4c6d-bb36-d9f7d219a69b",
+          "admin_signature_date": "2025-02-10T19:42:12.757Z",
+          "generated": true,
+          "imports_under_license": [],
+          "awaiting_admin_signature": false,
+          "year": "2025",
+          "paid": true,
+          "name": "Brewster's auto supplies",
+          "receipt_uploaded": true,
+          "can_generate": false,
+          "date": "2025-01-28T14:59:54.233Z",
+          "retail": true,
+          "last_modified": "2025-01-28T14:59:54.233Z",
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "hs_code": "2903.45"
+            }
+          ],
+          "completed": true,
+          "user": "Wixg55sGRMVoQ3FU6wJT76NuhYD2",
+          "next_importer_number": 0,
+          "admin_role": "National Ozone Assistant (Technical)",
+          "cert_no": 334,
+          "status": "complete",
+          "download_ready": true
+        },
+        {
+          "id": "9SNXoNUXcpWICXfa4GSS",
+          "cert_no": 331,
+          "name": "Petit St Vincent Resort",
+          "completed": true,
+          "awaiting_admin_signature": false,
+          "date": "2025-01-03T18:51:16.210Z",
+          "user": "idOtSBA94hS9fPWNYgi7YN6Mymd2",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "download_ready": true,
+          "year": "2025",
+          "last_modified": "2025-01-03T18:51:16.210Z",
+          "status": "complete",
+          "admin_name": "Brenton Quammie",
+          "refrigerants": [
+            {
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a",
+              "quota": 1260,
+              "hs_code": "2903.45"
+            },
+            {
+              "ashrae": "R-404A",
+              "hs_code": "3827.61",
+              "quota": 3921.6,
+              "refrigerant": "R-143a/125/134a"
+            },
+            {
+              "ashrae": "R-410A",
+              "quota": 2087.5,
+              "hs_code": "3827.63",
+              "refrigerant": "R32/125"
+            },
+            {
+              "quota": 0,
+              "hs_code": "2901.10",
+              "refrigerant": "Butane",
+              "ashrae": "R-600"
+            }
+          ],
+          "retail": true,
+          "imports_under_license": [],
+          "can_generate": false,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2F9SNXoNUXcpWICXfa4GSS_admin.png?alt=media&token=1fd7abc6-42ce-4518-bfa3-7e55717adb5f",
+          "paid": true,
+          "receipt_uploaded": true,
+          "next_importer_number": 0,
+          "admin_signature_date": "2025-01-27T12:41:00.699Z",
+          "generated": true
+        },
+        {
+          "id": "9p9aGf4WMOAnOd6tfyy5",
+          "generated": true,
+          "refrigerants": [
+            {
+              "quota": 1260,
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a"
+            }
+          ],
+          "imports_under_license": [],
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2F9p9aGf4WMOAnOd6tfyy5_admin.png?alt=media&token=edd67af7-32c8-40a2-b305-22101fb03048",
+          "user": "Wixg55sGRMVoQ3FU6wJT76NuhYD2",
+          "retail": true,
+          "next_importer_number": 0,
+          "download_ready": true,
+          "last_modified": "2023-12-21T14:13:42.677Z",
+          "paid": true,
+          "awaiting_admin_signature": false,
+          "completed": true,
+          "name": "Brewster's auto supplies",
+          "status": "complete",
+          "year": "2024",
+          "admin_signature_date": "2023-12-28T15:08:55.094Z",
+          "can_generate": false,
+          "admin_role": "NOU Admin",
+          "date": "2023-12-21T14:13:42.677Z",
+          "receipt_uploaded": true,
+          "admin_name": "Mr. Brenton Quammie",
+          "cert_no": 284
+        },
+        {
+          "id": "A3qyadPT6FC12rpjADro",
+          "imports_under_license": [],
+          "name": "Mustique Company Ltd",
+          "awaiting_admin_signature": false,
+          "date": "2023-12-27T18:46:50.685Z",
+          "next_importer_number": 0,
+          "year": "2024",
+          "completed": true,
+          "paid": true,
+          "user": "gjoLkCgOkjODRfTlUS3aHrbrGCl2",
+          "receipt_uploaded": true,
+          "can_generate": false,
+          "download_ready": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FA3qyadPT6FC12rpjADro_admin.png?alt=media&token=d257d4bf-b21b-4f79-94ef-57073323de96",
+          "admin_name": "Mr. Brenton Quammie",
+          "status": "complete",
+          "generated": true,
+          "admin_role": "NOU Admin",
+          "cert_no": 289,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "quota": 1260
+            },
+            {
+              "quota": 3921.6,
+              "ashrae": "R-404A",
+              "hs_code": "3827.61",
+              "refrigerant": "R-143a/125/134a"
+            },
+            {
+              "refrigerant": "R32/125",
+              "ashrae": "R-410A",
+              "quota": 2087.5,
+              "hs_code": "3827.63"
+            },
+            {
+              "refrigerant": "Difluoromethane",
+              "ashrae": "R-32",
+              "hs_code": "2903.42",
+              "quota": 675
+            },
+            {
+              "quota": 0,
+              "hs_code": "2901.10*",
+              "refrigerant": "Iso-Butane",
+              "ashrae": "R-600a"
+            }
+          ],
+          "last_modified": "2023-12-27T18:46:50.685Z",
+          "retail": true,
+          "admin_signature_date": "2023-12-28T15:14:48.707Z"
+        },
+        {
+          "id": "Ap58XtO3wGqKr6RgM7y8",
+          "admin_name": "Brenton Quammie",
+          "status": "complete",
+          "awaiting_admin_signature": false,
+          "date": "2024-12-23T15:13:15.760Z",
+          "generated": true,
+          "last_modified": "2024-12-23T15:13:15.760Z",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "next_importer_number": 0,
+          "admin_signature_date": "2025-01-27T12:42:13.910Z",
+          "imports_under_license": [],
+          "year": "2025",
+          "download_ready": true,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "quota": 1430
+            },
+            {
+              "refrigerant": "Difluoromethane",
+              "ashrae": "R-32",
+              "quota": 675,
+              "hs_code": "2903.42"
+            },
+            {
+              "hs_code": "3827.61",
+              "quota": 3921.6,
+              "ashrae": "R-404A",
+              "refrigerant": "R-143a/125/134a"
+            },
+            {
+              "ashrae": "R-410A",
+              "hs_code": "3827.63",
+              "quota": 2087.5,
+              "refrigerant": "R32/125"
+            },
+            {
+              "refrigerant": "Propane",
+              "ashrae": "R-290",
+              "quota": 0.02,
+              "hs_code": "2711.12"
+            },
+            {
+              "ashrae": "R-600",
+              "quota": 0,
+              "refrigerant": "Butane",
+              "hs_code": "2901.10"
+            },
+            {
+              "quota": 0,
+              "refrigerant": "Iso-Butane",
+              "hs_code": "2901.10",
+              "ashrae": "R-600a"
+            },
+            {
+              "ashrae": "R-1234yf",
+              "quota": 0,
+              "refrigerant": "2,3,3,3- Tetrafluoropropene",
+              "hs_code": "2903.51"
+            },
+            {
+              "hs_code": "3827.68",
+              "quota": 1386,
+              "ashrae": "R-448A",
+              "refrigerant": "R-32/125/1234yf/134a/1234ze(E)"
+            },
+            {
+              "ashrae": "R-454B",
+              "quota": 465,
+              "refrigerant": "R-32/1234yf",
+              "hs_code": "3827.68"
+            }
+          ],
+          "receipt_uploaded": true,
+          "completed": true,
+          "cert_no": 304,
+          "can_generate": false,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FAp58XtO3wGqKr6RgM7y8_admin.png?alt=media&token=2eaf8d90-980f-4dda-94cc-904baf0d0e56",
+          "paid": true,
+          "retail": true,
+          "user": "cgrldagtHTXh760tB51P5i18yJn1",
+          "name": "One St. Vincent Group Inc."
+        },
+        {
+          "id": "C7La2BaEfdpgXceVI9Ee",
+          "can_generate": false,
+          "admin_role": "NOU Admin",
+          "date": "2024-01-06T21:08:58.250Z",
+          "name": "DeNobriga’s Ltd.",
+          "cert_no": 299,
+          "refrigerants": [
+            {
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a",
+              "hs_code": "2903.45"
+            },
+            {
+              "hs_code": "3827.61",
+              "quota": 3921.6,
+              "refrigerant": "R-143a/125/134a",
+              "ashrae": "R-404A"
+            },
+            {
+              "ashrae": "R-407A",
+              "refrigerant": "R-32/125/134a",
+              "quota": 2107,
+              "hs_code": "3827.63"
+            },
+            {
+              "refrigerant": "R32/125",
+              "hs_code": "3827.63",
+              "quota": 2087.5,
+              "ashrae": "R-410A"
+            },
+            {
+              "quota": 0,
+              "refrigerant": "Iso-Butane",
+              "hs_code": "2901.10",
+              "ashrae": "R-600a"
+            },
+            {
+              "quota": 0,
+              "ashrae": "R-1234yf",
+              "hs_code": "2903.51",
+              "refrigerant": "2,3,3,3- Tetrafluoropropene"
+            }
+          ],
+          "retail": true,
+          "admin_name": "Mr. Brenton Quammie",
+          "next_importer_number": 0,
+          "awaiting_admin_signature": false,
+          "user": "CRvmTGQFGqbZVk3uMFK2pNRQPAV2",
+          "last_modified": "2024-01-06T21:08:58.250Z",
+          "receipt_uploaded": true,
+          "download_ready": true,
+          "paid": true,
+          "year": "2024",
+          "completed": true,
+          "admin_signature_date": "2024-01-08T19:04:08.966Z",
+          "generated": true,
+          "imports_under_license": [],
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FC7La2BaEfdpgXceVI9Ee_admin.png?alt=media&token=0a8d80dd-6324-41f9-95c0-e9418e3eda32",
+          "status": "complete"
+        },
+        {
+          "id": "IzMPtss4ebO4IuBx2lXc",
+          "imports_under_license": [],
+          "name": "Thompson Cooling & Electrical Services Ltd",
+          "awaiting_admin_signature": false,
+          "date": "2025-01-03T22:41:18.275Z",
+          "next_importer_number": 0,
+          "year": "2025",
+          "completed": true,
+          "paid": true,
+          "user": "K4uSUz0GZqXGedbLt4Lp8ZFylQE3",
+          "receipt_uploaded": true,
+          "can_generate": false,
+          "download_ready": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FIzMPtss4ebO4IuBx2lXc_admin.png?alt=media&token=35066e21-777e-40e7-97a6-b97bc5c3cca1",
+          "admin_name": "Brenton Quammie",
+          "status": "complete",
+          "generated": true,
+          "admin_role": "National Ozone Assistant (Technical)",
+          "cert_no": 332,
+          "refrigerants": [
+            {
+              "hs_code": "2903.42",
+              "quota": 675,
+              "refrigerant": "Difluoromethane",
+              "ashrae": "R-32"
+            },
+            {
+              "hs_code": "3824.64",
+              "ashrae": "R-453A",
+              "quota": 1765.34,
+              "refrigerant": "R32/125/134a/227ea/600/601"
+            },
+            {
+              "hs_code": "3827.63",
+              "quota": 2087.5,
+              "ashrae": "R-410A",
+              "refrigerant": "R32/125"
+            },
+            {
+              "refrigerant": "R-143a/125/134a",
+              "hs_code": "3827.61",
+              "ashrae": "R-404A",
+              "quota": 3921.6
+            },
+            {
+              "refrigerant": "Iso-Butane",
+              "hs_code": "2901.10",
+              "quota": 0,
+              "ashrae": "R-600a"
+            },
+            {
+              "refrigerant": "R-125/143a/134a/600a",
+              "hs_code": "3827.61",
+              "ashrae": "R-434A",
+              "quota": 3245
+            },
+            {
+              "hs_code": "3827.64",
+              "ashrae": "R-407C",
+              "quota": 1773.85,
+              "refrigerant": "R32/125/134a"
+            }
+          ],
+          "last_modified": "2025-01-03T22:41:18.275Z",
+          "retail": true,
+          "admin_signature_date": "2025-01-27T12:42:45.388Z"
+        },
+        {
+          "id": "LTMrjo3F5ABSxgybH3Yp",
+          "completed": true,
+          "cert_no": 295,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "hs_code": "2903.45",
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            }
+          ],
+          "can_generate": false,
+          "next_importer_number": 0,
+          "last_modified": "2023-12-29T17:46:08.298Z",
+          "status": "complete",
+          "receipt_uploaded": true,
+          "admin_signature_date": "2024-01-02T12:14:58.514Z",
+          "date": "2023-12-29T17:46:08.298Z",
+          "name": "Automax Auto Supplies",
+          "generated": true,
+          "imports_under_license": [],
+          "retail": true,
+          "paid": true,
+          "download_ready": true,
+          "awaiting_admin_signature": false,
+          "admin_name": "Mr. Brenton Quammie",
+          "year": "2024",
+          "user": "a003S8GKC8ZctfJikmZ9UeZ2olW2",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FLTMrjo3F5ABSxgybH3Yp_admin.png?alt=media&token=6ffdd071-5b75-4822-9371-3bb496118dc5",
+          "admin_role": "NOU Admin"
+        },
+        {
+          "id": "MtsX1NzqBRJsc9xYU0SS",
+          "admin_name": "Mr. Brenton Quammie",
+          "status": "complete",
+          "awaiting_admin_signature": false,
+          "date": "2023-12-06T22:07:47.596Z",
+          "generated": true,
+          "last_modified": "2023-12-06T22:07:47.596Z",
+          "admin_role": "NOU Admin",
+          "next_importer_number": 0,
+          "admin_signature_date": "2023-12-28T15:02:46.647Z",
+          "imports_under_license": [],
+          "year": "2024",
+          "receipt_uploaded": true,
+          "refrigerants": [
+            {
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "hs_code": "2903.45",
+              "quota": 1260,
+              "ashrae": "R-134a"
+            },
+            {
+              "quota": 3921.6,
+              "refrigerant": "R-143a/125/134a",
+              "ashrae": "R-404A",
+              "hs_code": "3827.61"
+            },
+            {
+              "refrigerant": "R32/125",
+              "quota": 2087.5,
+              "ashrae": "R-410A",
+              "hs_code": "3827.63"
+            }
+          ],
+          "download_ready": true,
+          "completed": true,
+          "cert_no": 279,
+          "can_generate": false,
+          "paid": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FMtsX1NzqBRJsc9xYU0SS_admin.png?alt=media&token=8fa391d0-ba08-4985-9839-ae9976665827",
+          "retail": true,
+          "user": "UY9NICJ8kpcP42wItGXj1G8lTd93",
+          "name": "cash money investments"
+        },
+        {
+          "id": "NvgoBNRwRtdRU9JwKboA",
+          "generated": true,
+          "admin_name": "Mr. Brenton Quammie",
+          "admin_signature_date": "2023-12-29T02:41:15.489Z",
+          "date": "2023-12-28T18:18:17.950Z",
+          "cert_no": 290,
+          "can_generate": false,
+          "completed": true,
+          "awaiting_admin_signature": false,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "quota": 1260,
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            },
+            {
+              "ashrae": "R-404A",
+              "refrigerant": "R-143a/125/134a",
+              "hs_code": "3827.61",
+              "quota": 3921.6
+            },
+            {
+              "ashrae": "R-407A",
+              "hs_code": "3827.63",
+              "refrigerant": "R-32/125/134a",
+              "quota": 2107
+            },
+            {
+              "refrigerant": "R32/125",
+              "hs_code": "3827.63",
+              "quota": 2087.5,
+              "ashrae": "R-410A"
+            },
+            {
+              "ashrae": "R-507A",
+              "hs_code": "3827.61",
+              "quota": 3985,
+              "refrigerant": "R-125/143a"
+            },
+            {
+              "refrigerant": "Carbon dioxide",
+              "quota": 1,
+              "ashrae": "R-744",
+              "hs_code": "2811.21"
+            }
+          ],
+          "status": "complete",
+          "next_importer_number": 0,
+          "retail": true,
+          "year": "2024",
+          "imports_under_license": [],
+          "last_modified": "2023-12-28T18:18:17.950Z",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FNvgoBNRwRtdRU9JwKboA_admin.png?alt=media&token=81a41bb1-f2f6-4483-a4e9-60905d586a79",
+          "receipt_uploaded": true,
+          "download_ready": true,
+          "user": "tSSxbtRIpUND0IHkWRukM1rAnF83",
+          "paid": true,
+          "admin_role": "NOU Admin",
+          "name": "Agricultural Input Warehouse Limited"
+        },
+        {
+          "id": "P0AQNE2qhqq94Op1tCKb",
+          "next_importer_number": 0,
+          "admin_name": "Mr. Brenton Quammie ",
+          "admin_role": "NOU Admin",
+          "awaiting_admin_signature": false,
+          "year": "2024",
+          "refrigerants": [
+            {
+              "ashrae": "R-1234yf",
+              "refrigerant": "2,3,3,3- Tetrafluoropropene",
+              "hs_code": "2903.51",
+              "quota": 0
+            },
+            {
+              "hs_code": "2903.45",
+              "ashrae": "R-134a",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "quota": 1260
+            },
+            {
+              "hs_code": "3827.61",
+              "refrigerant": "R-143a/125/134a",
+              "quota": 3921.6,
+              "ashrae": "R-404A"
+            }
+          ],
+          "admin_signature_date": "2024-01-02T12:44:58.477Z",
+          "last_modified": "2023-12-30T15:27:28.737Z",
+          "can_generate": false,
+          "imports_under_license": [],
+          "download_ready": true,
+          "completed": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FP0AQNE2qhqq94Op1tCKb_admin.png?alt=media&token=7813817c-5532-4197-8feb-7ce64f5eced9",
+          "receipt_uploaded": true,
+          "date": "2023-12-30T15:27:28.737Z",
+          "status": "complete",
+          "retail": true,
+          "name": "J.Tech Refrigeration & A.C Services",
+          "user": "5wh8R57VfjNifXf7X7F9T4UwSGu1",
+          "generated": true,
+          "paid": true,
+          "cert_no": 298
+        },
+        {
+          "id": "P2R9Qx6LDneXo8fZT5JY",
+          "imports_under_license": [],
+          "generated": true,
+          "next_importer_number": 0,
+          "can_generate": false,
+          "retail": true,
+          "paid": true,
+          "admin_signature_date": "2025-01-27T12:43:24.205Z",
+          "completed": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FP2R9Qx6LDneXo8fZT5JY_admin.png?alt=media&token=8d50a41d-027f-444d-b1e1-5971d37afa4f",
+          "cert_no": 330,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "hs_code": "2903.45",
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            },
+            {
+              "refrigerant": "R-143a/125/134a",
+              "ashrae": "R-404A",
+              "quota": 3921.6,
+              "hs_code": "3827.61"
+            },
+            {
+              "quota": 675,
+              "ashrae": "R-32",
+              "refrigerant": "Difluoromethane",
+              "hs_code": "2903.42"
+            },
+            {
+              "refrigerant": "R32/125",
+              "hs_code": "3827.63",
+              "quota": 2087.5,
+              "ashrae": "R-410A"
+            },
+            {
+              "quota": 0,
+              "refrigerant": "Iso-Butane",
+              "hs_code": "2901.10",
+              "ashrae": "R-600a"
+            }
+          ],
+          "awaiting_admin_signature": false,
+          "admin_name": "Brenton Quammie",
+          "last_modified": "2025-01-03T18:01:50.455Z",
+          "status": "complete",
+          "download_ready": true,
+          "name": "Mustique Company Ltd",
+          "year": "2025",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "receipt_uploaded": true,
+          "user": "gjoLkCgOkjODRfTlUS3aHrbrGCl2",
+          "date": "2025-01-03T18:01:50.455Z"
+        },
+        {
+          "id": "QmtZcumsA9b7Ah6hUHQj",
+          "refrigerants": [
+            {
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "hs_code": "2903.45",
+              "ashrae": "R-134a",
+              "quota": 1260
+            },
+            {
+              "hs_code": "2903.42",
+              "ashrae": "R-32",
+              "refrigerant": "Difluoromethane",
+              "quota": 675
+            },
+            {
+              "quota": 3921.6,
+              "ashrae": "R-404A",
+              "hs_code": "3827.61",
+              "refrigerant": "R-143a/125/134a"
+            },
+            {
+              "quota": 2087.5,
+              "hs_code": "3827.63",
+              "refrigerant": "R32/125",
+              "ashrae": "R-410A"
+            },
+            {
+              "quota": 0.02,
+              "ashrae": "R-290",
+              "hs_code": "2711.12",
+              "refrigerant": "Propane"
+            },
+            {
+              "ashrae": "R-600a",
+              "hs_code": "2901.10",
+              "quota": 0,
+              "refrigerant": "Iso-Butane"
+            },
+            {
+              "ashrae": "R-1234yf",
+              "hs_code": "2903.51",
+              "quota": 0,
+              "refrigerant": "2,3,3,3- Tetrafluoropropene"
+            }
+          ],
+          "date": "2024-01-11T02:46:39.787Z",
+          "year": "2024",
+          "can_generate": false,
+          "download_ready": true,
+          "generated": true,
+          "user": "PyxcXc5EpoTpFKbecj6031EwZUs2",
+          "name": "Arctic Air",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FQmtZcumsA9b7Ah6hUHQj_admin.png?alt=media&token=55d1eda0-29c3-445f-ab3c-5de8a43147cc",
+          "completed": true,
+          "awaiting_admin_signature": false,
+          "retail": true,
+          "imports_under_license": [],
+          "next_importer_number": 0,
+          "receipt_uploaded": true,
+          "cert_no": 302,
+          "last_modified": "2024-01-11T02:46:39.787Z",
+          "admin_name": "Mr. Brenton Quammie",
+          "status": "complete",
+          "admin_role": "NOU Admin",
+          "paid": true,
+          "admin_signature_date": "2024-02-05T18:08:48.213Z"
+        },
+        {
+          "id": "TC6kPrdWg23KeL6DujyZ",
+          "awaiting_admin_signature": false,
+          "refrigerants": [
+            {
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "quota": 1260,
+              "ashrae": "R-134a",
+              "hs_code": "2903.45"
+            },
+            {
+              "ashrae": "R-513A",
+              "quota": 629,
+              "refrigerant": "R-1234yf/134a",
+              "hs_code": "3827.68"
+            },
+            {
+              "quota": 2139.25,
+              "ashrae": "R-452A",
+              "hs_code": "3827.63",
+              "refrigerant": "R-1,2,3,4yf/ 125/32"
+            }
+          ],
+          "user": "8Jv6tdolJJVMAynT2cEo8hQmwuz2",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FTC6kPrdWg23KeL6DujyZ_admin.png?alt=media&token=a5d7f12e-e602-435f-9290-a6798d9dbf3c",
+          "can_generate": false,
+          "admin_signature_date": "2025-01-27T12:43:54.039Z",
+          "imports_under_license": [],
+          "next_importer_number": 0,
+          "paid": true,
+          "status": "complete",
+          "last_modified": "2025-01-02T18:49:52.043Z",
+          "admin_name": "Brenton Quammie",
+          "download_ready": true,
+          "admin_role": "National Ozone Assistant (Technical)",
+          "completed": true,
+          "date": "2025-01-02T18:49:52.043Z",
+          "receipt_uploaded": true,
+          "generated": true,
+          "retail": true,
+          "cert_no": 316,
+          "year": "2025",
+          "name": "Coreas Auto Supplies ltd"
+        },
+        {
+          "id": "TrIYw0L4jDbRnUoztEvw",
+          "cert_no": 315,
+          "imports_under_license": [],
+          "can_generate": false,
+          "admin_name": "Brenton Quammie",
+          "download_ready": true,
+          "refrigerants": [
+            {
+              "hs_code": "2903.45",
+              "quota": 1260,
+              "ashrae": "R-134a",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            },
+            {
+              "hs_code": "2903.42",
+              "refrigerant": "Difluoromethane",
+              "quota": 675,
+              "ashrae": "R-32"
+            },
+            {
+              "hs_code": "3827.63",
+              "refrigerant": "R32/125",
+              "quota": 2087.5,
+              "ashrae": "R-410A"
+            },
+            {
+              "ashrae": "R-404A",
+              "refrigerant": "R-143a/125/134a",
+              "hs_code": "3827.61",
+              "quota": 3921.6
+            },
+            {
+              "hs_code": "2711.12",
+              "quota": 0.02,
+              "ashrae": "R-290",
+              "refrigerant": "Propane"
+            },
+            {
+              "ashrae": "R-600a",
+              "quota": 0,
+              "refrigerant": "Iso-Butane",
+              "hs_code": "2901.10"
+            },
+            {
+              "hs_code": "2903.51",
+              "ashrae": "R-1234yf",
+              "quota": 0,
+              "refrigerant": "2,3,3,3- Tetrafluoropropene"
+            }
+          ],
+          "receipt_uploaded": true,
+          "next_importer_number": 0,
+          "paid": true,
+          "awaiting_admin_signature": false,
+          "name": "Sargeant Abbott Maintenance Services",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FTrIYw0L4jDbRnUoztEvw_admin.png?alt=media&token=478e9814-074f-4e4c-b7ef-c0e6b4d17016",
+          "user": "mvlTywolcrMZcAWEtrcxXOFuBhd2",
+          "status": "complete",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "admin_signature_date": "2025-01-27T12:44:43.091Z",
+          "retail": "false",
+          "completed": true,
+          "year": "2025",
+          "generated": true,
+          "last_modified": "2025-01-02T17:33:01.418Z",
+          "date": "2025-01-02T17:33:01.418Z"
+        },
+        {
+          "id": "UCAoSQyhi2JRlGHRP6uS",
+          "user": "xPV5oEfpn5aUYp7id6WKVW7QtQk2",
+          "last_modified": "2023-12-30T04:02:33.885Z",
+          "admin_signature_date": "2024-01-02T12:38:08.683Z",
+          "status": "complete",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FUCAoSQyhi2JRlGHRP6uS_admin.png?alt=media&token=ee5466db-ac4c-4c0f-8d7b-9eceac2c4245",
+          "cert_no": 297,
+          "retail": "false",
+          "date": "2023-12-30T04:02:33.885Z",
+          "receipt_uploaded": true,
+          "next_importer_number": 0,
+          "awaiting_admin_signature": false,
+          "admin_role": "NOU Admin",
+          "imports_under_license": [],
+          "completed": true,
+          "name": "holistic automotive services ",
+          "download_ready": true,
+          "can_generate": false,
+          "refrigerants": [
+            {
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a",
+              "quota": 1260,
+              "hs_code": "2903.45"
+            },
+            {
+              "refrigerant": "Difluoromethane",
+              "hs_code": "2903.42",
+              "ashrae": "R-32",
+              "quota": 675
+            },
+            {
+              "refrigerant": "R-143a/125/134a",
+              "quota": 3921.6,
+              "hs_code": "3827.61",
+              "ashrae": "R-404A"
+            },
+            {
+              "quota": 2087.5,
+              "ashrae": "R-410A",
+              "refrigerant": "R32/125",
+              "hs_code": "3827.63"
+            }
+          ],
+          "year": "2024",
+          "generated": true,
+          "paid": true,
+          "admin_name": "Mr. Brenton Quammie"
+        },
+        {
+          "id": "abNC0jjrG1nezcQ6SN8h",
+          "admin_name": "Brenton Quammie",
+          "user": "BfILq4XXdeQLoaBYuvBSPwnk5KJ3",
+          "name": "Rainforest Seafoods SVG ltd",
+          "can_generate": false,
+          "date": "2024-12-31T15:36:57.454Z",
+          "receipt_uploaded": true,
+          "admin_signature_date": "2025-01-27T12:45:35.018Z",
+          "retail": true,
+          "completed": true,
+          "year": "2025",
+          "status": "complete",
+          "paid": true,
+          "generated": true,
+          "awaiting_admin_signature": false,
+          "next_importer_number": 0,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "hs_code": "2903.45",
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            },
+            {
+              "ashrae": "R-404A",
+              "refrigerant": "R-143a/125/134a",
+              "hs_code": "3827.61",
+              "quota": 3921.6
+            },
+            {
+              "hs_code": "3827.63",
+              "refrigerant": "R32/125",
+              "quota": 2087.5,
+              "ashrae": "R-410A"
+            }
+          ],
+          "cert_no": 310,
+          "last_modified": "2024-12-31T15:36:57.454Z",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FabNC0jjrG1nezcQ6SN8h_admin.png?alt=media&token=10d1a064-5f51-49e5-9d4c-2d86523b19f7",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "imports_under_license": [],
+          "download_ready": true
+        },
+        {
+          "id": "dCghfFs8xcRi4SEJvEht",
+          "receipt_uploaded": true,
+          "cert_no": 325,
+          "year": "2027",
+          "date": "2025-01-03T15:01:35.073Z",
+          "next_importer_number": 0,
+          "paid": true,
+          "imports_under_license": [],
+          "name": "THA HOOK UP",
+          "completed": false,
+          "status": "Awaiting Completion",
+          "refrigerants": [
+            {
+              "hs_code": "2903.44",
+              "refrigerant": "Pentafluoroethane",
+              "quota": 3500,
+              "ashrae": "R-125"
+            },
+            {
+              "quota": 1260,
+              "ashrae": "R-134a",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "hs_code": "2903.45"
+            },
+            {
+              "ashrae": "R-143a",
+              "refrigerant": "1,1,1-Trifluoroethane",
+              "quota": 4470,
+              "hs_code": "2903.44"
+            },
+            {
+              "refrigerant": "1,1-Difluoroethane",
+              "hs_code": "2903.43",
+              "quota": 124,
+              "ashrae": "R-152a"
+            },
+            {
+              "quota": 3220,
+              "ashrae": "R-227ea",
+              "refrigerant": "Heptafluoropropane",
+              "hs_code": "2903.46"
+            },
+            {
+              "quota": 14800,
+              "ashrae": "R-23",
+              "refrigerant": "Trifluoromethane",
+              "hs_code": "2903.41"
+            },
+            {
+              "refrigerant": "Decafluoropentane",
+              "quota": 1340,
+              "ashrae": "R-236cb",
+              "hs_code": "2903.46"
+            },
+            {
+              "refrigerant": "Hexafluoropropane",
+              "ashrae": "R-236ea",
+              "quota": 1370,
+              "hs_code": "2903.46"
+            },
+            {
+              "quota": 9810,
+              "hs_code": "2903.46",
+              "ashrae": "R-236fa",
+              "refrigerant": "Hexafluoropropane"
+            },
+            {
+              "quota": 693,
+              "ashrae": "R-245ca",
+              "hs_code": "2903.47",
+              "refrigerant": "1,1,2,2,3-Pentafluoropropane"
+            },
+            {
+              "ashrae": "R-245fa",
+              "refrigerant": "1,1,1,3,3-Pentafluoropropane",
+              "hs_code": "2903.47",
+              "quota": 1030
+            },
+            {
+              "ashrae": "R-32",
+              "quota": 675,
+              "refrigerant": "Difluoromethane",
+              "hs_code": "2903.42"
+            },
+            {
+              "quota": 794,
+              "ashrae": "R-365mfc",
+              "hs_code": "2903.48",
+              "refrigerant": "1,1,1,3,3-Pentafluorobutane"
+            },
+            {
+              "ashrae": "R-41",
+              "refrigerant": "Fluoromethane (Methyl Fluoride)",
+              "quota": 92,
+              "hs_code": "2903.43"
+            },
+            {
+              "refrigerant": "1,1,1,2,2,3,4,5,5,5-Decafluoropentane",
+              "quota": 1640,
+              "hs_code": "2903.48",
+              "ashrae": "R-43-10mee"
+            },
+            {
+              "hs_code": "3827.61",
+              "ashrae": "R-404A",
+              "quota": 3921.6,
+              "refrigerant": "R-143a/125/134a"
+            },
+            {
+              "hs_code": "3827.63",
+              "quota": 2107,
+              "ashrae": "R-407A",
+              "refrigerant": "R-32/125/134a"
+            },
+            {
+              "ashrae": "R-407B",
+              "quota": 2804,
+              "hs_code": "3827.62",
+              "refrigerant": "R-32/125/134a"
+            },
+            {
+              "hs_code": "3827.64",
+              "quota": 1773.85,
+              "ashrae": "R-407C",
+              "refrigerant": "R32/125/134a"
+            },
+            {
+              "refrigerant": "R32/125/134a",
+              "hs_code": "3827.64",
+              "quota": 1627,
+              "ashrae": "R-407D"
+            },
+            {
+              "ashrae": "R-407E",
+              "hs_code": "3827.64",
+              "refrigerant": "R32/125/134a",
+              "quota": 1552
+            },
+            {
+              "ashrae": "R-407F",
+              "quota": 1825,
+              "hs_code": "3827.64",
+              "refrigerant": "R32/125/134a"
+            },
+            {
+              "ashrae": "R-407G",
+              "hs_code": "3827.64",
+              "refrigerant": "R32/125/134a",
+              "quota": 1463
+            },
+            {
+              "quota": 2087.5,
+              "ashrae": "R-410A",
+              "refrigerant": "R32/125",
+              "hs_code": "3827.63"
+            },
+            {
+              "quota": 2229,
+              "refrigerant": "R32/125",
+              "hs_code": "3827.62",
+              "ashrae": "R-410B"
+            },
+            {
+              "ashrae": "R-413A",
+              "quota": 1258.4,
+              "hs_code": "3827.59",
+              "refrigerant": "R-218/134a/600a"
+            },
+            {
+              "hs_code": "3827.63",
+              "quota": 2346,
+              "refrigerant": "R-125/134a/600",
+              "ashrae": "R-417A"
+            },
+            {
+              "refrigerant": "R-125/134a/600",
+              "ashrae": "R-417B",
+              "quota": 3027,
+              "hs_code": "3827.62"
+            },
+            {
+              "ashrae": "R-417C",
+              "quota": 1809,
+              "hs_code": "3827.64",
+              "refrigerant": "R-125/134a/600"
+            },
+            {
+              "quota": 2967,
+              "ashrae": "R-419A",
+              "refrigerant": "R-125/134a/E170",
+              "hs_code": "3827.62"
+            },
+            {
+              "ashrae": "R-419B",
+              "refrigerant": "R-125/134a/E170",
+              "hs_code": "3827.63",
+              "quota": 2384
+            },
+            {
+              "refrigerant": "R-125/134a",
+              "ashrae": "R-421A",
+              "quota": 2631,
+              "hs_code": "3827.62"
+            },
+            {
+              "ashrae": "R-421B",
+              "hs_code": "3827.62",
+              "quota": 3190,
+              "refrigerant": "R-125/134a"
+            },
+            {
+              "hs_code": "3827.62",
+              "quota": 3143,
+              "ashrae": "R-422A",
+              "refrigerant": "R-134a/600a"
+            },
+            {
+              "refrigerant": "R-134a/600a",
+              "quota": 2526,
+              "ashrae": "R-422B",
+              "hs_code": "3827.62"
+            },
+            {
+              "quota": 3085,
+              "refrigerant": "R-125/134a/600a",
+              "ashrae": "R-422C",
+              "hs_code": "3827.62"
+            },
+            {
+              "quota": 2729,
+              "refrigerant": "R-125/134a/600a",
+              "ashrae": "R-422D",
+              "hs_code": "3827.62"
+            },
+            {
+              "ashrae": "R-422E",
+              "refrigerant": "R-125/134a/600a",
+              "quota": 2592,
+              "hs_code": "3827.62"
+            },
+            {
+              "quota": 2280,
+              "hs_code": "3827.64",
+              "refrigerant": "R-134a/227ea",
+              "ashrae": "R-423A"
+            },
+            {
+              "ashrae": "R-424A",
+              "quota": 2440,
+              "hs_code": "3827.63",
+              "refrigerant": "R-125/134a/600a/600/601a"
+            },
+            {
+              "hs_code": "3827.64",
+              "ashrae": "R-425A",
+              "quota": 1505,
+              "refrigerant": "R-32/134a/227ea"
+            },
+            {
+              "hs_code": "3827.64",
+              "quota": 1508,
+              "ashrae": "R-426A",
+              "refrigerant": "R-125/134a/600/601a"
+            },
+            {
+              "hs_code": "3827.64",
+              "ashrae": "R-427A",
+              "refrigerant": "R-32/125/143a/134a",
+              "quota": 2138
+            },
+            {
+              "quota": 3607,
+              "ashrae": "R-428A",
+              "hs_code": "3827.61",
+              "refrigerant": "R-125/143a/290/600a"
+            },
+            {
+              "refrigerant": "R-E170/152a/600a",
+              "quota": 12.4,
+              "hs_code": "3827.68",
+              "ashrae": "R-429A"
+            },
+            {
+              "refrigerant": "R-152a/600a",
+              "quota": 94,
+              "ashrae": "R-430A",
+              "hs_code": "3827.68"
+            },
+            {
+              "quota": 36,
+              "hs_code": "3827.68",
+              "refrigerant": "R-290/152a",
+              "ashrae": "R-431A"
+            },
+            {
+              "refrigerant": "R-125/143a/134a/600a",
+              "quota": 3245,
+              "hs_code": "3827.61",
+              "ashrae": "R-434A"
+            },
+            {
+              "ashrae": "R-435A",
+              "refrigerant": "R-E170/152a",
+              "quota": 24.8,
+              "hs_code": "3827.68"
+            },
+            {
+              "ashrae": "R-437A",
+              "refrigerant": "R-125/134a/600/601",
+              "hs_code": "3827.64",
+              "quota": 1805
+            },
+            {
+              "ashrae": "R-439A",
+              "hs_code": "3827.63",
+              "refrigerant": "R32/125/600a",
+              "quota": 1982.5
+            },
+            {
+              "quota": 144,
+              "refrigerant": "R-290/134a/152a",
+              "ashrae": "R-440A",
+              "hs_code": "3827.64"
+            },
+            {
+              "quota": 1888,
+              "refrigerant": "R-32/125/134a/152a/227ea",
+              "hs_code": "3827.64",
+              "ashrae": "R-442A"
+            },
+            {
+              "ashrae": "R-444A",
+              "refrigerant": "R32/152a/1234ze(E)",
+              "hs_code": "3827.68",
+              "quota": 87
+            },
+            {
+              "quota": 293,
+              "ashrae": "R-444B",
+              "refrigerant": "R-32/1234ze(E)/152a",
+              "hs_code": "3827.68"
+            },
+            {
+              "ashrae": "R-445A",
+              "hs_code": "3827.68",
+              "quota": 129,
+              "refrigerant": "R-744/134a/1234ze(E)"
+            },
+            {
+              "hs_code": "3827.68",
+              "ashrae": "R-446A",
+              "quota": 459,
+              "refrigerant": "R-32/1234ze(E)/600"
+            },
+            {
+              "hs_code": "3827.68",
+              "ashrae": "R-447A",
+              "quota": 582,
+              "refrigerant": "R32/125/1234ze(E)"
+            },
+            {
+              "quota": 739,
+              "hs_code": "3827.68",
+              "ashrae": "R-447B",
+              "refrigerant": "R32/125/1234ze(E)"
+            },
+            {
+              "refrigerant": "R-32/125/1234yf/134a/1234ze(E)",
+              "quota": 1386,
+              "ashrae": "R-448A",
+              "hs_code": "3827.68"
+            },
+            {
+              "refrigerant": "R-32/125/1234yf/134a",
+              "hs_code": "3827.65",
+              "quota": 1396,
+              "ashrae": "R-449A"
+            },
+            {
+              "ashrae": "R-449B",
+              "hs_code": "3827.65",
+              "refrigerant": "R-32/125/1234yf/134a",
+              "quota": 1411
+            },
+            {
+              "refrigerant": "R-32/125/1234yf/134a",
+              "ashrae": "R-449C",
+              "hs_code": "3827.65",
+              "quota": 1250
+            },
+            {
+              "quota": 601,
+              "refrigerant": "R-1234ze(E)/134a",
+              "ashrae": "R-450A",
+              "hs_code": "3827.68"
+            },
+            {
+              "quota": 146,
+              "refrigerant": "R-1234yf(E)/134a",
+              "hs_code": "3827.68",
+              "ashrae": "R-451A"
+            },
+            {
+              "ashrae": "R-451B",
+              "refrigerant": "R-1234yf(E)/134a",
+              "hs_code": "3827.68",
+              "quota": 160
+            },
+            {
+              "hs_code": "3827.63",
+              "refrigerant": "R-1,2,3,4yf/ 125/32",
+              "ashrae": "R-452A",
+              "quota": 2139.25
+            },
+            {
+              "ashrae": "R-452B",
+              "refrigerant": "R-32/125/1234yf",
+              "hs_code": "3827.68",
+              "quota": 697
+            },
+            {
+              "ashrae": "R-452C",
+              "refrigerant": "R-32/125/1234yf",
+              "quota": 2219,
+              "hs_code": "3827.63"
+            },
+            {
+              "hs_code": "3824.64",
+              "quota": 1765.34,
+              "refrigerant": "R32/125/134a/227ea/600/601",
+              "ashrae": "R-453A"
+            },
+            {
+              "quota": 236,
+              "hs_code": "3827.68",
+              "refrigerant": "R-32/1234yf",
+              "ashrae": "R-454A"
+            },
+            {
+              "refrigerant": "R-32/1234yf",
+              "hs_code": "3827.68",
+              "quota": 465,
+              "ashrae": "R-454B"
+            },
+            {
+              "quota": 145,
+              "hs_code": "3827.68",
+              "refrigerant": "R-32/1234yf",
+              "ashrae": "R-454C"
+            },
+            {
+              "refrigerant": "R-744/32/1234yf",
+              "quota": 145,
+              "hs_code": "3827.68",
+              "ashrae": "R-455A"
+            },
+            {
+              "quota": 684,
+              "refrigerant": "R-32/134a/1234ze(E)",
+              "ashrae": "R-456A",
+              "hs_code": "3827.68"
+            },
+            {
+              "ashrae": "R-457A",
+              "refrigerant": "R-32/1234yf/152a",
+              "quota": 136,
+              "hs_code": "3827.68"
+            },
+            {
+              "refrigerant": "R-32/125/134a/227ea/236fa",
+              "ashrae": "R-458A",
+              "quota": 1650,
+              "hs_code": "3827.64"
+            },
+            {
+              "hs_code": "3827.61",
+              "refrigerant": "R-125/143a",
+              "quota": 3985,
+              "ashrae": "R-507A"
+            },
+            {
+              "hs_code": "3827.51",
+              "refrigerant": "R-23/116",
+              "ashrae": "R-508A",
+              "quota": 12543
+            },
+            {
+              "hs_code": "3827.51",
+              "refrigerant": "R-23/116",
+              "quota": 12802,
+              "ashrae": "R-508B"
+            },
+            {
+              "refrigerant": "R-134a/152a",
+              "quota": 189,
+              "ashrae": "R-512A",
+              "hs_code": "3827.68"
+            },
+            {
+              "quota": 629,
+              "hs_code": "3827.68",
+              "refrigerant": "R-1234yf/134a",
+              "ashrae": "R-513A"
+            },
+            {
+              "hs_code": "3827.68",
+              "refrigerant": "R-1234yf/134a",
+              "quota": 593,
+              "ashrae": "R-513B"
+            },
+            {
+              "refrigerant": "R-227ea/R-1234ze(E)",
+              "hs_code": "3827.68",
+              "quota": 687,
+              "ashrae": "R-5151"
+            },
+            {
+              "refrigerant": "R-1234ze(E)/227ea",
+              "ashrae": "R-515A",
+              "quota": 386,
+              "hs_code": "3827.68"
+            },
+            {
+              "refrigerant": "Propene/Propylene",
+              "quota": 0,
+              "ashrae": "R-1270",
+              "hs_code": "2901.22"
+            },
+            {
+              "ashrae": "R-12a",
+              "hs_code": "2711.13",
+              "refrigerant": "R290/600a",
+              "quota": 0
+            },
+            {
+              "quota": 0,
+              "hs_code": "2901.1",
+              "refrigerant": "Ethane",
+              "ashrae": "R-170"
+            },
+            {
+              "hs_code": "2905.19",
+              "quota": 0,
+              "refrigerant": "Hydrocarbon blend",
+              "ashrae": "R-22A"
+            },
+            {
+              "quota": 0.02,
+              "hs_code": "2711.12",
+              "refrigerant": "Propane",
+              "ashrae": "R-290"
+            },
+            {
+              "ashrae": "R-600",
+              "refrigerant": "Butane",
+              "quota": 0,
+              "hs_code": "2901.10"
+            },
+            {
+              "hs_code": "2901.10",
+              "quota": 0,
+              "ashrae": "R-600a",
+              "refrigerant": "Iso-Butane"
+            },
+            {
+              "ashrae": "R-601A",
+              "refrigerant": "Isopentane",
+              "hs_code": "2901.1",
+              "quota": 0
+            },
+            {
+              "ashrae": "R-717",
+              "refrigerant": "Ammonia",
+              "hs_code": "2814.1",
+              "quota": 0
+            },
+            {
+              "hs_code": "2811.21",
+              "quota": 1,
+              "ashrae": "R-744",
+              "refrigerant": "Carbon dioxide"
+            },
+            {
+              "ashrae": "R-1234yf",
+              "quota": 0,
+              "hs_code": "2903.51",
+              "refrigerant": "2,3,3,3- Tetrafluoropropene"
+            },
+            {
+              "ashrae": "R-1234ze(E)",
+              "refrigerant": "1,3,3,3-Tetrafluoropropene",
+              "hs_code": "2903.51",
+              "quota": 0
+            },
+            {
+              "hs_code": "3827.90",
+              "ashrae": "R-514A",
+              "refrigerant": "R-1336mzz(Z)/1130 (E)",
+              "quota": 1.747
+            }
+          ],
+          "retail": true,
+          "can_generate": false,
+          "last_modified": "2025-01-03T15:01:35.073Z",
+          "generated": false,
+          "user": "3gx3oxVlKUde1BdpeoUq0slBG1F2"
+        },
+        {
+          "id": "euuCqvoUm7YuD3w8J97s",
+          "download_ready": true,
+          "imports_under_license": [],
+          "user": "9YK3PEdYufZXU7mTpp1ei8RD0xZ2",
+          "receipt_uploaded": true,
+          "completed": true,
+          "next_importer_number": 0,
+          "year": "2024",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FeuuCqvoUm7YuD3w8J97s_admin.png?alt=media&token=7bb885ef-4956-4633-8f4e-6ce57987a137",
+          "awaiting_admin_signature": false,
+          "admin_role": "NOU Admin",
+          "admin_signature_date": "2023-12-29T02:37:03.380Z",
+          "last_modified": "2023-12-27T17:45:03.345Z",
+          "name": "SG DeFreitas & Co. Ltd",
+          "retail": true,
+          "status": "complete",
+          "can_generate": false,
+          "cert_no": 288,
+          "admin_name": "Mr. Brenton Quammie",
+          "date": "2023-12-27T17:45:03.345Z",
+          "generated": true,
+          "paid": true,
+          "refrigerants": [
+            {
+              "quota": 1260,
+              "hs_code": "2903.45",
+              "ashrae": "R-134a",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            },
+            {
+              "ashrae": "R-32",
+              "refrigerant": "Difluoromethane",
+              "quota": 675,
+              "hs_code": "2903.42"
+            },
+            {
+              "hs_code": "3827.61",
+              "quota": 3921.6,
+              "ashrae": "R-404A",
+              "refrigerant": "R-143a/125/134a"
+            },
+            {
+              "quota": 2087.5,
+              "hs_code": "3827.63",
+              "refrigerant": "R32/125",
+              "ashrae": "R-410A"
+            },
+            {
+              "quota": 1765.34,
+              "refrigerant": "R32/125/134a/227ea/600/601",
+              "ashrae": "R-453A",
+              "hs_code": "3824.64"
+            },
+            {
+              "hs_code": "2711.12",
+              "quota": 0.02,
+              "refrigerant": "Propane",
+              "ashrae": "R-290"
+            },
+            {
+              "quota": 0,
+              "ashrae": "R-600",
+              "hs_code": "2901.10*",
+              "refrigerant": "Butane"
+            },
+            {
+              "ashrae": "R-407C",
+              "hs_code": "3827.64",
+              "quota": 1773.85,
+              "refrigerant": "R32/125/134a"
+            },
+            {
+              "ashrae": "R-1234yf",
+              "hs_code": "2903.51",
+              "refrigerant": "2,3,3,3- Tetrafluoropropene",
+              "quota": 0
+            },
+            {
+              "refrigerant": "Iso-Butane",
+              "ashrae": "R-600a",
+              "quota": 0,
+              "hs_code": "2901.10*"
+            }
+          ]
+        },
+        {
+          "id": "gDwzAro0Ce7zMhOzZPtB",
+          "name": "Essentric Refrigeration",
+          "status": "complete",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "generated": true,
+          "cert_no": 305,
+          "download_ready": true,
+          "user": "BJd0oYpVyHc1vcmTjAUTWQQbHaj2",
+          "receipt_uploaded": true,
+          "next_importer_number": 0,
+          "retail": true,
+          "admin_signature_date": "2025-01-27T12:46:21.055Z",
+          "last_modified": "2024-12-27T16:54:52.676Z",
+          "year": "2025",
+          "admin_name": "Brenton Quammie",
+          "can_generate": false,
+          "paid": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FgDwzAro0Ce7zMhOzZPtB_admin.png?alt=media&token=69a0be62-a359-45d8-a934-48c497a8568f",
+          "completed": true,
+          "date": "2024-12-27T16:54:52.676Z",
+          "imports_under_license": [],
+          "awaiting_admin_signature": false,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "quota": 1260,
+              "hs_code": "2903.45"
+            },
+            {
+              "refrigerant": "Difluoromethane",
+              "hs_code": "2903.42",
+              "ashrae": "R-32",
+              "quota": 675
+            },
+            {
+              "quota": 2087.5,
+              "hs_code": "3827.63",
+              "refrigerant": "R32/125",
+              "ashrae": "R-410A"
+            },
+            {
+              "quota": 0,
+              "ashrae": "R-1234yf",
+              "refrigerant": "2,3,3,3- Tetrafluoropropene",
+              "hs_code": "2903.51"
+            },
+            {
+              "quota": 0,
+              "hs_code": "2901.10",
+              "refrigerant": "Iso-Butane",
+              "ashrae": "R-600a"
+            },
+            {
+              "ashrae": "R-290",
+              "hs_code": "2711.12",
+              "quota": 0.02,
+              "refrigerant": "Propane"
+            },
+            {
+              "quota": 3921.6,
+              "ashrae": "R-404A",
+              "hs_code": "3827.61",
+              "refrigerant": "R-143a/125/134a"
+            },
+            {
+              "refrigerant": "Hydrocarbon blend",
+              "ashrae": "R-22A",
+              "quota": 0,
+              "hs_code": "2905.19"
+            },
+            {
+              "refrigerant": "R-32/1234yf",
+              "hs_code": "3827.68",
+              "quota": 236,
+              "ashrae": "R-454A"
+            },
+            {
+              "quota": 1765.34,
+              "hs_code": "3824.64",
+              "refrigerant": "R32/125/134a/227ea/600/601",
+              "ashrae": "R-453A"
+            }
+          ]
+        },
+        {
+          "id": "ghuj1kJhTytG6DvOBOW1",
+          "name": "Unicomer St Vincent Ltd",
+          "last_modified": "2023-12-28T20:10:33.984Z",
+          "receipt_uploaded": true,
+          "admin_role": "NOU Admin",
+          "download_ready": true,
+          "admin_name": "Mr. Brenton Quammie",
+          "retail": true,
+          "status": "complete",
+          "awaiting_admin_signature": false,
+          "year": "2024",
+          "cert_no": 291,
+          "generated": true,
+          "imports_under_license": [],
+          "date": "2023-12-28T20:10:33.984Z",
+          "can_generate": false,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "hs_code": "2903.45",
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            },
+            {
+              "hs_code": "3827.63",
+              "ashrae": "R-410A",
+              "refrigerant": "R32/125",
+              "quota": 2087.5
+            },
+            {
+              "ashrae": "R-600a",
+              "quota": 0,
+              "hs_code": "2901.10",
+              "refrigerant": "Iso-Butane"
+            },
+            {
+              "hs_code": "2711.12",
+              "refrigerant": "Propane",
+              "ashrae": "R-290",
+              "quota": 0.02
+            }
+          ],
+          "completed": true,
+          "user": "CVNSMRbUe4gaAA7LmpbEfZiHZyp1",
+          "paid": true,
+          "admin_signature_date": "2023-12-29T02:44:32.642Z",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2Fghuj1kJhTytG6DvOBOW1_admin.png?alt=media&token=8dcd09bf-a88c-4d03-9a8f-6c984ef3f0f5",
+          "next_importer_number": 0
+        },
+        {
+          "id": "hCOXO3A3CoBOTv7YSJoT",
+          "generated": true,
+          "can_generate": false,
+          "cert_no": 312,
+          "status": "complete",
+          "awaiting_admin_signature": false,
+          "date": "2024-12-31T15:01:29.800Z",
+          "name": "Trotman's Electronics Service Ltd ",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "user": "MYKUdYXyyPNEPQ8QrHjqx8B8Zej2",
+          "receipt_uploaded": true,
+          "last_modified": "2024-12-31T15:01:29.800Z",
+          "admin_name": "Brenton Quammie",
+          "admin_signature_date": "2025-01-27T12:47:21.211Z",
+          "refrigerants": [
+            {
+              "ashrae": "R-410A",
+              "quota": 2087.5,
+              "refrigerant": "R32/125",
+              "hs_code": "3827.63"
+            },
+            {
+              "quota": 1260,
+              "ashrae": "R-134a",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "hs_code": "2903.45"
+            },
+            {
+              "refrigerant": "1,1,1-Trifluoroethane",
+              "quota": 4470,
+              "ashrae": "R-143a",
+              "hs_code": "2903.44"
+            },
+            {
+              "hs_code": "3824.64",
+              "refrigerant": "R32/125/134a/227ea/600/601",
+              "ashrae": "R-453A",
+              "quota": 1765.34
+            }
+          ],
+          "paid": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FhCOXO3A3CoBOTv7YSJoT_admin.png?alt=media&token=0d74828d-2b15-45dc-8fc3-ce4e5fef5775",
+          "completed": true,
+          "imports_under_license": [],
+          "year": "2025",
+          "retail": true,
+          "download_ready": true,
+          "next_importer_number": 0
+        },
+        {
+          "id": "jzYNc78uz06jHehjROzI",
+          "date": "2023-12-29T18:38:46.255Z",
+          "completed": true,
+          "receipt_uploaded": true,
+          "admin_role": "NOU Admin",
+          "admin_signature_date": "2024-01-02T12:41:55.136Z",
+          "cert_no": 296,
+          "refrigerants": [
+            {
+              "refrigerant": "R32/125",
+              "quota": 2087.5,
+              "hs_code": "3827.63",
+              "ashrae": "R-410A"
+            },
+            {
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a",
+              "hs_code": "2903.45",
+              "quota": 1260
+            }
+          ],
+          "generated": true,
+          "retail": true,
+          "status": "complete",
+          "download_ready": true,
+          "name": "Trotman's Electronics Service Ltd ",
+          "paid": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FjzYNc78uz06jHehjROzI_admin.png?alt=media&token=eca73d03-681b-41e7-871c-6133e4014685",
+          "year": "2024",
+          "next_importer_number": 0,
+          "last_modified": "2023-12-29T18:38:46.255Z",
+          "admin_name": "Mr. Brenton Quammie ",
+          "user": "MYKUdYXyyPNEPQ8QrHjqx8B8Zej2",
+          "awaiting_admin_signature": false,
+          "can_generate": false,
+          "imports_under_license": []
+        },
+        {
+          "id": "kHD57V7qjGl9XL8Sic3A",
+          "date": "2025-01-02T19:54:20.896Z",
+          "next_importer_number": 0,
+          "can_generate": false,
+          "generated": true,
+          "last_modified": "2025-01-02T19:54:20.896Z",
+          "status": "complete",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FkHD57V7qjGl9XL8Sic3A_admin.png?alt=media&token=2eb37644-5f4b-4275-b023-f60add261ccf",
+          "name": "Big Tigga Investments Ltd",
+          "year": "2025",
+          "cert_no": 317,
+          "awaiting_admin_signature": false,
+          "retail": true,
+          "admin_signature_date": "2025-01-27T12:48:00.679Z",
+          "download_ready": true,
+          "admin_role": "National Ozone Assistant (Technical)",
+          "receipt_uploaded": true,
+          "imports_under_license": [],
+          "paid": true,
+          "user": "vxaJgbmO1kdGz13o4ByE9hKAdeT2",
+          "admin_name": "Brenton Quammie",
+          "refrigerants": [
+            {
+              "hs_code": "2903.45",
+              "ashrae": "R-134a",
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            }
+          ],
+          "completed": true
+        },
+        {
+          "id": "lWM8OvaYQotblm1ILxXg",
+          "imports_under_license": [],
+          "name": "Coreas Hazells Inc",
+          "status": "complete",
+          "cert_no": 285,
+          "receipt_uploaded": true,
+          "admin_signature_date": "2023-12-29T02:34:53.617Z",
+          "download_ready": true,
+          "paid": true,
+          "next_importer_number": 0,
+          "date": "2023-12-21T14:49:38.788Z",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FlWM8OvaYQotblm1ILxXg_admin.png?alt=media&token=4674a7b6-2806-4e89-bc98-d11eee582aa2",
+          "admin_name": "Mr. Brenton Quammie",
+          "user": "tZj0iDaJrxRakHy0wibzV7apafL2",
+          "generated": true,
+          "admin_role": "NOU Admin",
+          "can_generate": false,
+          "awaiting_admin_signature": false,
+          "retail": true,
+          "refrigerants": [
+            {
+              "hs_code": "2903.45",
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a"
+            },
+            {
+              "quota": 1.747,
+              "hs_code": "3827.90",
+              "refrigerant": "R-1336mzz(Z)/1130 (E)",
+              "ashrae": "R-514A"
+            }
+          ],
+          "last_modified": "2023-12-21T14:49:38.788Z",
+          "year": "2024",
+          "completed": true
+        },
+        {
+          "id": "pbzPCNFlpira1STtWtco",
+          "download_ready": true,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "hs_code": "2903.51",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "quota": 1260
+            }
+          ],
+          "last_modified": "2023-12-06T20:05:24.619Z",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FpbzPCNFlpira1STtWtco_admin.png?alt=media&token=5889b950-8d4f-46c8-94c4-45137e3f130e",
+          "retail": true,
+          "can_generate": false,
+          "status": "complete",
+          "admin_role": "NOU Admin",
+          "imports_under_license": [],
+          "name": "THA HOOK UP",
+          "admin_name": "Mr. Brenton Quammie",
+          "admin_signature_date": "2023-12-28T15:17:38.054Z",
+          "user": "3gx3oxVlKUde1BdpeoUq0slBG1F2",
+          "paid": true,
+          "year": "2024",
+          "next_importer_number": 0,
+          "date": "2023-12-06T20:05:24.619Z",
+          "cert_no": 278,
+          "completed": true,
+          "awaiting_admin_signature": false,
+          "generated": true
+        },
+        {
+          "id": "qGPhI7a5LkbZbChBOuAx",
+          "can_generate": false,
+          "admin_signature_date": "2023-12-28T15:19:46.700Z",
+          "refrigerants": [
+            {
+              "quota": 1260,
+              "ashrae": "R-134a",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "hs_code": "2903.45"
+            }
+          ],
+          "generated": true,
+          "paid": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FqGPhI7a5LkbZbChBOuAx_admin.png?alt=media&token=af1cbdf0-eae3-4c2e-9570-76bfb70a8efb",
+          "user": "WXOvxPV4N0bsUizPNNz8KqwCkc83",
+          "status": "complete",
+          "name": "Auto Stop Automotive",
+          "admin_role": "NOU Admin",
+          "last_modified": "2023-12-27T12:55:44.672Z",
+          "date": "2023-12-27T12:55:44.672Z",
+          "year": "2024",
+          "admin_name": "Mr. Brenton Quammie",
+          "imports_under_license": [],
+          "next_importer_number": 0,
+          "cert_no": 286,
+          "retail": true,
+          "awaiting_admin_signature": false,
+          "download_ready": true,
+          "completed": true
+        },
+        {
+          "id": "qX5wbC8QBFO5osCFvVpm",
+          "download_ready": true,
+          "next_importer_number": 0,
+          "cert_no": 293,
+          "date": "2023-12-29T15:16:30.611Z",
+          "admin_signature_date": "2024-01-02T12:39:31.708Z",
+          "generated": true,
+          "can_generate": false,
+          "last_modified": "2023-12-29T15:16:30.611Z",
+          "imports_under_license": [],
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FqX5wbC8QBFO5osCFvVpm_admin.png?alt=media&token=c8499b0e-9ede-4a50-b9ad-88125dd7a3a4",
+          "admin_role": "NOU Admin",
+          "awaiting_admin_signature": false,
+          "admin_name": "Mr. Brenton Quammie",
+          "retail": true,
+          "completed": true,
+          "refrigerants": [
+            {
+              "ashrae": "R-134a",
+              "quota": 1260,
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            },
+            {
+              "quota": 3921.6,
+              "refrigerant": "R-143a/125/134a",
+              "hs_code": "3827.61",
+              "ashrae": "R-404A"
+            },
+            {
+              "ashrae": "R-410A",
+              "hs_code": "3827.63",
+              "refrigerant": "R32/125",
+              "quota": 2087.5
+            },
+            {
+              "quota": 0,
+              "ashrae": "R-600",
+              "hs_code": "2901.10",
+              "refrigerant": "Butane"
+            }
+          ],
+          "receipt_uploaded": true,
+          "paid": true,
+          "year": "2024",
+          "status": "complete",
+          "name": "Petit St Vincent Resort",
+          "user": "idOtSBA94hS9fPWNYgi7YN6Mymd2"
+        },
+        {
+          "id": "qxCFnqWoCFALfvBRPIlP",
+          "can_generate": false,
+          "name": "Pembre & Sons",
+          "year": "2025",
+          "date": "2025-01-06T13:43:18.071Z",
+          "cert_no": 333,
+          "generated": true,
+          "completed": true,
+          "last_modified": "2025-01-06T13:43:18.071Z",
+          "awaiting_admin_signature": false,
+          "next_importer_number": 0,
+          "retail": true,
+          "download_ready": true,
+          "status": "complete",
+          "imports_under_license": [],
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FqxCFnqWoCFALfvBRPIlP_admin.png?alt=media&token=66bd1750-e9db-49f8-bd90-658ba3e48865",
+          "admin_signature_date": "2025-01-27T12:49:10.960Z",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "paid": true,
+          "refrigerants": [
+            {
+              "quota": 3921.6,
+              "ashrae": "R-404A",
+              "hs_code": "3827.61",
+              "refrigerant": "R-143a/125/134a"
+            }
+          ],
+          "receipt_uploaded": true,
+          "admin_name": "Brenton Quammie",
+          "user": "fJ1rjwZBzvQphMVnK0zKoeZQRLt2"
+        },
+        {
+          "id": "rSMv1ewgLim58QvYheZp",
+          "admin_role": "NOU Admin",
+          "generated": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FrSMv1ewgLim58QvYheZp_admin.png?alt=media&token=bf0c07dc-de7b-4913-a95b-1820be6cd91a",
+          "paid": true,
+          "retail": true,
+          "year": "2024",
+          "status": "complete",
+          "imports_under_license": [],
+          "name": "Rainforest",
+          "admin_signature_date": "2023-12-28T18:26:57.740Z",
+          "awaiting_admin_signature": false,
+          "next_importer_number": 0,
+          "last_modified": "2023-12-07T13:27:36.804Z",
+          "date": "2023-12-07T13:27:36.804Z",
+          "user": "BfILq4XXdeQLoaBYuvBSPwnk5KJ3",
+          "download_ready": true,
+          "refrigerants": [
+            {
+              "hs_code": "3827.63",
+              "ashrae": "R-410A",
+              "refrigerant": "R32/125",
+              "quota": 2087.5
+            },
+            {
+              "ashrae": "R-134a",
+              "quota": 1260,
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            }
+          ],
+          "completed": true,
+          "admin_name": "Mr. Brenton Quammie",
+          "can_generate": false,
+          "cert_no": 281
+        },
+        {
+          "id": "tOVAZOACbZnkFN3HZc7n",
+          "awaiting_admin_signature": false,
+          "paid": true,
+          "generated": true,
+          "refrigerants": [
+            {
+              "hs_code": "2903.45",
+              "quota": 1260,
+              "ashrae": "R-134a",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane"
+            },
+            {
+              "hs_code": "3827.61",
+              "refrigerant": "R-143a/125/134a",
+              "quota": 3921.6,
+              "ashrae": "R-404A"
+            },
+            {
+              "quota": 2107,
+              "refrigerant": "R-32/125/134a",
+              "ashrae": "R-407A",
+              "hs_code": "3827.63"
+            },
+            {
+              "ashrae": "R-407C",
+              "quota": 1773.85,
+              "hs_code": "3827.64",
+              "refrigerant": "R32/125/134a"
+            },
+            {
+              "ashrae": "R-410A",
+              "hs_code": "3827.63",
+              "quota": 2087.5,
+              "refrigerant": "R32/125"
+            },
+            {
+              "ashrae": "R-600a",
+              "refrigerant": "Iso-Butane",
+              "hs_code": "2901.10",
+              "quota": 0
+            }
+          ],
+          "completed": true,
+          "download_ready": true,
+          "receipt_uploaded": true,
+          "last_modified": "2023-12-29T13:02:23.912Z",
+          "admin_signature_date": "2024-01-02T12:43:10.690Z",
+          "status": "complete",
+          "cert_no": 292,
+          "retail": true,
+          "next_importer_number": 0,
+          "date": "2023-12-29T13:02:23.912Z",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FtOVAZOACbZnkFN3HZc7n_admin.png?alt=media&token=d5dd6e8d-d9a4-4bce-9802-1b9592c7020b",
+          "year": "2024",
+          "user": "K4uSUz0GZqXGedbLt4Lp8ZFylQE3",
+          "admin_name": "Mr Brenton Quammie ",
+          "admin_role": "NOU Admin",
+          "imports_under_license": [],
+          "name": "Thompson Cooling & Electrical Services Ltd",
+          "can_generate": false
+        },
+        {
+          "id": "uK4FGYk7TsH6XohvS3yq",
+          "receipt_uploaded": true,
+          "can_generate": false,
+          "completed": true,
+          "paid": true,
+          "status": "complete",
+          "retail": true,
+          "imports_under_license": [],
+          "admin_signature_date": "2025-01-27T12:49:45.741Z",
+          "year": "2025",
+          "user": "Wixg55sGRMVoQ3FU6wJT76NuhYD2",
+          "cert_no": 308,
+          "refrigerants": [
+            {
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a",
+              "quota": 1260
+            }
+          ],
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FuK4FGYk7TsH6XohvS3yq_admin.png?alt=media&token=5eb731f7-568f-4c94-befe-f2a07566896e",
+          "admin_name": "Brenton Quammie",
+          "awaiting_admin_signature": false,
+          "download_ready": true,
+          "last_modified": "2024-12-30T12:22:16.689Z",
+          "generated": true,
+          "name": "Brewster's auto supplies",
+          "date": "2024-12-30T12:22:16.689Z",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "next_importer_number": 0
+        },
+        {
+          "id": "x8Owa0xzN1yf7wriBzEb",
+          "paid": true,
+          "admin_role": "National Ozone Assistant (Technical)",
+          "next_importer_number": 0,
+          "admin_signature_date": "2025-01-27T12:50:42.005Z",
+          "download_ready": true,
+          "refrigerants": [
+            {
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "hs_code": "2903.45",
+              "ashrae": "R-134a"
+            },
+            {
+              "hs_code": "2903.42",
+              "refrigerant": "Difluoromethane",
+              "quota": 675,
+              "ashrae": "R-32"
+            },
+            {
+              "quota": 3921.6,
+              "ashrae": "R-404A",
+              "refrigerant": "R-143a/125/134a",
+              "hs_code": "3827.61"
+            },
+            {
+              "ashrae": "R-407C",
+              "hs_code": "3827.64",
+              "quota": 1773.85,
+              "refrigerant": "R32/125/134a"
+            },
+            {
+              "refrigerant": "R32/125",
+              "ashrae": "R-410A",
+              "hs_code": "3827.63",
+              "quota": 2087.5
+            },
+            {
+              "ashrae": "R-453A",
+              "hs_code": "3824.64",
+              "quota": 1765.34,
+              "refrigerant": "R32/125/134a/227ea/600/601"
+            },
+            {
+              "quota": 0.02,
+              "ashrae": "R-290",
+              "refrigerant": "Propane",
+              "hs_code": "2711.12"
+            },
+            {
+              "hs_code": "2901.10",
+              "refrigerant": "Butane",
+              "quota": 0,
+              "ashrae": "R-600"
+            },
+            {
+              "refrigerant": "2,3,3,3- Tetrafluoropropene",
+              "hs_code": "2903.51",
+              "quota": 0,
+              "ashrae": "R-1234yf"
+            },
+            {
+              "ashrae": "R-470A",
+              "refrigerant": "R-32/125/CO2/134a/1234ze(E)",
+              "quota": 909,
+              "hs_code": "3827.61"
+            },
+            {
+              "quota": 3985,
+              "refrigerant": "R-125/143a",
+              "hs_code": "3827.61",
+              "ashrae": "R-507A"
+            },
+            {
+              "ashrae": "R-470B",
+              "refrigerant": "HFO-1234ze(E)/R-125/32/CO2/134a/227ea",
+              "hs_code": "3827.61",
+              "quota": 748
+            },
+            {
+              "refrigerant": "R-32/1234yf",
+              "quota": 145,
+              "ashrae": "R-454C",
+              "hs_code": "3827.68"
+            }
+          ],
+          "retail": true,
+          "cert_no": 309,
+          "imports_under_license": [],
+          "user": "9YK3PEdYufZXU7mTpp1ei8RD0xZ2",
+          "admin_name": "Brenton Quammie",
+          "completed": true,
+          "awaiting_admin_signature": false,
+          "year": "2025",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2Fx8Owa0xzN1yf7wriBzEb_admin.png?alt=media&token=b7a4773a-2b36-4597-8c91-8274e5b571ce",
+          "last_modified": "2024-12-30T16:49:06.761Z",
+          "status": "complete",
+          "name": "SG DeFreitas & Co. Ltd",
+          "generated": true,
+          "receipt_uploaded": true,
+          "can_generate": false,
+          "date": "2024-12-30T16:49:06.761Z"
+        },
+        {
+          "id": "y1Ny8qvrQ9O3CAU3SIGo",
+          "name": "ANDREWS REFRIGERATION AND AIR CONDITIONING SERVICES",
+          "user": "NidtgbgINsRfieKlHsDnZ4hKqVf2",
+          "year": "2024",
+          "date": "2023-12-27T16:41:06.662Z",
+          "awaiting_admin_signature": false,
+          "last_modified": "2023-12-27T16:41:06.662Z",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2Fy1Ny8qvrQ9O3CAU3SIGo_admin.png?alt=media&token=ab03e23c-e190-44cd-8ee3-d57ee3d7e8a6",
+          "generated": true,
+          "admin_signature_date": "2023-12-28T15:20:59.067Z",
+          "refrigerants": [
+            {
+              "ashrae": "R-1234yf",
+              "refrigerant": "2,3,3,3- Tetrafluoropropene",
+              "quota": 0,
+              "hs_code": "2903.51"
+            },
+            {
+              "refrigerant": "Iso-Butane",
+              "hs_code": "2901.10*",
+              "ashrae": "R-600a",
+              "quota": 0
+            },
+            {
+              "hs_code": "2711.12",
+              "quota": 0.02,
+              "refrigerant": "Propane",
+              "ashrae": "R-290"
+            },
+            {
+              "refrigerant": "R32/125",
+              "quota": 2087.5,
+              "ashrae": "R-410A",
+              "hs_code": "3827.63"
+            },
+            {
+              "refrigerant": "R32/125/134a",
+              "quota": 1773.85,
+              "ashrae": "R-407C",
+              "hs_code": "3827.64"
+            },
+            {
+              "hs_code": "3827.61",
+              "quota": 3921.6,
+              "ashrae": "R-404A",
+              "refrigerant": "R-143a/125/134a"
+            },
+            {
+              "quota": 1260,
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a",
+              "hs_code": "2903.45"
+            },
+            {
+              "hs_code": "2903.42",
+              "refrigerant": "Difluoromethane",
+              "quota": 675,
+              "ashrae": "R-32"
+            },
+            {
+              "ashrae": "R-453A",
+              "hs_code": "3824.64",
+              "refrigerant": "R32/125/134a/227ea/600/601",
+              "quota": 1765.34
+            }
+          ],
+          "admin_role": "NOU Admin",
+          "paid": true,
+          "admin_name": "Mr. Brenton Quammie",
+          "download_ready": true,
+          "status": "complete",
+          "cert_no": 287,
+          "completed": true,
+          "can_generate": false,
+          "next_importer_number": 0,
+          "receipt_uploaded": true,
+          "retail": true,
+          "imports_under_license": []
+        },
+        {
+          "id": "yIBpoImZpSrpfovNqkFW",
+          "refrigerants": [
+            {
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "hs_code": "2903.45",
+              "quota": 1260,
+              "ashrae": "R-134a"
+            },
+            {
+              "refrigerant": "R32/125",
+              "quota": 2087.5,
+              "hs_code": "3827.63",
+              "ashrae": "R-410A"
+            },
+            {
+              "hs_code": "2903.51",
+              "quota": 0,
+              "refrigerant": "2,3,3,3- Tetrafluoropropene",
+              "ashrae": "R-1234yf"
+            },
+            {
+              "quota": 0,
+              "refrigerant": "1,3,3,3-Tetrafluoropropene",
+              "ashrae": "R-1234ze(E)",
+              "hs_code": "2903.51"
+            },
+            {
+              "hs_code": "2901.1",
+              "ashrae": "R-601A",
+              "quota": 0,
+              "refrigerant": "Isopentane"
+            },
+            {
+              "hs_code": "2901.10",
+              "ashrae": "R-600a",
+              "refrigerant": "Iso-Butane",
+              "quota": 0
+            },
+            {
+              "refrigerant": "Butane",
+              "ashrae": "R-600",
+              "hs_code": "2901.10",
+              "quota": 0
+            },
+            {
+              "ashrae": "R-513B",
+              "hs_code": "3827.68",
+              "quota": 593,
+              "refrigerant": "R-1234yf/134a"
+            },
+            {
+              "quota": 687,
+              "ashrae": "R-5151",
+              "hs_code": "3827.68",
+              "refrigerant": "R-227ea/R-1234ze(E)"
+            },
+            {
+              "quota": 189,
+              "ashrae": "R-512A",
+              "hs_code": "3827.68",
+              "refrigerant": "R-134a/152a"
+            },
+            {
+              "hs_code": "2711.13",
+              "refrigerant": "R290/600a",
+              "ashrae": "R-12a",
+              "quota": 0
+            },
+            {
+              "quota": 0,
+              "ashrae": "R-22A",
+              "hs_code": "2905.19",
+              "refrigerant": "Hydrocarbon blend"
+            }
+          ],
+          "next_importer_number": 0,
+          "admin_name": "Mr.Brenton Quammie",
+          "user": "uM8aPm0QRqgsTuxWVteczkSNg742",
+          "date": "2024-01-08T17:34:16.281Z",
+          "retail": true,
+          "awaiting_admin_signature": false,
+          "receipt_uploaded": true,
+          "admin_signature_date": "2024-01-08T19:05:30.225Z",
+          "imports_under_license": [],
+          "last_modified": "2024-01-08T17:34:16.281Z",
+          "cert_no": 300,
+          "completed": true,
+          "admin_role": "NOU Admin",
+          "download_ready": true,
+          "generated": true,
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FyIBpoImZpSrpfovNqkFW_admin.png?alt=media&token=9a5a5369-0854-41ec-8cac-102bd8980235",
+          "can_generate": false,
+          "status": "complete",
+          "paid": true,
+          "year": "2024",
+          "name": "RJH Misc., Services"
+        },
+        {
+          "id": "ypnLtps1bEy2sBt6zSxO",
+          "cert_no": 282,
+          "paid": true,
+          "year": "2024",
+          "admin_signature_date": "2023-12-28T15:05:12.202Z",
+          "imports_under_license": [],
+          "name": "One St. Vincent Group Inc.",
+          "status": "complete",
+          "receipt_uploaded": true,
+          "awaiting_admin_signature": false,
+          "date": "2023-12-13T14:43:05.530Z",
+          "download_ready": true,
+          "retail": true,
+          "generated": true,
+          "user": "cgrldagtHTXh760tB51P5i18yJn1",
+          "last_modified": "2023-12-13T14:43:05.530Z",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2FypnLtps1bEy2sBt6zSxO_admin.png?alt=media&token=c1a2c8c2-df83-48a2-8e24-0be2c0ca01dc",
+          "can_generate": false,
+          "next_importer_number": 0,
+          "completed": true,
+          "admin_role": "NOU Admin",
+          "refrigerants": [
+            {
+              "hs_code": "2903.45",
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a",
+              "quota": 1260
+            },
+            {
+              "refrigerant": "Difluoromethane",
+              "quota": 675,
+              "ashrae": "R-32",
+              "hs_code": "2903.42"
+            },
+            {
+              "hs_code": "3827.61",
+              "quota": 3921.6,
+              "refrigerant": "R-143a/125/134a",
+              "ashrae": "R-404A"
+            },
+            {
+              "hs_code": "3827.63",
+              "refrigerant": "R32/125",
+              "quota": 2087.5,
+              "ashrae": "R-410A"
+            },
+            {
+              "ashrae": "R-290",
+              "refrigerant": "Propane",
+              "hs_code": "2711.12",
+              "quota": 0.02
+            },
+            {
+              "quota": 0,
+              "hs_code": "2901.10*",
+              "refrigerant": "Butane",
+              "ashrae": "R-600"
+            },
+            {
+              "ashrae": "R-600a",
+              "quota": 0,
+              "hs_code": "2901.10*",
+              "refrigerant": "Iso-Butane"
+            }
+          ],
+          "admin_name": "Mr. Brenton Quammie"
+        },
+        {
+          "id": "zvyxy7RkLeoKtP3QJWeF",
+          "admin_name": "Brenton Quammie",
+          "generated": true,
+          "cert_no": 314,
+          "imports_under_license": [],
+          "status": "complete",
+          "receipt_uploaded": true,
+          "can_generate": false,
+          "last_modified": "2025-01-01T01:41:42.250Z",
+          "retail": true,
+          "date": "2025-01-01T01:41:42.250Z",
+          "admin_role": "National Ozone Assistant (Technical)",
+          "paid": true,
+          "download_ready": true,
+          "name": "AUTOMAX AUTO PARTS ",
+          "admin_signature": "https://firebasestorage.googleapis.com/v0/b/sustainable-development-b9b71.appspot.com/o/registration_signatures%2Fzvyxy7RkLeoKtP3QJWeF_admin.png?alt=media&token=1aea6e75-4375-47bd-8f44-9b6bb671d79b",
+          "completed": true,
+          "next_importer_number": 0,
+          "awaiting_admin_signature": false,
+          "user": "bqCPjmauuechdlW4ASedwcrertc2",
+          "year": "2025",
+          "admin_signature_date": "2025-01-27T12:51:11.635Z",
+          "refrigerants": [
+            {
+              "refrigerant": "1,1,1,2-Tetrafluoroethane",
+              "ashrae": "R-134a",
+              "hs_code": "2903.45",
+              "quota": 1260
+            }
+          ]
+        }
+    ]
+}

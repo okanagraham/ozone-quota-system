@@ -1,27 +1,22 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext_working';
+import { useAuth } from '../../context/AuthContext';
 
-const PrivateRoute = ({ children, allowedRoles = ['importer', 'technician'] }) => {
-  const { currentUser, userRole, loading } = useAuth();
+const PrivateRoute = ({ children }) => {
+  const { currentUser, loading } = useAuth();
   
+  // Show loading while checking auth
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-900"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-900"></div>
       </div>
     );
   }
   
+  // Redirect to login if not authenticated
   if (!currentUser) {
-    return <Navigate to="/login/importer" replace />;
-  }
-  
-  if (!allowedRoles.includes(userRole)) {
-    // Redirect to appropriate dashboard based on role
-    if (userRole === 'admin') return <Navigate to="/admin/dashboard" replace />;
-    if (userRole === 'customs') return <Navigate to="/customs/dashboard" replace />;
-    return <Navigate to="/login/importer" replace />;
+    return <Navigate to="/login" replace />;
   }
   
   return children;

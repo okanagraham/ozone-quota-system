@@ -1,7 +1,7 @@
 // src/pages/auth/ForgotPassword.js
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext_working'
+import { useAuth } from '../../context/AuthContext'
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('')

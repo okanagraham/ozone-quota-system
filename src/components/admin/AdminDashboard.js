@@ -1,7 +1,7 @@
 // src/components/admin/AdminDashboard.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext_working';
+import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../services/supabase/supabaseClient';
 import MainLayout from '../layout/MainLayout';
 

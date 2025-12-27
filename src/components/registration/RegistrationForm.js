@@ -1,7 +1,7 @@
 // src/components/registration/RegistrationForm.js
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext_working'
+import { useAuth } from '../../context/AuthContext'
 import { useDemoMode } from '../../context/DemoModeContext'
 import { supabase } from '../../lib/supabase'
 import MainLayout from '../layout/MainLayout'

@@ -1,34 +1,42 @@
-// src/components/auth/AdminRoute.js
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext_working';
+import { useAuth } from '../../context/AuthContext';
 
-/**
- * AdminRoute component that redirects to dashboard if user is not an admin
- */
 const AdminRoute = ({ children }) => {
-  const { currentUser, userProfile, loading } = useAuth();
+  const { currentUser, userRole, loading } = useAuth();
   
-  // Show loading indicator while checking authentication
+  // Show loading while checking auth
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-900"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-900"></div>
       </div>
     );
   }
   
   // Redirect to login if not authenticated
   if (!currentUser) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login/admin" replace />;
   }
   
-  // Redirect to dashboard if not admin
-  if (userProfile?.role !== 'admin') {
+  // Wait for role to load (but don't redirect yet)
+  if (userRole === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-900"></div>
+      </div>
+    );
+  }
+  
+  // Check if user is admin
+  if (userRole !== 'admin') {
+    // Redirect non-admins to their appropriate dashboard
+    if (userRole === 'customs') {
+      return <Navigate to="/customs/dashboard" replace />;
+    }
     return <Navigate to="/dashboard" replace />;
   }
   
-  // Render children if authenticated and admin
   return children;
 };
 

@@ -1,374 +1,950 @@
 // src/components/pdf/ImportLicensePDF.js
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Svg,
+  Rect,
+} from '@react-pdf/renderer';
 
+// Barcode generation utility - creates Code39 barcode as SVG paths
+const generateCode39Barcode = (text) => {
+  const CODE39_CHARS = {
+    '0': 'nnnwwnwnn', '1': 'wnnwnnnnw', '2': 'nnwwnnnnw', '3': 'wnwwnnnnn',
+    '4': 'nnnwwnnnw', '5': 'wnnwwnnnn', '6': 'nnwwwnnnn', '7': 'nnnwnnwnw',
+    '8': 'wnnwnnwnn', '9': 'nnwwnnwnn', 'A': 'wnnnnwnnw', 'B': 'nnwnnwnnw',
+    'C': 'wnwnnwnnn', 'D': 'nnnnwwnnw', 'E': 'wnnnwwnnn', 'F': 'nnwnwwnnn',
+    'G': 'nnnnnwwnw', 'H': 'wnnnnwwnn', 'I': 'nnwnnwwnn', 'J': 'nnnnwwwnn',
+    'K': 'wnnnnnnww', 'L': 'nnwnnnnww', 'M': 'wnwnnnnwn', 'N': 'nnnnwnnww',
+    'O': 'wnnnwnnwn', 'P': 'nnwnwnnwn', 'Q': 'nnnnnnwww', 'R': 'wnnnnnwwn',
+    'S': 'nnwnnnwwn', 'T': 'nnnnwnwwn', 'U': 'wwnnnnnnw', 'V': 'nwwnnnnnw',
+    'W': 'wwwnnnnnn', 'X': 'nwnnwnnnw', 'Y': 'wwnnwnnnn', 'Z': 'nwwnwnnnn',
+    '-': 'nwnnnnwnw', '.': 'wwnnnnwnn', ' ': 'nwwnnnwnn', '*': 'nwnnwnwnn',
+    ':': 'nwnwnwnnn', '/': 'nwnwnnnwn', '+': 'nwnnnwnwn', '%': 'nnnwnwnwn',
+  };
+
+// Create styles
 const styles = StyleSheet.create({
   page: {
     padding: 30,
     fontSize: 10,
     fontFamily: 'Helvetica',
   },
-  header: {
+  border: {
+    border: '1pt solid #333333',
+    padding: 20,
+    minHeight: '95%',
+  },
+  // Flag colors header line
+  flagLineContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  flagLineBlue: {
+    width: 50,
+    height: 5,
+    backgroundColor: '#0072C6',
+  },
+  flagLineYellow: {
+    width: 50,
+    height: 5,
+    backgroundColor: '#FCD116',
+  },
+  flagLineGreen: {
+    width: 50,
+    height: 5,
+    backgroundColor: '#009E60',
+  },
+  // Header section
+  headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderTopWidth: 4,
-    borderTopColor: '#059669',
-    paddingTop: 10,
-    marginBottom: 15,
+    marginBottom: 10,
   },
   headerLeft: {
     flex: 1,
   },
   headerRight: {
+    flex: 1,
     alignItems: 'flex-end',
   },
   countryName: {
-    fontSize: 11,
+    fontSize: 8,
     fontWeight: 'bold',
-    color: '#059669',
+    color: '#444444',
   },
   unitName: {
-    fontSize: 10,
-    color: '#666',
+    fontSize: 9,
+    color: '#444444',
   },
   licenseTitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
+    color: '#444444',
     textAlign: 'right',
   },
   licenseSubtitle: {
-    fontSize: 8,
+    fontSize: 9,
+    color: '#444444',
     textAlign: 'right',
-    color: '#666',
     marginTop: 2,
-    maxWidth: 250,
-  },
-  yearSection: {
-    alignItems: 'flex-end',
-    marginTop: 10,
   },
   yearLabel: {
-    fontSize: 8,
-    color: '#666',
+    fontSize: 9,
+    color: '#444444',
+    textAlign: 'right',
+    marginTop: 5,
   },
   yearValue: {
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#059669',
+    color: '#009E60',
+    textAlign: 'right',
   },
-  licenseNoSection: {
+  licenseNoText: {
+    fontSize: 6,
+    color: '#444444',
+    textAlign: 'right',
+    marginTop: 5,
+  },
+  barcodeContainer: {
+    marginTop: 5,
     alignItems: 'flex-end',
+  },
+  importerBarcodeContainer: {
     marginTop: 5,
+    marginBottom: 10,
   },
-  licenseNoLabel: {
-    fontSize: 8,
-    color: '#666',
+  // Importer info section
+  importerSection: {
+    marginTop: 20,
+    marginBottom: 20,
   },
-  licenseNoValue: {
+  importerNoLabel: {
+    fontSize: 6,
+    color: '#444444',
+  },
+  certificationText: {
     fontSize: 10,
-    fontWeight: 'bold',
-  },
-  infoSection: {
+    color: '#444444',
     marginTop: 15,
-    padding: 10,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 4,
+    lineHeight: 1.5,
   },
-  infoRow: {
-    flexDirection: 'row',
-    marginBottom: 5,
-  },
-  infoLabel: {
-    width: 120,
-    fontSize: 8,
-    color: '#666',
+  certificationBold: {
     fontWeight: 'bold',
   },
-  infoValue: {
-    flex: 1,
-    fontSize: 9,
-  },
-  certifyText: {
-    marginTop: 15,
-    marginBottom: 15,
-    fontSize: 9,
-    lineHeight: 1.6,
-  },
-  boldText: {
-    fontWeight: 'bold',
-  },
+  // Items table
   itemsSection: {
-    marginTop: 15,
-  },
-  sectionTitle: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#059669',
-  },
-  table: {
-    marginTop: 5,
+    marginTop: 20,
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#ECFDF5',
     borderBottomWidth: 1,
-    borderBottomColor: '#059669',
-    paddingVertical: 6,
-    paddingHorizontal: 3,
+    borderBottomColor: '#333333',
+    paddingBottom: 5,
+    marginBottom: 5,
+  },
+  tableHeaderText: {
+    fontSize: 6,
+    fontWeight: 'bold',
+    color: '#444444',
   },
   tableRow: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-    paddingVertical: 6,
-    paddingHorizontal: 3,
+    paddingVertical: 3,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#eeeeee',
   },
-  tableCellHeader: {
-    fontSize: 7,
-    fontWeight: 'bold',
-    color: '#065F46',
-    textTransform: 'uppercase',
-  },
-  tableCell: {
-    fontSize: 8,
-  },
-  colAshrae: { width: '12%' },
-  colChemical: { width: '22%' },
+  // Column widths for import items
+  colCsName: { width: '12%' },
   colHsCode: { width: '10%' },
   colQty: { width: '8%' },
-  colVolume: { width: '10%' },
-  colUnit: { width: '8%' },
-  colCountry: { width: '15%' },
-  colCo2: { width: '15%' },
-  totalsSection: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#ECFDF5',
-    borderRadius: 4,
-  },
-  totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  totalLabel: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: '#065F46',
-  },
-  totalValue: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#059669',
-  },
-  signatureSection: {
-    marginTop: 'auto',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    padding: 12,
-  },
-  signatureRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  signatureLabel: {
+  colVolume: { width: '12%' },
+  colMt: { width: '10%' },
+  colChemical: { width: '20%' },
+  colCo2: { width: '12%' },
+  colCountry: { width: '16%' },
+  tableCell: {
     fontSize: 7,
-    fontWeight: 'bold',
-    color: '#666',
-    marginBottom: 3,
+    color: '#444444',
   },
-  signatureValue: {
-    fontSize: 9,
-  },
-  signatureImage: {
-    height: 45,
-    width: 130,
-  },
-  footer: {
+  // Footer/Signature section
+  footerSection: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 50,
     left: 30,
     right: 30,
-    textAlign: 'center',
-    fontSize: 8,
-    color: '#666',
+    border: '1pt solid #bfbfbf',
+    padding: 15,
   },
-  inspectionNote: {
-    marginTop: 10,
-    padding: 8,
-    backgroundColor: '#FEF3C7',
-    borderRadius: 4,
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
-  inspectionText: {
+  footerLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#444444',
+  },
+  footerValue: {
+    fontSize: 10,
+    color: '#444444',
+    marginTop: 5,
+  },
+  signatureImage: {
+    width: 150,
+    height: 50,
+    objectFit: 'contain',
+  },
+  // Watermark
+  watermark: {
+    position: 'absolute',
+    top: '40%',
+    left: '30%',
+    fontSize: 60,
+    color: '#eeeeee',
+    opacity: 0.3,
+    transform: 'rotate(-45deg)',
+  },
+  // Totals row
+  totalsRow: {
+    flexDirection: 'row',
+    paddingVertical: 5,
+    borderTopWidth: 1,
+    borderTopColor: '#333333',
+    marginTop: 5,
+  },
+  totalsLabel: {
     fontSize: 8,
-    color: '#92400E',
+    fontWeight: 'bold',
+    color: '#444444',
+  },
+  totalsValue: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#009E60',
   },
 });
 
-const ImportLicensePDF = ({ importData, user, registration }) => {
-  const items = importData.imported_items || [];
+// Unit conversion helper
+const convertToMetricTons = (quantity, volume, unit) => {
+  const qty = parseFloat(quantity) || 0;
+  const vol = parseFloat(volume) || 0;
+  const totalMass = qty * vol;
+  
+  const conversionFactors = {
+    'g': 0.000001,
+    'kg': 0.001,
+    'lb': 0.000453592,
+    'oz': 0.0000283495,
+    'ton': 1,
+    'mt': 1,
+  };
+  
+  const factor = conversionFactors[unit?.toLowerCase()] || 0.001;
+  return (totalMass * factor).toFixed(4);
+};
+
+const ImportLicensePDF = ({ importData, user }) => {
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    const d = new Date(date);
+    return d.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  const importedItems = importData?.imported_items || [];
   
   // Calculate total CO2 equivalent
-  const totalCO2 = items.reduce((sum, item) => {
+  const totalCO2 = importedItems.reduce((sum, item) => {
+    return sum + (parseFloat(item.co2_equivalent) || 0);
+  }, 0);
+
+  // Generate barcodes
+  const pdf417Pattern = generatePDF417Visual(importData?.id || 'default');
+
+  // Code39 Barcode Component
+  const Code39Barcode = ({ data, width = 80, height = 25 }) => {
+    const barcode = generateCode39Barcode(String(data));
+    
+    return (
+      <Svg width={width} height={height} viewBox={`0 0 ${barcode.totalWidth} ${height}`}>
+        {barcode.bars.map((bar, i) => (
+          <Rect
+            key={i}
+            x={bar.x}
+            y={0}
+            width={bar.width}
+            height={height}
+            fill="#000000"
+          />
+        ))}
+      </Svg>
+    );
+  };
+
+  // PDF417-style Barcode Component
+  const PDF417Barcode = ({ pattern, width = 130, height = 30 }) => {
+    const cellWidth = width / 20;
+    const cellHeight = height / pattern.length;
+    
+    return (
+      <Svg width={width} height={height}>
+        {pattern.map((row, rowIdx) => (
+          row.map((filled, colIdx) => (
+            filled && (
+              <Rect
+                key={`${rowIdx}-${colIdx}`}
+                x={colIdx * cellWidth}
+                y={rowIdx * cellHeight}
+                width={cellWidth - 0.5}
+                height={cellHeight - 0.5}
+                fill="#000000"
+              />
+            )
+          ))
+        ))}
+      </Svg>
+    );
+  };
+
+  return (
+    <Document>
+      <Page size="LETTER" style={styles.page}>
+        <View style={styles.border}>
+          {/* Flag color lines */}
+          <View style={styles.flagLineContainer}>
+            <View style={styles.flagLineBlue} />
+            <View style={styles.flagLineYellow} />
+            <View style={styles.flagLineGreen} />
+          </View>
+
+          {/* Header */}
+          <View style={styles.headerContainer}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.countryName}>ST. VINCENT & THE GRENADINES</Text>
+              <Text style={styles.unitName}>NATIONAL OZONE UNIT</Text>
+            </View>
+            <View style={styles.headerRight}>
+              <Text style={styles.licenseTitle}>LICENSE TO IMPORT</Text>
+              <Text style={styles.licenseSubtitle}>
+                CONTROLLED SUBSTANCES / CONTROLLED SUBSTANCES ALTERNATIVES
+              </Text>
+              <Text style={styles.yearLabel}>#</Text>
+              <Text style={styles.yearValue}>{importData?.import_year || new Date().getFullYear()}</Text>
+              <Text style={styles.licenseNoText}>
+                LICENSE NO: {importData?.import_year} - {importData?.import_number || 'N/A'}
+              </Text>
+              {/* PDF417-style barcode */}
+              <View style={styles.barcodeContainer}>
+                <PDF417Barcode pattern={pdf417Pattern} width={130} height={30} />
+              </View>
+            </View>
+          </View>
+
+          {/* Importer Information */}
+          <View style={styles.importerSection}>
+            <Text style={styles.importerNoLabel}>IMPORTER NO: {user?.importer_number || 'N/A'}</Text>
+            {/* Code39 barcode for importer number */}
+            <View style={styles.importerBarcodeContainer}>
+              <Code39Barcode data={user?.importer_number || '0000'} width={80} height={20} />
+            </View>
+            <View style={{ marginTop: 10 }}>
+              <Text style={styles.certificationText}>
+                THIS CERTIFIES THAT{' '}
+                <Text style={styles.certificationBold}>
+                  {(user?.displayName || user?.display_name || 'N/A').toUpperCase()}
+                </Text>{' '}
+                OF{' '}
+                <Text style={styles.certificationBold}>
+                  {(user?.enterprise_name || 'N/A').toUpperCase()}
+                </Text>{' '}
+                AT{' '}
+                <Text style={styles.certificationBold}>
+                  {(user?.business_address || 'N/A').toUpperCase()}
+                </Text>{' '}
+                IS GRANTED A LICENSE TO IMPORT THE FOLLOWING CONTROLLED SUBSTANCES (CSs) / CONTROLLED SUBSTANCES ALTERNATIVES (CSAs):
+              </Text>
+            </View>
+          </View>
+
+          {/* Items Table */}
+          <View style={styles.itemsSection}>
+            {/* Table Header */}
+            <View style={styles.tableHeader}>
+              <View style={styles.colCsName}>
+                <Text style={styles.tableHeaderText}>CS/CSA NAME</Text>
+              </View>
+              <View style={styles.colHsCode}>
+                <Text style={styles.tableHeaderText}>HS CODE</Text>
+              </View>
+              <View style={styles.colQty}>
+                <Text style={styles.tableHeaderText}>QTY</Text>
+              </View>
+              <View style={styles.colVolume}>
+                <Text style={styles.tableHeaderText}>VOLUME</Text>
+              </View>
+              <View style={styles.colMt}>
+                <Text style={styles.tableHeaderText}>MT</Text>
+              </View>
+              <View style={styles.colChemical}>
+                <Text style={styles.tableHeaderText}>CHEMICAL NAME</Text>
+              </View>
+              <View style={styles.colCo2}>
+                <Text style={styles.tableHeaderText}>CO2e USED</Text>
+              </View>
+              <View style={styles.colCountry}>
+                <Text style={styles.tableHeaderText}>EXPORT COUNTRY</Text>
+              </View>
+            </View>
+
+            {/* Table Rows */}
+            {importedItems.map((item, index) => {
+              const mt = convertToMetricTons(item.quantity, item.volume, item.designation);
+              return (
+                <View key={index} style={styles.tableRow}>
+                  <View style={styles.colCsName}>
+                    <Text style={styles.tableCell}>{item.ashrae || 'N/A'}</Text>
+                  </View>
+                  <View style={styles.colHsCode}>
+                    <Text style={styles.tableCell}>{item.hs_code || 'N/A'}</Text>
+                  </View>
+                  <View style={styles.colQty}>
+                    <Text style={styles.tableCell}>{item.quantity || '0'}</Text>
+                  </View>
+                  <View style={styles.colVolume}>
+                    <Text style={styles.tableCell}>
+                      {item.volume} {item.designation}(s)
+                    </Text>
+                  </View>
+                  <View style={styles.colMt}>
+                    <Text style={styles.tableCell}>{mt}</Text>
+                  </View>
+                  <View style={styles.colChemical}>
+                    <Text style={styles.tableCell}>{item.cs_name || item.chemical_name || 'N/A'}</Text>
+                  </View>
+                  <View style={styles.colCo2}>
+                    <Text style={styles.tableCell}>{item.co2_equivalent || '0'}</Text>
+                  </View>
+                  <View style={styles.colCountry}>
+                    <Text style={styles.tableCell}>({item.export_country || 'N/A'})</Text>
+                  </View>
+                </View>
+              );
+            })}
+
+            {/* Totals Row */}
+            <View style={styles.totalsRow}>
+              <View style={{ width: '72%' }}>
+                <Text style={styles.totalsLabel}>TOTAL CO2 EQUIVALENT:</Text>
+              </View>
+              <View style={{ width: '28%' }}>
+                <Text style={styles.totalsValue}>{totalCO2.toFixed(2)} CO2eq</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Watermark */}
+          <Text style={styles.watermark}>OFFICIAL</Text>
+        </View>
+
+        {/* Footer/Signature Section */}
+        <View style={styles.footerSection}>
+          <View style={styles.footerRow}>
+            <View>
+              <Text style={styles.footerLabel}>NAME OF AUTHORIZED OFFICER</Text>
+              <Text style={styles.footerValue}>
+                {(importData?.admin_name || 'N/A').toUpperCase()}
+              </Text>
+            </View>
+            <View>
+              <Text style={styles.footerLabel}>TITLE OF AUTHORIZED OFFICER</Text>
+              <Text style={styles.footerValue}>
+                {(importData?.admin_role || 'NOU Administrator').toUpperCase()}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.footerRow}>
+            <View>
+              <Text style={styles.footerLabel}>DATE</Text>
+              <Text style={styles.footerValue}>
+                {formatDate(importData?.admin_signature_date)}
+              </Text>
+            </View>
+            <View>
+              <Text style={styles.footerLabel}>SIGNATURE</Text>
+              {importData?.admin_signature_url ? (
+                <Image
+                  style={styles.signatureImage}
+                  src={importData.admin_signature_url}
+                />
+              ) : (
+                <Text style={styles.footerValue}>_____________________</Text>
+              )}
+            </View>
+          </View>
+        </View>
+      </Page>
+    </Document>
+  );
+};
+  
+  const bars = [];
+  const fullText = `*${text.toUpperCase()}*`;
+  let x = 0;
+  const narrowWidth = 1;
+  const wideWidth = 2.5;
+  const height = 30;
+  
+  for (const char of fullText) {
+    const pattern = CODE39_CHARS[char] || CODE39_CHARS['*'];
+    for (let i = 0; i < pattern.length; i++) {
+      const isWide = pattern[i] === 'w';
+      const width = isWide ? wideWidth : narrowWidth;
+      if (i % 2 === 0) {
+        bars.push({ x, width, height });
+      }
+      x += width;
+    }
+    x += narrowWidth;
+  }
+  
+  return { bars, totalWidth: x };
+};
+
+// PDF417-style barcode visual
+const generatePDF417Visual = (text) => {
+  const rows = [];
+  const numRows = 4;
+  const numCols = 20;
+  
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash = hash & hash;
+  }
+  
+  for (let row = 0; row < numRows; row++) {
+    const rowBars = [];
+    for (let col = 0; col < numCols; col++) {
+      const seed = (hash + row * numCols + col) % 7;
+      rowBars.push(seed > 2);
+    }
+    rows.push(rowBars);
+  }
+  
+  return rows;
+};
+
+// Create styles
+const styles = StyleSheet.create({
+  page: {
+    padding: 30,
+    fontSize: 10,
+    fontFamily: 'Helvetica',
+  },
+  border: {
+    border: '1pt solid #333333',
+    padding: 20,
+    minHeight: '95%',
+  },
+  // Flag colors header line
+  flagLineContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  flagLineBlue: {
+    width: 50,
+    height: 5,
+    backgroundColor: '#0072C6',
+  },
+  flagLineYellow: {
+    width: 50,
+    height: 5,
+    backgroundColor: '#FCD116',
+  },
+  flagLineGreen: {
+    width: 50,
+    height: 5,
+    backgroundColor: '#009E60',
+  },
+  // Header section
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  headerRight: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  countryName: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#444444',
+  },
+  unitName: {
+    fontSize: 9,
+    color: '#444444',
+  },
+  licenseTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#444444',
+    textAlign: 'right',
+  },
+  licenseSubtitle: {
+    fontSize: 9,
+    color: '#444444',
+    textAlign: 'right',
+    marginTop: 2,
+  },
+  yearLabel: {
+    fontSize: 9,
+    color: '#444444',
+    textAlign: 'right',
+    marginTop: 5,
+  },
+  yearValue: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#009E60',
+    textAlign: 'right',
+  },
+  licenseNoText: {
+    fontSize: 6,
+    color: '#444444',
+    textAlign: 'right',
+    marginTop: 5,
+  },
+  // Importer info section
+  importerSection: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  importerNoLabel: {
+    fontSize: 6,
+    color: '#444444',
+  },
+  certificationText: {
+    fontSize: 10,
+    color: '#444444',
+    marginTop: 15,
+    lineHeight: 1.5,
+  },
+  certificationBold: {
+    fontWeight: 'bold',
+  },
+  // Items table
+  itemsSection: {
+    marginTop: 20,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
+    paddingBottom: 5,
+    marginBottom: 5,
+  },
+  tableHeaderText: {
+    fontSize: 6,
+    fontWeight: 'bold',
+    color: '#444444',
+  },
+  tableRow: {
+    flexDirection: 'row',
+    paddingVertical: 3,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#eeeeee',
+  },
+  // Column widths for import items
+  colCsName: { width: '12%' },
+  colHsCode: { width: '10%' },
+  colQty: { width: '8%' },
+  colVolume: { width: '12%' },
+  colMt: { width: '10%' },
+  colChemical: { width: '20%' },
+  colCo2: { width: '12%' },
+  colCountry: { width: '16%' },
+  tableCell: {
+    fontSize: 7,
+    color: '#444444',
+  },
+  // Footer/Signature section
+  footerSection: {
+    position: 'absolute',
+    bottom: 50,
+    left: 30,
+    right: 30,
+    border: '1pt solid #bfbfbf',
+    padding: 15,
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  footerLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#444444',
+  },
+  footerValue: {
+    fontSize: 10,
+    color: '#444444',
+    marginTop: 5,
+  },
+  signatureImage: {
+    width: 150,
+    height: 50,
+    objectFit: 'contain',
+  },
+  // Watermark
+  watermark: {
+    position: 'absolute',
+    top: '40%',
+    left: '30%',
+    fontSize: 60,
+    color: '#eeeeee',
+    opacity: 0.3,
+    transform: 'rotate(-45deg)',
+  },
+  // Totals row
+  totalsRow: {
+    flexDirection: 'row',
+    paddingVertical: 5,
+    borderTopWidth: 1,
+    borderTopColor: '#333333',
+    marginTop: 5,
+  },
+  totalsLabel: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#444444',
+  },
+  totalsValue: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#009E60',
+  },
+});
+
+// Unit conversion helper
+const convertToMetricTons = (quantity, volume, unit) => {
+  const qty = parseFloat(quantity) || 0;
+  const vol = parseFloat(volume) || 0;
+  const totalMass = qty * vol;
+  
+  const conversionFactors = {
+    'g': 0.000001,
+    'kg': 0.001,
+    'lb': 0.000453592,
+    'oz': 0.0000283495,
+    'ton': 1,
+    'mt': 1,
+  };
+  
+  const factor = conversionFactors[unit?.toLowerCase()] || 0.001;
+  return (totalMass * factor).toFixed(4);
+};
+
+const ImportLicensePDF = ({ importData, user }) => {
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    const d = new Date(date);
+    return d.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  const importedItems = importData?.imported_items || [];
+  
+  // Calculate total CO2 equivalent
+  const totalCO2 = importedItems.reduce((sum, item) => {
     return sum + (parseFloat(item.co2_equivalent) || 0);
   }, 0);
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <Text style={styles.countryName}>ST. VINCENT & THE GRENADINES</Text>
-            <Text style={styles.unitName}>NATIONAL OZONE UNIT</Text>
-            <Text style={styles.unitName}>Ministry of Health, Wellness and the Environment</Text>
+      <Page size="LETTER" style={styles.page}>
+        <View style={styles.border}>
+          {/* Flag color lines */}
+          <View style={styles.flagLineContainer}>
+            <View style={styles.flagLineBlue} />
+            <View style={styles.flagLineYellow} />
+            <View style={styles.flagLineGreen} />
           </View>
-          <View style={styles.headerRight}>
-            <Text style={styles.licenseTitle}>IMPORT LICENSE</Text>
-            <Text style={styles.licenseSubtitle}>
-              OZONE DEPLETING SUBSTANCES AND ALTERNATIVES
-            </Text>
-          </View>
-        </View>
 
-        {/* Year and License Number */}
-        <View style={styles.yearSection}>
-          <Text style={styles.yearLabel}>IMPORT YEAR</Text>
-          <Text style={styles.yearValue}>{importData.import_year || 'N/A'}</Text>
-        </View>
-
-        <View style={styles.licenseNoSection}>
-          <Text style={styles.licenseNoLabel}>LICENSE NO:</Text>
-          <Text style={styles.licenseNoValue}>
-            SVG-IMP-{importData.import_year}-{String(importData.import_number || 0).padStart(4, '0')}
-          </Text>
-        </View>
-
-        {/* Importer Information */}
-        <View style={styles.infoSection}>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>IMPORTER:</Text>
-            <Text style={styles.infoValue}>{importData.name || user?.enterprise_name || 'N/A'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>REGISTRATION CERT:</Text>
-            <Text style={styles.infoValue}>
-              {registration?.cert_no ? `SVG-NOU-${registration.year}-${String(registration.cert_no).padStart(4, '0')}` : 'N/A'}
-            </Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>SUBMISSION DATE:</Text>
-            <Text style={styles.infoValue}>
-              {importData.submission_date ? new Date(importData.submission_date).toLocaleDateString() : 'N/A'}
-            </Text>
-          </View>
-          {importData.inspection_date && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>INSPECTION DATE:</Text>
-              <Text style={styles.infoValue}>
-                {new Date(importData.inspection_date).toLocaleDateString()}
+          {/* Header */}
+          <View style={styles.headerContainer}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.countryName}>ST. VINCENT & THE GRENADINES</Text>
+              <Text style={styles.unitName}>NATIONAL OZONE UNIT</Text>
+            </View>
+            <View style={styles.headerRight}>
+              <Text style={styles.licenseTitle}>LICENSE TO IMPORT</Text>
+              <Text style={styles.licenseSubtitle}>
+                CONTROLLED SUBSTANCES / CONTROLLED SUBSTANCES ALTERNATIVES
+              </Text>
+              <Text style={styles.yearLabel}>#</Text>
+              <Text style={styles.yearValue}>{importData?.import_year || new Date().getFullYear()}</Text>
+              <Text style={styles.licenseNoText}>
+                LICENSE NO: {importData?.import_year} - {importData?.import_number || 'N/A'}
               </Text>
             </View>
-          )}
-        </View>
+          </View>
 
-        {/* Certification Text */}
-        <View style={styles.certifyText}>
-          <Text>
-            THIS LICENSE AUTHORIZES{' '}
-            <Text style={styles.boldText}>
-              {(importData.name || user?.enterprise_name || 'N/A').toUpperCase()}
-            </Text>
-            {' '}TO IMPORT THE FOLLOWING OZONE DEPLETING SUBSTANCES AND ALTERNATIVES 
-            INTO ST. VINCENT AND THE GRENADINES FOR THE CALENDAR YEAR {importData.import_year}.
-          </Text>
-        </View>
+          {/* Importer Information */}
+          <View style={styles.importerSection}>
+            <Text style={styles.importerNoLabel}>IMPORTER NO: {user?.importer_number || 'N/A'}</Text>
+            <View style={{ marginTop: 20 }}>
+              <Text style={styles.certificationText}>
+                THIS CERTIFIES THAT{' '}
+                <Text style={styles.certificationBold}>
+                  {(user?.displayName || user?.display_name || 'N/A').toUpperCase()}
+                </Text>{' '}
+                OF{' '}
+                <Text style={styles.certificationBold}>
+                  {(user?.enterprise_name || 'N/A').toUpperCase()}
+                </Text>{' '}
+                AT{' '}
+                <Text style={styles.certificationBold}>
+                  {(user?.business_address || 'N/A').toUpperCase()}
+                </Text>{' '}
+                IS GRANTED A LICENSE TO IMPORT THE FOLLOWING CONTROLLED SUBSTANCES (CSs) / CONTROLLED SUBSTANCES ALTERNATIVES (CSAs):
+              </Text>
+            </View>
+          </View>
 
-        {/* Import Items Table */}
-        <View style={styles.itemsSection}>
-          <Text style={styles.sectionTitle}>LICENSED IMPORT ITEMS</Text>
-          
-          <View style={styles.table}>
+          {/* Items Table */}
+          <View style={styles.itemsSection}>
             {/* Table Header */}
             <View style={styles.tableHeader}>
-              <Text style={[styles.tableCellHeader, styles.colAshrae]}>ASHRAE</Text>
-              <Text style={[styles.tableCellHeader, styles.colChemical]}>SUBSTANCE</Text>
-              <Text style={[styles.tableCellHeader, styles.colHsCode]}>HS CODE</Text>
-              <Text style={[styles.tableCellHeader, styles.colQty]}>QTY</Text>
-              <Text style={[styles.tableCellHeader, styles.colVolume]}>VOLUME</Text>
-              <Text style={[styles.tableCellHeader, styles.colUnit]}>UNIT</Text>
-              <Text style={[styles.tableCellHeader, styles.colCountry]}>ORIGIN</Text>
-              <Text style={[styles.tableCellHeader, styles.colCo2]}>CO2 EQ.</Text>
-            </View>
-            
-            {/* Table Rows */}
-            {items.map((item, index) => (
-              <View key={index} style={styles.tableRow}>
-                <Text style={[styles.tableCell, styles.colAshrae]}>{item.ashrae}</Text>
-                <Text style={[styles.tableCell, styles.colChemical]}>{item.cs_name || item.chemical_name}</Text>
-                <Text style={[styles.tableCell, styles.colHsCode]}>{item.hs_code}</Text>
-                <Text style={[styles.tableCell, styles.colQty]}>{item.quantity}</Text>
-                <Text style={[styles.tableCell, styles.colVolume]}>{item.volume}</Text>
-                <Text style={[styles.tableCell, styles.colUnit]}>{item.designation}</Text>
-                <Text style={[styles.tableCell, styles.colCountry]}>{item.export_country}</Text>
-                <Text style={[styles.tableCell, styles.colCo2]}>{item.co2_equivalent}</Text>
+              <View style={styles.colCsName}>
+                <Text style={styles.tableHeaderText}>CS/CSA NAME</Text>
               </View>
-            ))}
+              <View style={styles.colHsCode}>
+                <Text style={styles.tableHeaderText}>HS CODE</Text>
+              </View>
+              <View style={styles.colQty}>
+                <Text style={styles.tableHeaderText}>QTY</Text>
+              </View>
+              <View style={styles.colVolume}>
+                <Text style={styles.tableHeaderText}>VOLUME</Text>
+              </View>
+              <View style={styles.colMt}>
+                <Text style={styles.tableHeaderText}>MT</Text>
+              </View>
+              <View style={styles.colChemical}>
+                <Text style={styles.tableHeaderText}>CHEMICAL NAME</Text>
+              </View>
+              <View style={styles.colCo2}>
+                <Text style={styles.tableHeaderText}>CO2e USED</Text>
+              </View>
+              <View style={styles.colCountry}>
+                <Text style={styles.tableHeaderText}>EXPORT COUNTRY</Text>
+              </View>
+            </View>
+
+            {/* Table Rows */}
+            {importedItems.map((item, index) => {
+              const mt = convertToMetricTons(item.quantity, item.volume, item.designation);
+              return (
+                <View key={index} style={styles.tableRow}>
+                  <View style={styles.colCsName}>
+                    <Text style={styles.tableCell}>{item.ashrae || 'N/A'}</Text>
+                  </View>
+                  <View style={styles.colHsCode}>
+                    <Text style={styles.tableCell}>{item.hs_code || 'N/A'}</Text>
+                  </View>
+                  <View style={styles.colQty}>
+                    <Text style={styles.tableCell}>{item.quantity || '0'}</Text>
+                  </View>
+                  <View style={styles.colVolume}>
+                    <Text style={styles.tableCell}>
+                      {item.volume} {item.designation}(s)
+                    </Text>
+                  </View>
+                  <View style={styles.colMt}>
+                    <Text style={styles.tableCell}>{mt}</Text>
+                  </View>
+                  <View style={styles.colChemical}>
+                    <Text style={styles.tableCell}>{item.cs_name || item.chemical_name || 'N/A'}</Text>
+                  </View>
+                  <View style={styles.colCo2}>
+                    <Text style={styles.tableCell}>{item.co2_equivalent || '0'}</Text>
+                  </View>
+                  <View style={styles.colCountry}>
+                    <Text style={styles.tableCell}>({item.export_country || 'N/A'})</Text>
+                  </View>
+                </View>
+              );
+            })}
+
+            {/* Totals Row */}
+            <View style={styles.totalsRow}>
+              <View style={{ width: '72%' }}>
+                <Text style={styles.totalsLabel}>TOTAL CO2 EQUIVALENT:</Text>
+              </View>
+              <View style={{ width: '28%' }}>
+                <Text style={styles.totalsValue}>{totalCO2.toFixed(2)} CO2eq</Text>
+              </View>
+            </View>
           </View>
 
-          {/* Totals */}
-          <View style={styles.totalsSection}>
-            <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>TOTAL CO2 EQUIVALENT:</Text>
-              <Text style={styles.totalValue}>{totalCO2.toFixed(2)} CO2eq</Text>
-            </View>
-          </View>
+          {/* Watermark */}
+          <Text style={styles.watermark}>OFFICIAL</Text>
         </View>
 
-        {/* Inspection Note */}
-        {importData.inspected && (
-          <View style={styles.inspectionNote}>
-            <Text style={styles.inspectionText}>
-              ✓ This shipment has been inspected and verified by the National Ozone Unit.
-            </Text>
-          </View>
-        )}
-
-        {/* Signature Section */}
-        <View style={styles.signatureSection}>
-          <View style={styles.signatureRow}>
+        {/* Footer/Signature Section */}
+        <View style={styles.footerSection}>
+          <View style={styles.footerRow}>
             <View>
-              <Text style={styles.signatureLabel}>AUTHORIZED BY</Text>
-              <Text style={styles.signatureValue}>{importData.admin_name || 'N/A'}</Text>
+              <Text style={styles.footerLabel}>NAME OF AUTHORIZED OFFICER</Text>
+              <Text style={styles.footerValue}>
+                {(importData?.admin_name || 'N/A').toUpperCase()}
+              </Text>
             </View>
             <View>
-              <Text style={styles.signatureLabel}>ROLE</Text>
-              <Text style={styles.signatureValue}>{importData.admin_role || 'NOU Administrator'}</Text>
-            </View>
-            <View>
-              <Text style={styles.signatureLabel}>APPROVAL DATE</Text>
-              <Text style={styles.signatureValue}>
-                {importData.admin_signature_date 
-                  ? new Date(importData.admin_signature_date).toLocaleDateString()
-                  : 'N/A'}
+              <Text style={styles.footerLabel}>TITLE OF AUTHORIZED OFFICER</Text>
+              <Text style={styles.footerValue}>
+                {(importData?.admin_role || 'NOU Administrator').toUpperCase()}
               </Text>
             </View>
           </View>
-          <View>
-            <Text style={styles.signatureLabel}>SIGNATURE</Text>
-            {importData.admin_signature ? (
-              <Image src={importData.admin_signature} style={styles.signatureImage} />
-            ) : (
-              <Text style={styles.signatureValue}>_______________________</Text>
-            )}
+          <View style={styles.footerRow}>
+            <View>
+              <Text style={styles.footerLabel}>DATE</Text>
+              <Text style={styles.footerValue}>
+                {formatDate(importData?.admin_signature_date)}
+              </Text>
+            </View>
+            <View>
+              <Text style={styles.footerLabel}>SIGNATURE</Text>
+              {importData?.admin_signature_url ? (
+                <Image
+                  style={styles.signatureImage}
+                  src={importData.admin_signature_url}
+                />
+              ) : (
+                <Text style={styles.footerValue}>_____________________</Text>
+              )}
+            </View>
           </View>
         </View>
-
-        {/* Footer */}
-        <Text style={styles.footer}>
-          National Ozone Unit • Ministry of Health, Wellness and the Environment • St. Vincent & The Grenadines
-        </Text>
       </Page>
     </Document>
   );

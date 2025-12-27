@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../services/supabase/supabaseClient';
 import MainLayout from '../layout/MainLayout';
+import AdminLayout from '../layout/AdminLayout';
 
 const AdminDashboard = () => {
   const { currentUser, userProfile, userRole } = useAuth();
@@ -143,20 +144,20 @@ const AdminDashboard = () => {
   // Show loading while fetching data (but only if we're admin)
   if (loading && userRole === 'admin') {
     return (
-      <MainLayout title="Admin Dashboard">
+      <AdminLayout title="Admin Dashboard">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-900"></div>
           </div>
         </div>
-      </MainLayout>
+      </AdminLayout>
     );
   }
   
   // Show error if any
   if (error) {
     return (
-      <MainLayout title="Admin Dashboard">
+      <AdminLayout title="Admin Dashboard">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="bg-red-50 border-l-4 border-red-400 p-4">
             <p className="text-sm text-red-700">{error}</p>
@@ -168,14 +169,14 @@ const AdminDashboard = () => {
             </button>
           </div>
         </div>
-      </MainLayout>
+      </AdminLayout>
     );
   }
   
   // If somehow we get here without being admin, show message
   if (userRole !== 'admin') {
     return (
-      <MainLayout title="Admin Dashboard">
+      <AdminLayout title="Admin Dashboard">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
             <p className="text-sm text-yellow-700">
@@ -183,12 +184,12 @@ const AdminDashboard = () => {
             </p>
           </div>
         </div>
-      </MainLayout>
+      </AdminLayout>
     );
   }
   
   return (
-    <MainLayout title="Admin Dashboard">
+    <AdminLayout title="Admin Dashboard">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
         <div className="mb-6">
@@ -378,7 +379,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </AdminLayout>
   );
 };
 

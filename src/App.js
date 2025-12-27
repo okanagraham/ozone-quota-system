@@ -10,6 +10,8 @@ import ImporterLogin from './pages/auth/ImporterLogin';
 import AdminLogin from './pages/auth/AdminLogin';
 import CustomsLogin from './pages/auth/CustomsLogin';
 import LoginSelector from './pages/auth/LoginSelector';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 
 // Demo Mode Components
 import DemoModeBanner from './components/common/DemoModeBanner';
@@ -38,6 +40,7 @@ import CustomsCalculator from './components/customs/CustomsCalculator';
 
 // PDF Preview
 import PDFPreview from './components/pdf/PDFPreview';
+import PDFTestPage from './pages/test/PDFTestPage';
 
 // Other components
 import NotificationsPage from './pages/NotificationsPage';
@@ -152,6 +155,12 @@ function AppRoutes() {
         <Route path="/login/admin" element={<PublicRoute><AdminLogin /></PublicRoute>} />
         <Route path="/login/customs" element={<PublicRoute><CustomsLogin /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+        
+        {/* PASSWORD RESET ROUTES */}
+        <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        
+        <Route path="/test/pdf" element={<PDFTestPage />} />
         
         {/* IMPORTER ROUTES */}
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />

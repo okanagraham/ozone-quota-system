@@ -1,5 +1,5 @@
 // src/components/admin/AdminRegistrations.js
-// With debug logging to identify loading issues
+// FIXED: Corrected navigation path and removed debug output
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabase/supabaseClient';
@@ -9,7 +9,6 @@ const AdminRegistrations = () => {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [debugInfo, setDebugInfo] = useState(null);
   const [filter, setFilter] = useState('pending'); // pending, approved, all
   const [selectedReg, setSelectedReg] = useState(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
@@ -22,7 +21,6 @@ const AdminRegistrations = () => {
     try {
       setLoading(true);
       setError(null);
-      setDebugInfo(null);
 
       console.log('Fetching registrations with filter:', filter);
 
@@ -55,28 +53,20 @@ const AdminRegistrations = () => {
       if (fetchError) {
         console.error('Supabase error:', fetchError);
         setError(`Database error: ${fetchError.message}`);
-        setDebugInfo({
-          errorCode: fetchError.code,
-          errorDetails: fetchError.details,
-          errorHint: fetchError.hint
-        });
         return;
       }
 
       if (!data) {
-        setDebugInfo({ message: 'No data returned from query' });
         setRegistrations([]);
         return;
       }
 
       console.log('Registrations loaded:', data.length);
       setRegistrations(data);
-      setDebugInfo({ count: data.length, filter });
 
     } catch (err) {
       console.error('Unexpected error:', err);
       setError(`Unexpected error: ${err.message}`);
-      setDebugInfo({ stack: err.stack });
     } finally {
       setLoading(false);
     }
@@ -141,6 +131,13 @@ const AdminRegistrations = () => {
     navigate('/login/admin');
   };
 
+  // Handle View click - navigate to the correct route
+  const handleViewRegistration = (regId) => {
+    console.log('Navigating to registration:', regId);
+    // FIXED: Use plural "registrations" to match App.js route
+    navigate(`/admin/registrations/${regId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -171,13 +168,6 @@ const AdminRegistrations = () => {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 pb-6">
-        {/* Debug Info (remove in production) */}
-        {debugInfo && (
-          <div className="mb-4 p-3 bg-gray-200 rounded text-xs font-mono">
-            <strong>Debug:</strong> {JSON.stringify(debugInfo)}
-          </div>
-        )}
-
         {/* Error Display */}
         {error && (
           <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -260,8 +250,9 @@ const AdminRegistrations = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm">
+                      {/* FIXED: Use handler function instead of inline navigate with wrong path */}
                       <button 
-                        onClick={() => navigate(`/admin/registration/${reg.id}`)}
+                        onClick={() => handleViewRegistration(reg.id)}
                         className="text-blue-600 hover:text-blue-800 mr-3"
                       >
                         View

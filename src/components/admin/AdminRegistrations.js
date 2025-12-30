@@ -286,7 +286,7 @@ const AdminRegistrations = () => {
       {/* Footer */}
       <footer className="bg-gray-800 text-white mt-auto">
         <div className="max-w-7xl mx-auto px-4 py-4 text-center text-sm text-gray-400">
-          © {new Date().getFullYear()} National Ozone Unit, Ministry of Fisheries
+          © {new Date().getFullYear()} National Ozone Unit, Ministry of Tourism & Sustainable Development
         </div>
       </footer>
     </div>

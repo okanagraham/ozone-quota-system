@@ -183,7 +183,7 @@ const TechnicianLogin = () => {
         </div>
         
         <div className="text-center text-xs text-purple-100">
-          &copy; {new Date().getFullYear()} National Ozone Unit, Ministry of Environment
+          &copy; {new Date().getFullYear()} National Ozone Unit, Ministry of Tourism & Sustainable Development
         </div>
       </div>
     </div>

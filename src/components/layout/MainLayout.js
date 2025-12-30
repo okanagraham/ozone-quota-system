@@ -101,7 +101,7 @@ const MainLayout = ({ children, title = "National Ozone Unit" }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="text-sm">
-              © {currentYear} National Ozone Unit, Ministry of Environment
+              © {currentYear} National Ozone Unit, Ministry of Tourism & Sustainable Development
             </div>
             <div className="text-sm">
               <Link to="/privacy" className="hover:underline">Privacy Policy</Link>

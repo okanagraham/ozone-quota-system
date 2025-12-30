@@ -31,6 +31,8 @@ import AdminRegistrations from './components/admin/AdminRegistrations';
 import AdminRegistrationView from './components/admin/AdminRegistrationView';
 import AdminImportsManagement from './components/admin/AdminImportsManagement';
 import AdminRefrigerants from './components/admin/AdminRefrigerants';
+import AdminUserManagement from './components/admin/AdminUserManagement';
+import AdminSettings from './components/admin/AdminSettings';
 
 // Customs components
 import CustomsDashboard from './components/customs/CustomsDashboard';
@@ -177,6 +179,8 @@ function AppRoutes() {
         <Route path="/admin/registrations/:id" element={<AdminRoute><AdminRegistrationView /></AdminRoute>} />
         <Route path="/admin/imports" element={<AdminRoute><AdminImportsManagement /></AdminRoute>} />
         <Route path="/admin/refrigerants" element={<AdminRoute><AdminRefrigerants /></AdminRoute>} />
+        <Route path="/admin/users" element={<AdminRoute><AdminUserManagement /></AdminRoute>} />
+        <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
         <Route path="/admin/notifications" element={<AdminRoute><NotificationsPage /></AdminRoute>} />
         
         {/* CUSTOMS ROUTES */}

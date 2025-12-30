@@ -160,7 +160,7 @@ const ForgotPassword = () => {
         )}
         
         <div className="text-center text-xs text-gray-500 mt-8">
-          &copy; {new Date().getFullYear()} National Ozone Unit, Ministry of Environment
+          &copy; {new Date().getFullYear()} National Ozone Unit, Ministry of Tourism & Sustainable Development
         </div>
       </div>
     </div>

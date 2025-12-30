@@ -140,7 +140,7 @@ const ImporterLogin = () => {
         </div>
         
         <p className="text-center text-xs text-blue-200 mt-6">
-          © {new Date().getFullYear()} National Ozone Unit, Ministry of Environment
+          © {new Date().getFullYear()} National Ozone Unit, Ministry of Tourism & Sustainable Development
         </p>
       </div>
     </div>

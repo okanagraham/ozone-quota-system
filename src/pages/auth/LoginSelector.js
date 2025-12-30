@@ -108,7 +108,7 @@ const LoginSelector = () => {
         </div>
 
         <div className="mt-8 text-center text-xs text-blue-300">
-          © {new Date().getFullYear()} National Ozone Unit, Ministry of Fisheries
+          © {new Date().getFullYear()} National Ozone Unit, Ministry of Tourism & Sustainable Development
         </div>
       </div>
     </div>

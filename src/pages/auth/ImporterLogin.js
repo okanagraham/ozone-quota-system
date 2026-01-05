@@ -46,9 +46,9 @@ const ImporterLogin = () => {
       }
       
       if (userData.role === 'technician') {
-        navigate('/technician/dashboard');
+        window.location.href =  '/technician/dashboard' ;
       } else {
-        navigate('/dashboard');
+        window.location.href = '/dashboard';
       }
     } catch (err) {
       console.error('Login error:', err);

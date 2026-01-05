@@ -8,43 +8,88 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [debugInfo, setDebugInfo] = useState(''); // Debug state
   const navigate = useNavigate();
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    console.log('=== ADMIN LOGIN DEBUG START ===');
+    console.log('Email:', email);
+    setDebugInfo('Starting login...');
+    
     try {
       setError('');
       setLoading(true);
+      
+      // Step 1: Attempt authentication
+      console.log('Step 1: Calling supabase.auth.signInWithPassword...');
+      setDebugInfo('Step 1: Authenticating...');
       
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password
       });
       
-      if (authError) throw authError;
+      console.log('Auth response:', { authData, authError });
+      
+      if (authError) {
+        console.error('Auth error:', authError);
+        setDebugInfo(`Auth failed: ${authError.message}`);
+        throw authError;
+      }
+      
+      console.log('Step 1 SUCCESS - User ID:', authData.user?.id);
+      setDebugInfo(`Step 1 SUCCESS - User ID: ${authData.user?.id}`);
+      
+      // Step 2: Fetch user role
+      console.log('Step 2: Fetching user role from users table...');
+      setDebugInfo('Step 2: Fetching user role...');
       
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('role')
+        .select('role, email, display_name')
         .eq('id', authData.user.id)
         .single();
       
-      if (userError) throw userError;
+      console.log('User data response:', { userData, userError });
       
-      // Only allow admin role
+      if (userError) {
+        console.error('User fetch error:', userError);
+        setDebugInfo(`User fetch failed: ${userError.message}`);
+        throw userError;
+      }
+      
+      console.log('Step 2 SUCCESS - Role:', userData?.role);
+      setDebugInfo(`Step 2 SUCCESS - Role: ${userData?.role}`);
+      
+      // Step 3: Check role
+      console.log('Step 3: Checking if role is admin...');
       if (userData.role !== 'admin') {
+        console.log('Role is not admin, signing out...');
+        setDebugInfo(`Access denied - Role is: ${userData.role}`);
         await supabase.auth.signOut();
         setError('Access denied. Administrator credentials required.');
         return;
       }
       
-      navigate('/admin/dashboard');
+      console.log('Step 3 SUCCESS - User is admin, navigating...');
+      setDebugInfo('SUCCESS! Navigating to dashboard...');
+      
+      // Step 4: Navigate
+      console.log('Step 4: Navigating to /admin/dashboard');
+      //navigate('/admin/dashboard');
+      window.location.href = '/admin/dashboard';
+      
     } catch (err) {
-      console.error('Login error:', err);
+      console.error('=== LOGIN ERROR ===');
+      console.error('Error object:', err);
+      console.error('Error message:', err.message);
+      console.error('Error status:', err?.status);
       setError(err.message || 'Failed to sign in. Please check your credentials.');
     } finally {
       setLoading(false);
+      console.log('=== ADMIN LOGIN DEBUG END ===');
     }
   };
   
@@ -67,6 +112,13 @@ const AdminLogin = () => {
               National Ozone Unit - Secure Access
             </p>
           </div>
+          
+          {/* Debug Info Display */}
+          {debugInfo && (
+            <div className="mb-4 bg-blue-50 border border-blue-200 rounded-md p-3">
+              <p className="text-xs text-blue-700 font-mono">{debugInfo}</p>
+            </div>
+          )}
           
           {/* Security Notice */}
           <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-md p-3">

@@ -1,24 +1,15 @@
 // src/context/AuthContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../services/supabase/supabaseClient';
 
-const AuthContext = createContext({
-  currentUser: null,
-  userProfile: null,
-  userRole: null,
-  loading: true,
-  login: async () => {},
-  signup: async () => {},
-  logout: async () => {},
-  resetPassword: async () => {},
-  isAdmin: false,
-  isImporter: false,
-  isCustoms: false,
-  isTechnician: false,
-});
+const AuthContext = createContext(null);
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return ctx;
 }
 
 export function AuthProvider({ children }) {
@@ -26,131 +17,171 @@ export function AuthProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
+  const mountedRef = useRef(true);
+  const initializingRef = useRef(false);
 
-  // Fetch user profile helper
-  const fetchProfile = async (userId) => {
+  // Fetch user profile from Supabase users table
+  const fetchUserProfile = useCallback(async (userId) => {
+    if (!userId) return null;
+    
     try {
       const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('id', userId)
         .single();
-      
+
       if (error) {
-        console.error('AUTH: Profile fetch error:', error);
+        console.error('Error fetching user profile:', error.message);
         return null;
       }
       return data;
     } catch (err) {
-      console.error('AUTH: Profile fetch exception:', err);
+      console.error('Exception in fetchUserProfile:', err);
       return null;
     }
-  };
+  }, []);
 
-  // Initialize on mount
+  // Initialize auth state on mount
   useEffect(() => {
-    console.log('AUTH: Setting up...');
-    let isMounted = true;
+    mountedRef.current = true;
+    
+    // Prevent double initialization
+    if (initializingRef.current || initialized) return;
+    initializingRef.current = true;
 
-    // Get initial session
+    let timeoutId;
+
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!isMounted) return;
-        
+        // Safety timeout - ensure loading stops after 5 seconds max
+        timeoutId = setTimeout(() => {
+          if (mountedRef.current) {
+            console.warn('Auth initialization timed out - forcing completion');
+            setLoading(false);
+            setInitialized(true);
+          }
+        }, 5000);
+
+        // Get current session
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error) {
+          console.error('Error getting session:', error.message);
+          if (mountedRef.current) {
+            setLoading(false);
+          }
+          return;
+        }
+
         if (session?.user) {
-          console.log('AUTH: Session found for:', session.user.email);
-          setCurrentUser(session.user);
+          if (mountedRef.current) {
+            setCurrentUser(session.user);
+          }
+
+          // Fetch user profile
+          const profile = await fetchUserProfile(session.user.id);
           
-          const profile = await fetchProfile(session.user.id);
-          if (profile && isMounted) {
-            console.log('AUTH: Profile loaded, role:', profile.role);
-            setUserProfile(profile);
-            setUserRole(profile.role);
+          if (mountedRef.current) {
+            if (profile) {
+              setUserProfile(profile);
+              setUserRole(profile.role || null);
+            }
           }
         } else {
-          console.log('AUTH: No session');
+          // No session - not logged in
+          if (mountedRef.current) {
+            setCurrentUser(null);
+            setUserProfile(null);
+            setUserRole(null);
+          }
         }
-      } catch (error) {
-        console.error('AUTH: Init error:', error);
+      } catch (err) {
+        console.error('Auth initialization error:', err);
       } finally {
-        if (isMounted) {
-          console.log('AUTH: Loading complete');
+        clearTimeout(timeoutId);
+        if (mountedRef.current) {
           setLoading(false);
+          setInitialized(true);
         }
       }
     };
 
     initializeAuth();
 
-    // Listen for auth changes
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('AUTH: Event -', event);
-        
-        if (!isMounted) return;
+        if (!mountedRef.current) return;
 
-        if (event === 'SIGNED_IN' && session?.user) {
-          console.log('AUTH: Signed in:', session.user.email);
-          setCurrentUser(session.user);
-          
-          const profile = await fetchProfile(session.user.id);
-          if (profile && isMounted) {
-            setUserProfile(profile);
-            setUserRole(profile.role);
-          }
-          setLoading(false);
-        } 
-        else if (event === 'SIGNED_OUT') {
-          console.log('AUTH: Signed out');
-          setCurrentUser(null);
-          setUserProfile(null);
-          setUserRole(null);
-          setLoading(false);
+        console.log('Auth event:', event);
+
+        switch (event) {
+          case 'SIGNED_IN':
+            if (session?.user) {
+              setCurrentUser(session.user);
+              const profile = await fetchUserProfile(session.user.id);
+              if (mountedRef.current && profile) {
+                setUserProfile(profile);
+                setUserRole(profile.role || null);
+              }
+            }
+            break;
+
+          case 'SIGNED_OUT':
+            setCurrentUser(null);
+            setUserProfile(null);
+            setUserRole(null);
+            break;
+
+          case 'TOKEN_REFRESHED':
+            if (session?.user) {
+              setCurrentUser(session.user);
+            }
+            break;
+
+          case 'USER_UPDATED':
+            if (session?.user) {
+              setCurrentUser(session.user);
+              const profile = await fetchUserProfile(session.user.id);
+              if (mountedRef.current && profile) {
+                setUserProfile(profile);
+                setUserRole(profile.role || null);
+              }
+            }
+            break;
+
+          default:
+            break;
         }
-        else if (event === 'TOKEN_REFRESHED' && session?.user) {
-          console.log('AUTH: Token refreshed');
-          setCurrentUser(session.user);
+
+        if (mountedRef.current) {
+          setLoading(false);
         }
       }
     );
 
+    // Cleanup
     return () => {
-      isMounted = false;
-      subscription?.unsubscribe();
+      mountedRef.current = false;
+      clearTimeout(timeoutId);
+      subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchUserProfile]);
 
-  // Login
+  // Login function
   const login = async (email, password) => {
-    console.log('AUTH: Logging in:', email);
     setLoading(true);
-    
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        password,
+        password
       });
-      
+
       if (error) throw error;
-      
-      // Manually set state immediately (don't wait for event)
-      if (data.user) {
-        setCurrentUser(data.user);
-        
-        const profile = await fetchProfile(data.user.id);
-        if (profile) {
-          setUserProfile(profile);
-          setUserRole(profile.role);
-        }
-        
-        console.log('AUTH: Login complete, role:', profile?.role);
-        setLoading(false);
-        
-        return { user: data.user, profile };
-      }
-      
+
+      // Profile will be fetched by onAuthStateChange
       return data;
     } catch (error) {
       setLoading(false);
@@ -158,25 +189,66 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Signup
-  const signup = async (email, password) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
-    return data;
+  // Signup function
+  const signup = async (email, password, role = 'importer', profileData = {}) => {
+    setLoading(true);
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (authError) throw authError;
+
+      // Create user profile in users table
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('users')
+          .insert([{
+            id: authData.user.id,
+            email: email,
+            role: role,
+            display_name: profileData.display_name || '',
+            enterprise_name: profileData.enterprise_name || '',
+            business_address: profileData.business_address || '',
+            business_location: profileData.business_location || '',
+            telephone: profileData.telephone || '',
+            import_quota: profileData.import_quota || 0,
+            balance_imports: profileData.balance_imports || 0,
+            cumulative_imports: profileData.cumulative_imports || 0,
+            created_at: new Date().toISOString()
+          }]);
+
+        if (profileError) {
+          console.error('Error creating user profile:', profileError);
+          // Don't throw - auth succeeded, just profile creation failed
+        }
+      }
+
+      return authData;
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
   };
 
-  // Logout
+  // Logout function
   const logout = async () => {
-    console.log('AUTH: Logging out');
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    
-    setCurrentUser(null);
-    setUserProfile(null);
-    setUserRole(null);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      // Clear state immediately
+      setCurrentUser(null);
+      setUserProfile(null);
+      setUserRole(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
   };
 
-  // Reset password
+  // Reset password function
   const resetPassword = async (email) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
@@ -184,23 +256,54 @@ export function AuthProvider({ children }) {
     if (error) throw error;
   };
 
+  // Update password function
+  const updatePassword = async (newPassword) => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+    if (error) throw error;
+  };
+
+  // Refresh user profile
+  const refreshProfile = async () => {
+    if (!currentUser) return null;
+    
+    const profile = await fetchUserProfile(currentUser.id);
+    if (profile) {
+      setUserProfile(profile);
+      setUserRole(profile.role || null);
+    }
+    return profile;
+  };
+
+  // Fetch user role (for backwards compatibility)
+  const fetchUserRole = async (uid) => {
+    const profile = await fetchUserProfile(uid);
+    return profile?.role || null;
+  };
+
   const value = {
+    // State
     currentUser,
     userProfile,
     userRole,
     loading,
+    
+    // Auth methods
     login,
     signup,
     logout,
     resetPassword,
+    updatePassword,
+    refreshProfile,
+    fetchUserRole,
+    
+    // Role checks
     isAdmin: userRole === 'admin',
     isImporter: userRole === 'importer',
     isCustoms: userRole === 'customs',
     isTechnician: userRole === 'technician',
   };
-
-  // Debug
-  console.log('AUTH render:', { loading, user: currentUser?.email, role: userRole });
 
   return (
     <AuthContext.Provider value={value}>

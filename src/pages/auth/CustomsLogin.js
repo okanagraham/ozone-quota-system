@@ -42,7 +42,7 @@ const CustomsLogin = () => {
       }
       
       // Redirect to customs dashboard
-      navigate('/customs/dashboard');
+      window.location.href = '/customs/dashboard';
       
     } catch (err) {
       console.error('Login error:', err);

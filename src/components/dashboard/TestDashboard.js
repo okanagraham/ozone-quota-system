@@ -1,10 +1,13 @@
 // src/components/dashboard/TestDashboard.js
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../services/supabase/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
+
+// Create a fresh client directly in this component
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
 const TestDashboard = () => {
   const [logs, setLogs] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
 
   const addLog = (message, type = 'info', data = null) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -19,70 +22,117 @@ const TestDashboard = () => {
   const runTests = async () => {
     addLog('=== TEST DASHBOARD STARTED ===', 'header');
     
-    // Test 1: Check Supabase client
-    addLog('Test 1: Checking Supabase client configuration...');
-    const url = process.env.REACT_APP_SUPABASE_URL;
-    const keyExists = !!process.env.REACT_APP_SUPABASE_ANON_KEY;
-    addLog(`Supabase URL: ${url}`, 'success');
-    addLog(`Supabase Key exists: ${keyExists}`, keyExists ? 'success' : 'error');
-  
-    // Test 2: Get current session
-    addLog('Test 2: Getting current session...');
-    let userId = null;
+    // Test 1: Check env vars
+    addLog('Test 1: Checking environment variables...');
+    addLog(`SUPABASE_URL: ${supabaseUrl}`, supabaseUrl ? 'success' : 'error');
+    addLog(`SUPABASE_KEY exists: ${!!supabaseKey}`, supabaseKey ? 'success' : 'error');
+    addLog(`SUPABASE_KEY length: ${supabaseKey?.length || 0}`, 'info');
+
+    if (!supabaseUrl || !supabaseKey) {
+      addLog('Missing environment variables - stopping tests', 'error');
+      return;
+    }
+
+    // Test 2: Create fresh Supabase client
+    addLog('Test 2: Creating fresh Supabase client...');
+    let freshClient;
+    try {
+      freshClient = createClient(supabaseUrl, supabaseKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+        }
+      });
+      addLog('Fresh client created successfully', 'success');
+    } catch (err) {
+      addLog(`Client creation failed: ${err.message}`, 'error');
+      return;
+    }
+
+    // Test 3: Direct REST API call (no SDK)
+    addLog('Test 3: Direct REST API call (bypassing SDK)...');
     try {
       const startTime = Date.now();
-      const { data, error } = await supabase.auth.getSession();
+      const response = await fetch(`${supabaseUrl}/rest/v1/users?select=id&limit=1`, {
+        method: 'GET',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        }
+      });
+      const duration = Date.now() - startTime;
+      
+      addLog(`REST API response: ${response.status} ${response.statusText} (${duration}ms)`, 
+        response.ok ? 'success' : 'error');
+      
+      if (response.ok) {
+        const data = await response.json();
+        addLog(`Data received: ${JSON.stringify(data).substring(0, 100)}`, 'success');
+      } else {
+        const errorText = await response.text();
+        addLog(`Error body: ${errorText}`, 'error');
+      }
+    } catch (err) {
+      addLog(`REST API exception: ${err.message}`, 'error');
+    }
+
+    // Test 4: Auth endpoint health check
+    addLog('Test 4: Auth endpoint health check...');
+    try {
+      const startTime = Date.now();
+      const response = await fetch(`${supabaseUrl}/auth/v1/health`, {
+        method: 'GET',
+        headers: {
+          'apikey': supabaseKey,
+        }
+      });
+      const duration = Date.now() - startTime;
+      
+      addLog(`Auth health: ${response.status} (${duration}ms)`, 
+        response.ok ? 'success' : 'error');
+    } catch (err) {
+      addLog(`Auth health exception: ${err.message}`, 'error');
+    }
+
+    // Test 5: getSession with timeout
+    addLog('Test 5: getSession with 5s timeout...');
+    try {
+      const sessionPromise = freshClient.auth.getSession();
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('TIMEOUT after 5s')), 5000)
+      );
+      
+      const startTime = Date.now();
+      const result = await Promise.race([sessionPromise, timeoutPromise]);
       const duration = Date.now() - startTime;
       
       addLog(`getSession completed in ${duration}ms`, 'success');
       
-      if (error) {
-        addLog(`Session error: ${error.message}`, 'error');
-      } else if (data?.session) {
-        userId = data.session.user.id;
-        addLog(`User ID: ${userId}`, 'success');
-        addLog(`Email: ${data.session.user.email}`, 'success');
+      if (result.error) {
+        addLog(`Session error: ${result.error.message}`, 'error');
+      } else if (result.data?.session) {
+        addLog(`Session found for: ${result.data.session.user.email}`, 'success');
       } else {
-        addLog('No session found', 'warning');
+        addLog('No active session', 'warning');
       }
     } catch (err) {
-      addLog(`Session exception: ${err.message}`, 'error');
+      addLog(`getSession failed: ${err.message}`, 'error');
     }
-  
-    // Test 3: Simple count query (no RLS dependency)
-    addLog('Test 3: Simple query - count all tables...');
+
+    // Test 6: Simple query with fresh client
+    addLog('Test 6: Query users table with fresh client...');
     try {
-      const startTime = Date.now();
-      const { count, error } = await supabase
-        .from('users')
-        .select('*', { count: 'exact', head: true });
-      const duration = Date.now() - startTime;
-  
-      if (error) {
-        addLog(`Count error: ${error.message} (code: ${error.code})`, 'error');
-      } else {
-        addLog(`Count query completed in ${duration}ms, count: ${count}`, 'success');
-      }
-    } catch (err) {
-      addLog(`Count exception: ${err.message}`, 'error');
-    }
-  
-    // Test 4: Query with timeout
-    addLog('Test 4: Query users with 5s timeout...');
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const queryPromise = freshClient.from('users').select('id, email').limit(1);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('TIMEOUT after 5s')), 5000)
+      );
       
       const startTime = Date.now();
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, email')
-        .limit(1)
-        .abortSignal(controller.signal);
-      
-      clearTimeout(timeoutId);
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
       const duration = Date.now() - startTime;
-  
+      
       if (error) {
         addLog(`Query error: ${error.message}`, 'error');
       } else {
@@ -90,36 +140,9 @@ const TestDashboard = () => {
         addLog(`Data: ${JSON.stringify(data)}`, 'success');
       }
     } catch (err) {
-      if (err.name === 'AbortError') {
-        addLog('Query TIMED OUT after 5 seconds!', 'error');
-      } else {
-        addLog(`Query exception: ${err.message}`, 'error');
-      }
+      addLog(`Query failed: ${err.message}`, 'error');
     }
-  
-    // Test 5: Check RLS status via RPC (if you have this function)
-    addLog('Test 5: Direct fetch to Supabase REST API...');
-    try {
-      const startTime = Date.now();
-      const response = await fetch(
-        `${process.env.REACT_APP_SUPABASE_URL}/rest/v1/users?select=id,email&limit=1`,
-        {
-          headers: {
-            'apikey': process.env.REACT_APP_SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
-          }
-        }
-      );
-      const duration = Date.now() - startTime;
-      
-      addLog(`Fetch status: ${response.status} in ${duration}ms`, response.ok ? 'success' : 'error');
-      
-      const text = await response.text();
-      addLog(`Response: ${text.substring(0, 200)}`, response.ok ? 'success' : 'error');
-    } catch (err) {
-      addLog(`Fetch exception: ${err.message}`, 'error');
-    }
-  
+
     addLog('=== ALL TESTS COMPLETED ===', 'header');
   };
 

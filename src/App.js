@@ -47,6 +47,7 @@ import PDFTestPage from './pages/test/PDFTestPage';
 
 // Other components
 import NotificationsPage from './pages/NotificationsPage';
+import TestDashboard from './components/dashboard/TestDashboard';
 
 // ============================================
 // LOADING SPINNER COMPONENT
@@ -158,6 +159,7 @@ function AppRoutes() {
         <Route path="/login/admin" element={<PublicRoute><AdminLogin /></PublicRoute>} />
         <Route path="/login/customs" element={<PublicRoute><CustomsLogin /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+        <Route path="/test-dashboard" element={<TestDashboard />} />
         
         {/* PASSWORD RESET ROUTES */}
         <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />

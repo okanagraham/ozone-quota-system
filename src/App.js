@@ -12,6 +12,7 @@ import CustomsLogin from './pages/auth/CustomsLogin';
 import LoginSelector from './pages/auth/LoginSelector';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
+import AuthCallback from './pages/auth/AuthCallback';
 
 // Demo Mode Components
 import DemoModeBanner from './components/common/DemoModeBanner';
@@ -161,6 +162,7 @@ function AppRoutes() {
         {/* PASSWORD RESET ROUTES */}
         <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
         
         <Route path="/test/pdf" element={<PDFTestPage />} />
         

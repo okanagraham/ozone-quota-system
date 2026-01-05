@@ -13,7 +13,7 @@ if (!supabaseAnonKey) {
   console.error('Missing REACT_APP_SUPABASE_ANON_KEY environment variable');
 }
 
-// Create Supabase client with options
+// Create Supabase client with simplified options
 export const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseAnonKey || 'placeholder-key',
@@ -21,15 +21,11 @@ export const supabase = createClient(
     auth: {
       autoRefreshToken: true,
       persistSession: true,
-      detectSessionInUrl: true,
-      storage: window.localStorage,
-      storageKey: 'nou-auth-token',
-      flowType: 'pkce'
-    },
-    global: {
-      headers: {
-        'X-Client-Info': 'nou-quota-system'
-      }
+      // Remove these problematic options:
+      // detectSessionInUrl: true,  // Can cause hanging
+      // flowType: 'pkce',          // Can cause issues on some deployments
+      // storage: window.localStorage,  // This is default anyway
+      // storageKey: 'nou-auth-token',  // Custom key can cause issues
     }
   }
 );

@@ -21,129 +21,105 @@ const TestDashboard = () => {
     
     // Test 1: Check Supabase client
     addLog('Test 1: Checking Supabase client configuration...');
-    try {
-      const url = process.env.REACT_APP_SUPABASE_URL;
-      const keyExists = !!process.env.REACT_APP_SUPABASE_ANON_KEY;
-      addLog(`Supabase URL: ${url}`, 'success');
-      addLog(`Supabase Key exists: ${keyExists}`, keyExists ? 'success' : 'error');
-    } catch (err) {
-      addLog(`Config error: ${err.message}`, 'error');
-    }
-
+    const url = process.env.REACT_APP_SUPABASE_URL;
+    const keyExists = !!process.env.REACT_APP_SUPABASE_ANON_KEY;
+    addLog(`Supabase URL: ${url}`, 'success');
+    addLog(`Supabase Key exists: ${keyExists}`, keyExists ? 'success' : 'error');
+  
     // Test 2: Get current session
     addLog('Test 2: Getting current session...');
+    let userId = null;
     try {
       const startTime = Date.now();
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const { data, error } = await supabase.auth.getSession();
       const duration = Date.now() - startTime;
+      
+      addLog(`getSession completed in ${duration}ms`, 'success');
       
       if (error) {
         addLog(`Session error: ${error.message}`, 'error');
-      } else if (session) {
-        addLog(`Session found in ${duration}ms`, 'success');
-        addLog(`User ID: ${session.user.id}`, 'success');
-        addLog(`Email: ${session.user.email}`, 'success');
-        setCurrentUser(session.user);
+      } else if (data?.session) {
+        userId = data.session.user.id;
+        addLog(`User ID: ${userId}`, 'success');
+        addLog(`Email: ${data.session.user.email}`, 'success');
       } else {
-        addLog('No session found - user not logged in', 'warning');
-        return; // Stop tests if not logged in
+        addLog('No session found', 'warning');
       }
     } catch (err) {
       addLog(`Session exception: ${err.message}`, 'error');
-      return;
     }
-
-    // Test 3: Simple query to users table
-    addLog('Test 3: Querying users table (simple select)...');
+  
+    // Test 3: Simple count query (no RLS dependency)
+    addLog('Test 3: Simple query - count all tables...');
     try {
       const startTime = Date.now();
-      const { data, error, status } = await supabase
+      const { count, error } = await supabase
         .from('users')
-        .select('id, email, role')
-        .limit(1);
+        .select('*', { count: 'exact', head: true });
       const duration = Date.now() - startTime;
-
+  
       if (error) {
-        addLog(`Users query error (${status}): ${error.message}`, 'error', error);
+        addLog(`Count error: ${error.message} (code: ${error.code})`, 'error');
       } else {
-        addLog(`Users query completed in ${duration}ms`, 'success');
-        addLog(`Returned ${data?.length || 0} rows`, 'success', data);
+        addLog(`Count query completed in ${duration}ms, count: ${count}`, 'success');
       }
     } catch (err) {
-      addLog(`Users query exception: ${err.message}`, 'error');
+      addLog(`Count exception: ${err.message}`, 'error');
     }
-
-    // Test 4: Query current user's profile
-    addLog('Test 4: Querying current user profile...');
+  
+    // Test 4: Query with timeout
+    addLog('Test 4: Query users with 5s timeout...');
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        addLog('No session for user query', 'warning');
-        return;
-      }
-
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const startTime = Date.now();
-      const { data, error, status } = await supabase
+      const { data, error } = await supabase
         .from('users')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
+        .select('id, email')
+        .limit(1)
+        .abortSignal(controller.signal);
+      
+      clearTimeout(timeoutId);
       const duration = Date.now() - startTime;
-
+  
       if (error) {
-        addLog(`Profile query error (${status}): ${error.message}`, 'error', error);
-        addLog(`Error code: ${error.code}`, 'error');
-        addLog(`Error details: ${error.details}`, 'error');
+        addLog(`Query error: ${error.message}`, 'error');
       } else {
-        addLog(`Profile query completed in ${duration}ms`, 'success');
-        addLog(`Profile data:`, 'success', data);
+        addLog(`Query completed in ${duration}ms`, 'success');
+        addLog(`Data: ${JSON.stringify(data)}`, 'success');
       }
     } catch (err) {
-      addLog(`Profile query exception: ${err.message}`, 'error');
+      if (err.name === 'AbortError') {
+        addLog('Query TIMED OUT after 5 seconds!', 'error');
+      } else {
+        addLog(`Query exception: ${err.message}`, 'error');
+      }
     }
-
-    // Test 5: Query settings table
-    addLog('Test 5: Querying settings table...');
+  
+    // Test 5: Check RLS status via RPC (if you have this function)
+    addLog('Test 5: Direct fetch to Supabase REST API...');
     try {
       const startTime = Date.now();
-      const { data, error, status } = await supabase
-        .from('settings')
-        .select('*')
-        .limit(1);
+      const response = await fetch(
+        `${process.env.REACT_APP_SUPABASE_URL}/rest/v1/users?select=id,email&limit=1`,
+        {
+          headers: {
+            'apikey': process.env.REACT_APP_SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
+          }
+        }
+      );
       const duration = Date.now() - startTime;
-
-      if (error) {
-        addLog(`Settings query error (${status}): ${error.message}`, 'error', error);
-      } else {
-        addLog(`Settings query completed in ${duration}ms`, 'success');
-        addLog(`Settings data:`, 'success', data);
-      }
+      
+      addLog(`Fetch status: ${response.status} in ${duration}ms`, response.ok ? 'success' : 'error');
+      
+      const text = await response.text();
+      addLog(`Response: ${text.substring(0, 200)}`, response.ok ? 'success' : 'error');
     } catch (err) {
-      addLog(`Settings query exception: ${err.message}`, 'error');
+      addLog(`Fetch exception: ${err.message}`, 'error');
     }
-
-    // Test 6: Query registrations table
-    addLog('Test 6: Querying registrations table...');
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const startTime = Date.now();
-      const { data, error, status } = await supabase
-        .from('registrations')
-        .select('id, year, status')
-        .eq('user_id', session.user.id)
-        .limit(5);
-      const duration = Date.now() - startTime;
-
-      if (error) {
-        addLog(`Registrations query error (${status}): ${error.message}`, 'error', error);
-      } else {
-        addLog(`Registrations query completed in ${duration}ms`, 'success');
-        addLog(`Found ${data?.length || 0} registrations`, 'success', data);
-      }
-    } catch (err) {
-      addLog(`Registrations query exception: ${err.message}`, 'error');
-    }
-
+  
     addLog('=== ALL TESTS COMPLETED ===', 'header');
   };
 

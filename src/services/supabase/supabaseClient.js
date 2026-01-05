@@ -1,5 +1,5 @@
 // src/services/supabase/supabaseClient.js
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
@@ -12,16 +12,10 @@ if (!supabaseAnonKey) {
   console.error('Missing REACT_APP_SUPABASE_ANON_KEY environment variable');
 }
 
-// Create Supabase client with NO session persistence
-export const supabase = createClient(
+// Create Supabase client using SSR package (works in browser too)
+export const supabase = createBrowserClient(
   supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key',
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
+  supabaseAnonKey || 'placeholder-key'
 );
 
 export const isSupabaseConfigured = () => {

@@ -52,11 +52,11 @@ const localStorageOnly = {
 export const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseAnonKey || 'placeholder-key',
-  {
+  /*{
     auth: {
       autoRefreshToken: true,
       persistSession: true,
-      storage: localStorageOnly,
+      //storage: localStorageOnly,
       storageKey: 'nou-supabase-auth',
       flowType: 'implicit', // Use implicit flow, not PKCE
       detectSessionInUrl: false, // Don't try to detect session in URL
@@ -66,7 +66,7 @@ export const supabase = createClient(
         'X-Client-Info': 'nou-quota-system',
       },
     },
-  }
+  }*/
 );
 
 export const isSupabaseConfigured = () => {

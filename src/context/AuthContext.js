@@ -1,25 +1,8 @@
 // src/context/AuthContext.js
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { supabase } from '../services/supabase/supabaseClient';
 
 const AuthContext = createContext(null);
-
-// Create a fresh client for auth operations
-const createFreshClient = () => {
-  return createClient(
-    process.env.REACT_APP_SUPABASE_URL,
-    process.env.REACT_APP_SUPABASE_ANON_KEY,
-    {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        storageKey: 'nou-auth',
-        flowType: 'implicit',
-        detectSessionInUrl: false,
-      },
-    }
-  );
-};
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
@@ -34,161 +17,276 @@ export function AuthProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
+  const mountedRef = useRef(true);
+  const initializingRef = useRef(false);
 
-  // Create client instance for this provider
-  const [supabase] = useState(() => createFreshClient());
+  // Fetch user profile from Supabase users table
+// In AuthContext.js - update the fetchUserProfile function:
 
-  // Fetch user profile
-  const fetchUserProfile = useCallback(async (userId) => {
-    if (!userId) return null;
+const fetchUserProfile = useCallback(async (userId) => {
+  console.log('=== FETCH PROFILE DEBUG ===');
+  console.log('fetchUserProfile called with userId:', userId);
+  
+  // ADD THIS: Check Supabase client configuration
+  console.log('Supabase URL:', process.env.REACT_APP_SUPABASE_URL);
+  console.log('Supabase Key exists:', !!process.env.REACT_APP_SUPABASE_ANON_KEY);
+  console.log('Supabase Key prefix:', process.env.REACT_APP_SUPABASE_ANON_KEY?.substring(0, 20));
+  
+  if (!userId) {
+    console.log('No userId provided, returning null');
+    return null;
+  }
+  
+  try {
+    console.log('Querying Supabase users table...');
+    const startTime = Date.now();
     
-    try {
-      console.log('Fetching profile for:', userId);
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
+    const { data, error, status, statusText } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
 
-      if (error) {
-        console.error('Profile fetch error:', error.message);
-        return null;
-      }
-      console.log('Profile fetched:', data?.email);
-      return data;
-    } catch (err) {
-      console.error('Profile fetch exception:', err);
+    console.log('Query completed in', Date.now() - startTime, 'ms');
+    console.log('Response status:', status, statusText);
+    console.log('Query result - data:', data);
+    console.log('Query result - error:', error);
+
+    if (error) {
+      console.error('Error fetching user profile:', error.message);
+      console.error('Error code:', error.code);
+      console.error('Error details:', error.details);
       return null;
     }
-  }, [supabase]);
+    
+    return data;
+  } catch (err) {
+    console.error('Exception in fetchUserProfile:', err);
+    return null;
+  }
+}, []);
 
-  // Initialize - check for existing session
+  // Initialize auth state on mount
   useEffect(() => {
-    let mounted = true;
+    mountedRef.current = true;
+    
+    // Prevent double initialization
+    if (initializingRef.current || initialized) return;
+    initializingRef.current = true;
 
-    const initialize = async () => {
-      console.log('AuthContext: Initializing...');
-      
+    let timeoutId;
+
+    const initializeAuth = async () => {
       try {
-        // Use a timeout to prevent hanging
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Session check timeout')), 3000)
-        );
-        
-        const sessionPromise = supabase.auth.getSession();
-        
-        const { data, error } = await Promise.race([sessionPromise, timeoutPromise])
-          .catch(err => {
-            console.warn('Session check failed:', err.message);
-            return { data: { session: null }, error: err };
-          });
+        // Safety timeout - ensure loading stops after 5 seconds max
+        timeoutId = setTimeout(() => {
+          if (mountedRef.current) {
+            console.warn('Auth initialization timed out - forcing completion');
+            setLoading(false);
+            setInitialized(true);
+          }
+        }, 5000);
 
-        if (!mounted) return;
+        // Get current session
+        const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
-          console.warn('Session error:', error.message);
+          console.error('Error getting session:', error.message);
+          if (mountedRef.current) {
+            setLoading(false);
+          }
+          return;
         }
 
-        if (data?.session?.user) {
-          console.log('Found existing session for:', data.session.user.email);
-          setCurrentUser(data.session.user);
+        if (session?.user) {
+          if (mountedRef.current) {
+            setCurrentUser(session.user);
+          }
+
+          // Fetch user profile
+          const profile = await fetchUserProfile(session.user.id);
           
-          const profile = await fetchUserProfile(data.session.user.id);
-          if (mounted && profile) {
-            setUserProfile(profile);
-            setUserRole(profile.role || null);
+          if (mountedRef.current) {
+            if (profile) {
+              setUserProfile(profile);
+              setUserRole(profile.role || null);
+            }
           }
         } else {
-          console.log('No existing session found');
+          // No session - not logged in
+          if (mountedRef.current) {
+            setCurrentUser(null);
+            setUserProfile(null);
+            setUserRole(null);
+          }
         }
       } catch (err) {
-        console.error('Auth init error:', err);
+        console.error('Auth initialization error:', err);
       } finally {
-        if (mounted) {
+        clearTimeout(timeoutId);
+        if (mountedRef.current) {
           setLoading(false);
+          setInitialized(true);
         }
       }
     };
 
-    initialize();
+    initializeAuth();
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (!mounted) return;
-        
+        if (!mountedRef.current) return;
+
         console.log('Auth event:', event);
 
-        if (event === 'SIGNED_IN' && session?.user) {
-          setCurrentUser(session.user);
-          const profile = await fetchUserProfile(session.user.id);
-          if (mounted && profile) {
-            setUserProfile(profile);
-            setUserRole(profile.role || null);
+        switch (event) {
+          // In the onAuthStateChange callback, update SIGNED_IN case:
+
+          case 'SIGNED_IN':
+          console.log('=== SIGNED_IN EVENT ===');
+          console.log('Session user:', session?.user?.id);
+  
+          if (session?.user) {
+            setCurrentUser(session.user);
+            console.log('Calling fetchUserProfile...');
+            
+            const profile = await fetchUserProfile(session.user.id);
+            
+            console.log('fetchUserProfile returned:', profile);
+            
+            if (mountedRef.current && profile) {
+              console.log('Setting profile and role...');
+              setUserProfile(profile);
+              setUserRole(profile.role || null);
+              console.log('Profile set complete');
+            } else {
+              console.log('Component unmounted or no profile found');
+            }
           }
-          setLoading(false);
-        } else if (event === 'SIGNED_OUT') {
-          setCurrentUser(null);
-          setUserProfile(null);
-          setUserRole(null);
+          break;
+
+          case 'SIGNED_OUT':
+            setCurrentUser(null);
+            setUserProfile(null);
+            setUserRole(null);
+            break;
+
+          case 'TOKEN_REFRESHED':
+            if (session?.user) {
+              setCurrentUser(session.user);
+            }
+            break;
+
+          case 'USER_UPDATED':
+            if (session?.user) {
+              setCurrentUser(session.user);
+              const profile = await fetchUserProfile(session.user.id);
+              if (mountedRef.current && profile) {
+                setUserProfile(profile);
+                setUserRole(profile.role || null);
+              }
+            }
+            break;
+
+          default:
+            break;
+        }
+
+        if (mountedRef.current) {
           setLoading(false);
         }
       }
     );
 
+    // Cleanup
     return () => {
-      mounted = false;
+      mountedRef.current = false;
+      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
-  }, [supabase, fetchUserProfile]);
+  }, [fetchUserProfile]);
 
-  // Login
+  // Login function
   const login = async (email, password) => {
-    console.log('Login attempt for:', email);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
-    return data;
-  };
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-  // Signup
-  const signup = async (email, password, role = 'importer', profileData = {}) => {
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (authError) throw authError;
+      if (error) throw error;
 
-    if (authData.user) {
-      const { error: profileError } = await supabase
-        .from('users')
-        .insert([{
-          id: authData.user.id,
-          email: email,
-          role: role,
-          ...profileData,
-          created_at: new Date().toISOString(),
-        }]);
-
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-      }
+      // Profile will be fetched by onAuthStateChange
+      return data;
+    } catch (error) {
+      setLoading(false);
+      throw error;
     }
-    return authData;
   };
 
-  // Logout
+  // Signup function
+  const signup = async (email, password, role = 'importer', profileData = {}) => {
+    setLoading(true);
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (authError) throw authError;
+
+      // Create user profile in users table
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('users')
+          .insert([{
+            id: authData.user.id,
+            email: email,
+            role: role,
+            display_name: profileData.display_name || '',
+            enterprise_name: profileData.enterprise_name || '',
+            business_address: profileData.business_address || '',
+            business_location: profileData.business_location || '',
+            telephone: profileData.telephone || '',
+            import_quota: profileData.import_quota || 0,
+            balance_imports: profileData.balance_imports || 0,
+            cumulative_imports: profileData.cumulative_imports || 0,
+            created_at: new Date().toISOString()
+          }]);
+
+        if (profileError) {
+          console.error('Error creating user profile:', profileError);
+          // Don't throw - auth succeeded, just profile creation failed
+        }
+      }
+
+      return authData;
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
+  };
+
+  // Logout function
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    setCurrentUser(null);
-    setUserProfile(null);
-    setUserRole(null);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      // Clear state immediately
+      setCurrentUser(null);
+      setUserProfile(null);
+      setUserRole(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
   };
 
-  // Reset password
+  // Reset password function
   const resetPassword = async (email) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
@@ -196,15 +294,18 @@ export function AuthProvider({ children }) {
     if (error) throw error;
   };
 
-  // Update password
+  // Update password function
   const updatePassword = async (newPassword) => {
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
     if (error) throw error;
   };
 
-  // Refresh profile
+  // Refresh user profile
   const refreshProfile = async () => {
     if (!currentUser) return null;
+    
     const profile = await fetchUserProfile(currentUser.id);
     if (profile) {
       setUserProfile(profile);
@@ -213,18 +314,29 @@ export function AuthProvider({ children }) {
     return profile;
   };
 
+  // Fetch user role (for backwards compatibility)
+  const fetchUserRole = async (uid) => {
+    const profile = await fetchUserProfile(uid);
+    return profile?.role || null;
+  };
+
   const value = {
+    // State
     currentUser,
     userProfile,
     userRole,
     loading,
+    
+    // Auth methods
     login,
     signup,
     logout,
     resetPassword,
     updatePassword,
     refreshProfile,
-    supabase, // Expose the client if needed
+    fetchUserRole,
+    
+    // Role checks
     isAdmin: userRole === 'admin',
     isImporter: userRole === 'importer',
     isCustoms: userRole === 'customs',

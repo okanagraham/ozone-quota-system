@@ -28,6 +28,11 @@ const fetchUserProfile = useCallback(async (userId) => {
   console.log('=== FETCH PROFILE DEBUG ===');
   console.log('fetchUserProfile called with userId:', userId);
   
+  // ADD THIS: Check Supabase client configuration
+  console.log('Supabase URL:', process.env.REACT_APP_SUPABASE_URL);
+  console.log('Supabase Key exists:', !!process.env.REACT_APP_SUPABASE_ANON_KEY);
+  console.log('Supabase Key prefix:', process.env.REACT_APP_SUPABASE_ANON_KEY?.substring(0, 20));
+  
   if (!userId) {
     console.log('No userId provided, returning null');
     return null;
@@ -37,23 +42,24 @@ const fetchUserProfile = useCallback(async (userId) => {
     console.log('Querying Supabase users table...');
     const startTime = Date.now();
     
-    const { data, error } = await supabase
+    const { data, error, status, statusText } = await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
       .single();
 
     console.log('Query completed in', Date.now() - startTime, 'ms');
+    console.log('Response status:', status, statusText);
     console.log('Query result - data:', data);
     console.log('Query result - error:', error);
 
     if (error) {
       console.error('Error fetching user profile:', error.message);
-      console.error('Error details:', error);
+      console.error('Error code:', error.code);
+      console.error('Error details:', error.details);
       return null;
     }
     
-    console.log('Profile fetched successfully:', data);
     return data;
   } catch (err) {
     console.error('Exception in fetchUserProfile:', err);

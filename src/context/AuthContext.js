@@ -22,26 +22,44 @@ export function AuthProvider({ children }) {
   const initializingRef = useRef(false);
 
   // Fetch user profile from Supabase users table
-  const fetchUserProfile = useCallback(async (userId) => {
-    if (!userId) return null;
-    
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
+// In AuthContext.js - update the fetchUserProfile function:
 
-      if (error) {
-        console.error('Error fetching user profile:', error.message);
-        return null;
-      }
-      return data;
-    } catch (err) {
-      console.error('Exception in fetchUserProfile:', err);
+const fetchUserProfile = useCallback(async (userId) => {
+  console.log('=== FETCH PROFILE DEBUG ===');
+  console.log('fetchUserProfile called with userId:', userId);
+  
+  if (!userId) {
+    console.log('No userId provided, returning null');
+    return null;
+  }
+  
+  try {
+    console.log('Querying Supabase users table...');
+    const startTime = Date.now();
+    
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    console.log('Query completed in', Date.now() - startTime, 'ms');
+    console.log('Query result - data:', data);
+    console.log('Query result - error:', error);
+
+    if (error) {
+      console.error('Error fetching user profile:', error.message);
+      console.error('Error details:', error);
       return null;
     }
-  }, []);
+    
+    console.log('Profile fetched successfully:', data);
+    return data;
+  } catch (err) {
+    console.error('Exception in fetchUserProfile:', err);
+    return null;
+  }
+}, []);
 
   // Initialize auth state on mount
   useEffect(() => {
@@ -118,16 +136,30 @@ export function AuthProvider({ children }) {
         console.log('Auth event:', event);
 
         switch (event) {
+          // In the onAuthStateChange callback, update SIGNED_IN case:
+
           case 'SIGNED_IN':
-            if (session?.user) {
-              setCurrentUser(session.user);
-              const profile = await fetchUserProfile(session.user.id);
-              if (mountedRef.current && profile) {
-                setUserProfile(profile);
-                setUserRole(profile.role || null);
-              }
+          console.log('=== SIGNED_IN EVENT ===');
+          console.log('Session user:', session?.user?.id);
+  
+          if (session?.user) {
+            setCurrentUser(session.user);
+            console.log('Calling fetchUserProfile...');
+            
+            const profile = await fetchUserProfile(session.user.id);
+            
+            console.log('fetchUserProfile returned:', profile);
+            
+            if (mountedRef.current && profile) {
+              console.log('Setting profile and role...');
+              setUserProfile(profile);
+              setUserRole(profile.role || null);
+              console.log('Profile set complete');
+            } else {
+              console.log('Component unmounted or no profile found');
             }
-            break;
+          }
+          break;
 
           case 'SIGNED_OUT':
             setCurrentUser(null);

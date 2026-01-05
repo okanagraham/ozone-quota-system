@@ -4,73 +4,63 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl) {
-  console.error('Missing REACT_APP_SUPABASE_URL environment variable');
-}
+// Create client with NO session management
+export const supabase = createClient(
+  supabaseUrl,
+  supabaseAnonKey,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+    },
+  }
+);
 
-if (!supabaseAnonKey) {
-  console.error('Missing REACT_APP_SUPABASE_ANON_KEY environment variable');
-}
+// Manual token storage using cookies (more reliable than localStorage)
+const TOKEN_KEY = 'nou_access_token';
+const REFRESH_KEY = 'nou_refresh_token';
 
-// Clear any existing Supabase cookies on load (they cause hangs)
-if (typeof document !== 'undefined') {
-  document.cookie.split(';').forEach(cookie => {
-    const name = cookie.split('=')[0].trim();
-    if (name.includes('sb-') || name.includes('supabase')) {
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-      console.log('Cleared problematic cookie:', name);
-    }
-  });
-}
-
-// Simple localStorage-only storage (no cookies)
-const localStorageOnly = {
-  getItem: (key) => {
-    try {
-      return localStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  },
-  setItem: (key, value) => {
-    try {
-      localStorage.setItem(key, value);
-    } catch {
-      // Ignore
-    }
-  },
-  removeItem: (key) => {
-    try {
-      localStorage.removeItem(key);
-    } catch {
-      // Ignore
-    }
-  },
+export const saveTokens = (accessToken, refreshToken) => {
+  document.cookie = `${TOKEN_KEY}=${accessToken}; path=/; max-age=3600; SameSite=Lax`;
+  document.cookie = `${REFRESH_KEY}=${refreshToken}; path=/; max-age=604800; SameSite=Lax`;
 };
 
-// Create Supabase client - localStorage only, no cookies
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key',
-  /*{
+export const getAccessToken = () => {
+  const match = document.cookie.match(new RegExp('(^| )' + TOKEN_KEY + '=([^;]+)'));
+  return match ? match[2] : null;
+};
+
+export const getRefreshToken = () => {
+  const match = document.cookie.match(new RegExp('(^| )' + REFRESH_KEY + '=([^;]+)'));
+  return match ? match[2] : null;
+};
+
+export const clearTokens = () => {
+  document.cookie = `${TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  document.cookie = `${REFRESH_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+};
+
+// Create authenticated client with stored token
+export const getAuthenticatedClient = () => {
+  const accessToken = getAccessToken();
+  
+  if (!accessToken) {
+    return supabase; // Return unauthenticated client
+  }
+
+  // Create new client with the access token
+  return createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      //storage: localStorageOnly,
-      storageKey: 'nou-supabase-auth',
-      flowType: 'implicit', // Use implicit flow, not PKCE
-      detectSessionInUrl: false, // Don't try to detect session in URL
+      autoRefreshToken: false,
+      persistSession: false,
     },
     global: {
       headers: {
-        'X-Client-Info': 'nou-quota-system',
+        Authorization: `Bearer ${accessToken}`,
       },
     },
-  }*/
-);
-
-export const isSupabaseConfigured = () => {
-  return !!(supabaseUrl && supabaseAnonKey);
+  });
 };
 
 export default supabase;
